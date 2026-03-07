@@ -1,0 +1,29 @@
+
+<zk>
+
+	<!-- 
+	<menuitem iconSclass="	z-icon-key " label="TEST desde Apply" />  Poner directo esto para crear los submenus
+	
+	<menuseparator /> es un serparador
+	-->
+	
+	<menu label="Localizacion" iconSclass="z-icon-map-marker ">
+	
+		<menupopup apply="org.zkoss.bind.BindComposer"
+			viewModel="@id('vmPopup')@init('com.depy.sistema.menuPopup.MenuPopupVM')">
+	
+				<menuitem iconSclass="  z-icon-building "
+					label="Cambiar Empresa" onClick="@command('cambiarEmpresa')" />
+
+
+				<menuitem iconSclass=" z-icon-sitemap "
+					label="Cambiar Sucursal" onClick="@command('cambiarSucrusal')" />
+			
+	
+		</menupopup>
+	
+	</menu>
+
+
+</zk>
+

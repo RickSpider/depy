@@ -1,0 +1,91 @@
+<?page title="sedeModal" contentType="text/html;charset=UTF-8"?>
+<zk>
+	<window title="Cotizacion Crear/Ver/Editar" border="normal"
+		position="center,center" closable="true" mode="modal"
+		action="show: slideDown;hide: slideUp">
+
+		<tablelayout columns="2">
+
+			
+			<tablechildren>
+				<label value="Comprobante:" />
+			</tablechildren>
+			<tablechildren>
+					<combobox width="150px" readonly="true"
+						model="@load(vm.lComprobanteTipo)"
+						selectedItem="@bind(vm.comprobanteSelected.comprobanteTipo)" visible = "@load(!vm.editar)">
+						<template name="model">
+							<comboitem label="@load(each.tipo)" />
+						</template>
+					</combobox>
+					
+					<textbox value="@load(vm.comprobanteSelected.comprobanteTipo.tipo)" visible = "@load(vm.editar)" readonly="true" />
+			</tablechildren>
+					
+			<tablechildren>
+				<label value="Timbrado:" />
+			</tablechildren>
+			<tablechildren>
+				<textbox value="@load(vm.comprobanteSelected.timbrado) @save(vm.comprobanteSelected.timbrado, before='guardar')" 
+				disabled="@load(!vm.campoTimbrado)"/>
+			</tablechildren>
+			
+			<tablechildren>
+				<label value="Establecimiento:" />
+			</tablechildren>
+			<tablechildren>
+				<textbox value="@load(vm.comprobanteSelected.establecimiento) @save(vm.comprobanteSelected.establecimiento, before='guardar')" 
+				constraint="/^[0-9,$]*$/" maxlength="3"/>
+			</tablechildren>
+			
+			<tablechildren>
+				<label value="Punto Expedicion:" />
+			</tablechildren>
+			<tablechildren>
+				<textbox value="@load(vm.comprobanteSelected.puntoExpedicion) @save(vm.comprobanteSelected.puntoExpedicion, before='guardar')" 
+				constraint="/^[0-9,$]*$/" maxlength="3"/>
+			</tablechildren>
+			
+			<tablechildren>
+				<label value="Emision:" />
+			</tablechildren>
+			<tablechildren>
+				<datebox
+					value="@load(vm.comprobanteSelected.fechaInicioDate) @save(vm.comprobanteSelected.fechaInicioDate, before='guardar')"
+					format="dd/MM/yyyy" width="150px" />
+			</tablechildren>			
+			
+			<tablechildren>
+				<label value="Inicio #:" />
+			</tablechildren>
+			<tablechildren>
+				<longbox value="@load(vm.comprobanteSelected.iniNro) @save(vm.comprobanteSelected.iniNro, before='guardar')" />
+			</tablechildren>
+				
+			<tablechildren>
+				<label value="Siguiente #:" />
+			</tablechildren>
+			<tablechildren>
+				<longbox value="@load(vm.comprobanteSelected.sigteNro) @save(vm.comprobanteSelected.sigteNro, before='guardar')" />
+			</tablechildren>
+			
+			
+			<tablechildren>
+				<label value="Activo:" />
+			</tablechildren>
+			<tablechildren>
+				<checkbox checked="@bind(vm.comprobanteSelected.activo)" />
+			</tablechildren>		
+
+		</tablelayout>
+		
+		<space height="10px" />
+
+			<hlayout>
+
+				<button label="Aceptar" onClick="@command('guardar')" />
+
+			</hlayout>
+
+	</window>
+</zk>

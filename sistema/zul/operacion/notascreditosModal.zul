@@ -1,0 +1,87 @@
+<?page title="clienteModal" contentType="text/html;charset=UTF-8"?>
+
+<zk>
+
+	<window border="normal" position="center,center" closable="true"
+		mode="modal" action="show: slideDown;hide: slideUp" width="960px"
+		height="500px">
+
+		<caption label="Notas de Credito" style="font-weight:bold" />
+
+		<vlayout hflex="1" vflex="1">
+			<tablelayout columns="4">
+			
+				<tablechildren><label value="Desde:" style="font-weight:bold" /></tablechildren>
+				<tablechildren><datebox value="@bind(vm.desde)" format="dd/MM/yyyy HH:mm:ss" width="150px"  onChange="@command('cargarDatos')"/></tablechildren>
+				<tablechildren><label value="Hasta:" style="font-weight:bold" /></tablechildren>
+				<tablechildren><datebox value="@bind(vm.hasta)" format="dd/MM/yyyy HH:mm:ss" width="150px" onChange="@command('cargarDatos')"/></tablechildren>
+			
+			</tablelayout>
+
+			<listbox hflex="1" vflex="1" model="@load(vm.notascreditos)"
+				 mold="paging" autopaging="true">
+
+				<listhead>
+
+					<listheader label="Fecha" hflex="min" />
+					<listheader label="Nro." hflex="min" />
+					<listheader label="documentonro" />
+					<listheader label="Razon Social" width="200px" />
+					<listheader label="Estado" />
+					<listheader label="Total"/>
+					<listheader align="center" />
+
+				</listhead>
+
+				<template name="model">
+					<listitem>
+
+						<listcell label="@load(each[1])"/>
+						<listcell label="@load(each[2])"/>
+						<listcell label="@load(each[4])" />
+						<listcell label="@load(each[5])" tooltiptext="@load(each[5])"
+							style="white-space:nowrap;text-overflow: ellipsis;" />
+						<listcell tooltiptext="@load(each[6])">
+
+									<label value="@load(each[6])"
+											       sclass="@load(
+											           each[6].toString() eq 'Aprobado' ? 'bs badge rounded-pill text-bg-success' :
+											           each[6].toString() eq 'Rechazado' ? 'bs badge rounded-pill text-bg-danger' :
+											           'badge rounded-pill text-bg-info'
+											       )"/>
+
+							</listcell>
+						<listcell >
+						
+							<doublebox format="#,###.##" value="@load(each[7])"
+							style="text-align:right" readonly="true" />
+							
+						</listcell>
+						<listcell>
+							<hlayout>
+								<button iconSclass=" z-icon-file-text  "
+										tooltiptext="ver KUDE PDF" 
+										onClick="@command('verKude', id=each[0])"/>
+	
+								<button iconSclass="z-icon-qrcode "
+									class="doxa-button-green"
+									onClick="@command('openQrSifen',linkQr=each[8])"
+									tooltiptext="Sifen Comprobante Electronico" />
+							</hlayout>	
+						
+						</listcell>
+
+					</listitem>
+				</template>
+
+
+			</listbox>
+
+
+		</vlayout>
+
+
+
+
+	</window>
+</zk>

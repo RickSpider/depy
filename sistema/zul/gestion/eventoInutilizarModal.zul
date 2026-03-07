@@ -1,0 +1,94 @@
+<?page title="Cancelar" contentType="text/html;charset=UTF-8"?>
+<zk>
+
+	<window border="normal" position="center,center" closable="true"
+		mode="modal" action="show: slideDown;hide: slideUp" width="600px">
+		
+		<caption label="Inutilizacion" style="font-weight:bold"/>
+
+		<tablelayout columns="2">
+
+			<tablechildren>
+
+				<label value="Timbrado:" style="font-weight:bold" />
+
+			</tablechildren>
+
+			<tablechildren>
+
+				<textbox value="@load(vm.eventoSelected.timbrado)"
+					readonly="true" width="350px" />
+
+			</tablechildren>
+
+			<tablechildren>
+
+				<label value="Establecimiento:"
+					style="font-weight:bold" />
+
+			</tablechildren>
+
+			<tablechildren>
+
+				<textbox
+					value="@load(vm.eventoSelected.establecimiento)" readonly="true"
+					width="350px" />
+
+			</tablechildren>
+
+			<tablechildren>
+
+				<label value="Punto Expedicion:"
+					style="font-weight:bold" />
+
+			</tablechildren>
+
+			<tablechildren>
+
+				<textbox
+					value="@load(vm.eventoSelected.puntoExpedicion)" readonly="true"
+					width="350px" />
+
+			</tablechildren>
+
+			<tablechildren>
+
+				<label value="Numeracion:" style="font-weight:bold" />
+
+			</tablechildren>
+
+			<tablechildren>
+
+				<textbox value="@load(vm.eventoSelected.numeroIni)"
+					readonly="true" width="350px" />
+
+			</tablechildren>
+
+
+			<tablechildren>
+
+				<label value="Motivo:" style="font-weight:bold" />
+
+			</tablechildren>
+
+			<tablechildren>
+
+				<textbox value="@load(vm.eventoSelected.motivo)"
+					width="350px" />
+
+			</tablechildren>
+
+		</tablelayout>
+		
+		<space height="10px" />
+		
+		<hlayout>
+
+			<button label="Aceptar" onClick="@command('generarEvento')" />
+
+		</hlayout>
+		
+
+	</window>
+
+</zk>

@@ -1,0 +1,273 @@
+<?page title="facturacion" contentType="text/html;charset=UTF-8"?>
+
+
+<zk>
+	<window border="normal"
+		viewModel="@id('vm') @init('com.depy.sistema.operacion.FacturacionVM')"
+		vflex="1" id="Body" apply="org.zkoss.bind.BindComposer">
+		
+		<caption  >
+		
+			<label value="Facturación - " style="font-weight:bold"/>
+			<label value="@load(vm.sucursalStr)" style="font-weight:bold"/>
+		
+		</caption>
+		
+		<hlayout>
+		
+		
+		
+			<tablelayout columns="6">
+				<tablechildren>
+					<label value="RUC/Doc #:" style="font-weight:bold" />
+				</tablechildren>
+
+				<tablechildren>
+					<hlayout>
+						<searchbox model="@load(vm.lClienteSM)"
+							placeholder="Seleccione un Cliente" vflex="1"
+							selectedItem="@bind(vm.clienteSMSelected)" autoclose="true"
+							multiple="false">
+							<template name="model">
+
+								${each.documentoNro} |
+								${each.razonSocial}
+
+							</template>
+
+						</searchbox>
+						<button iconSclass=" z-icon-plus" class="doxa-button-green"
+							onClick="@command('crearCliente')" tooltiptext="Agregar Cliente" />
+					</hlayout>
+
+				</tablechildren>
+
+				<tablechildren>
+					<label value="Razon Social:"
+						style="font-weight:bold" />
+				</tablechildren>
+
+				<tablechildren colspan="3">
+					<textbox
+						value="@load(vm.clienteSMSelected.razonSocial)" readonly="true"
+						hflex="1" />
+				</tablechildren>
+
+				<tablechildren>
+					<label value="Direccion:" style="font-weight:bold" />
+				</tablechildren>
+
+				<tablechildren colspan="3">
+					<textbox
+						value="@load(vm.clienteSMSelected.direccion)" readonly="true"
+						hflex="1" />
+				</tablechildren>
+
+				<tablechildren>
+					<label value="Condicion:"
+						style="font-weight:bold" />
+				</tablechildren>
+
+				<tablechildren>
+
+					<combobox width="150px" readonly="true"
+						model="@load(vm.lCondicionPago)"
+						selectedItem="@bind(vm.facturaSelected.condicion)">
+						<template name="model">
+							<comboitem label="@load(each.tipo)" />
+						</template>
+					</combobox>
+
+				</tablechildren>
+
+				<tablechildren>
+					<label value="Moneda:" style="font-weight:bold" />
+				</tablechildren>
+
+				<tablechildren>
+					<combobox width="150px" readonly="true"
+						model="@load(vm.lMoneda)"
+						selectedItem="@bind(vm.facturaSelected.moneda)"
+						onChange="">
+						
+						<template name="model">
+							<comboitem label="@load(each.tipo)" />
+						</template>
+
+					</combobox>
+				</tablechildren>
+
+				<tablechildren>
+					<label value="Moneda Cambio:"
+						style="font-weight:bold" />
+				</tablechildren>
+
+				<tablechildren>
+					<doublebox
+						value="@bind(vm.facturaSelected.monedaCambio)" readonly="@load((vm.facturaSelected.moneda.tipo.equals('PYG')))"/>
+				</tablechildren>
+
+				<tablechildren>
+					<label value="Credito Plazo:"
+						style="font-weight:bold" />
+				</tablechildren>
+
+				<tablechildren>
+					<hbox>
+						<textbox
+						value="@bind(vm.facturaSelected.plazoCredito)" 
+						readonly="@load((!vm.facturaSelected.condicion.tipo.equals('Credito')))"
+						onChange="@command('onChangeCondicion')"/>
+						
+						<label class="fa-regular fa-circle-question" popup="popupCredito" hflex="1" vflex="1"/>
+						
+					</hbox>
+					
+				</tablechildren>
+
+			</tablelayout>
+			
+			<hbox hflex="1" align="end" pack="end">
+			
+				<button class="doxa-button-orange" onClick="@command('facturacionesModal')" 
+				label="Facturaciones" iconSclass="fa-solid fa-file-lines"/>
+			
+			</hbox>
+			
+		</hlayout>
+
+		<hlayout vflex="1" hflex="1">
+			<listbox vflex="1" hflex="1"
+				model="@load(vm.facturaSelected.detalles)">
+				<listhead>
+
+					<listheader label="Codigo" hflex="min" />
+					<listheader label="Descripcion" />
+					<listheader label="Precio Unitario" hflex='min' />
+					<listheader label="Cantidad" hflex='min' />
+					<listheader label="IVA" hflex='min' />
+					<listheader label="Total" hflex='min' />
+					<listheader hflex='min' >
+						<button iconSclass=" z-icon-plus" class="doxa-button-green"
+							 onClick="@command('agregarDetalle')" tooltiptext="Agregar Cliente" />
+					</listheader>
+
+				</listhead>
+				<template name="model">
+
+
+					<listitem>
+						<listcell>
+							<textbox value="@bind(each.itemCodigo)"  width="100px" />
+						</listcell>
+						<listcell>
+							<textbox value="@bind(each.itemDescripcion)" hflex="1" />
+						</listcell>
+						<listcell>
+							<doublebox width="100px" value="@bind(each.precioUnitario)"
+								style="text-align:right" format="#,###.##" onChange="@command('calcularTotales')" />
+						</listcell>
+						<listcell>
+							<doublebox width="100px" value="@bind(each.cantidad)"
+								style="text-align:right" format="#,###.##" onChange="@command('calcularTotales')"/>
+						</listcell>
+						<listcell>
+							<combobox width="150px" readonly="true"
+								model="@load(vm.lIva)"
+								selectedItem="@bind(each.tasaIva)"
+								onChange="@command('onChangeIva', detalle=each)">
+								<template name="model" var="x">
+									<comboitem label="@load(x)" />
+								</template>
+							</combobox>
+						</listcell>
+						<listcell>
+							<doublebox style="text-align:right"
+								format="#,###.##" value="@load((each.cantidad*each.precioUnitario))" 
+								readonly="true"/>
+						</listcell>
+						<listcell>
+
+							<button iconSclass="z-icon-trash-o" onClick="@command('borrarDetalle', detalle=each)"
+								class="doxa-button-red" tooltiptext="Borrar" />
+
+						</listcell>
+					</listitem>
+
+				</template>
+
+			</listbox>
+
+			<vlayout vflex="2">
+
+
+
+				<tablelayout columns="2">
+				
+					<!--  <tablechildren>
+						<label value="Forma Pago:" />
+					</tablechildren>
+					<tablechildren>
+						<textbox value="@load(vm.facturaSelected.pagos.get(0).pagoTipo.tipo)" readonly="true" width="100px" style="font-weight: bold;"/>
+					</tablechildren>-->
+
+					<tablechildren>
+						<label value="Total:" />
+					</tablechildren>
+					<tablechildren>
+						<doublebox format="#,###.##" value="@load(vm.totalDetalle)"
+							style="font-weight: bold; text-align:right;" readonly="true" width="100px"/>
+					</tablechildren>
+
+					<tablechildren colspan="2">
+						<label value="Impuestos"
+							style="font-weight: bold;" />
+					</tablechildren>
+					
+					<tablechildren>
+						<label value="IVA10" />
+					</tablechildren>
+					<tablechildren>
+						<doublebox format="#,###.##" value="@load(vm.iva10)"
+							style="text-align:right" readonly="true" width="100px"/>
+					</tablechildren>
+
+					<tablechildren>
+						<label value="IVA5" />
+					</tablechildren>
+					<tablechildren>
+						<doublebox format="#,###.##" value="@load(vm.iva5)"
+							style="text-align:right" readonly="true" width="100px"/>
+					</tablechildren>
+
+					<tablechildren>
+						<label value="EXENTA" />
+					</tablechildren>
+					<tablechildren>
+						<doublebox format="#,###.##" value="@load(vm.iva0)"
+							style="text-align:right" readonly="true" width="100px"/>
+					</tablechildren>
+					
+
+				</tablelayout>
+
+				<hlayout>
+
+					<button label="FACTURAR"
+						style="background-color:green" onClick="@command('generarFactura')" />
+					
+					<button onClick="@command('limpiarPantalla')"
+						label="LIMPIAR" />
+
+				</hlayout>
+
+			</vlayout>
+
+		</hlayout>
+
+	</window>
+	
+	 <popup id="popupCredito">
+        Ejemplo: 30 días, 12 meses
+    </popup>
+</zk>

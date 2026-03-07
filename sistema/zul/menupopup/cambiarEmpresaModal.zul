@@ -1,0 +1,34 @@
+<?page title="cambiarEmpresaModal" contentType="text/html;charset=UTF-8"?>
+
+<?component name="finder" templateURI="/doxacore/zul/component/finder.zul"?>
+
+<zk>
+
+	<window id="cambiarEmpresaModal" 
+		border="normal" position="center,center" closable="true" mode="modal"
+		action="show: slideDown;hide: slideUp" width="500px"
+		apply="org.zkoss.bind.BindComposer"
+		viewModel="@id('vm') @init('com.depy.sistema.menuPopup.CambiarEmpresaModalVM')">
+		
+		<caption label="Cambiar Empresa" style="font-weight:bold"/>
+
+		<tablelayout>
+
+			<tablechildren>
+				<finder finderValue="@load(vm.empresaUsuarioSelected.empresa.razonSocial)"
+					finderModel="@init(vm.empresaFinder)" />
+			</tablechildren>
+
+		</tablelayout>
+
+		<hlayout>
+
+			<button label="Guardar" onClick="@command('guardar')" />
+
+		</hlayout>
+
+
+
+
+	</window>
+</zk>

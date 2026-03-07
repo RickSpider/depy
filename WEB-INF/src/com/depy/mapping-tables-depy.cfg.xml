@@ -1,0 +1,19 @@
+<mapping class="com.depy.modelo.Empresa" />
+<mapping class="com.depy.modelo.EmpresaUsuario" />
+<mapping class="com.depy.modelo.Sucursal" />
+<mapping class="com.depy.modelo.SucursalUsuario" />
+<mapping class="com.depy.modelo.Distrito" />
+<mapping class="com.depy.modelo.Localidad" />
+<mapping class="com.depy.modelo.Cliente" />
+<mapping class="com.depy.modelo.Ruc" />
+
+<mapping class="com.depy.modelo.Comprobante" />
+<mapping class="com.depy.modelo.UnidadMedida" />
+<mapping class="com.depy.modelo.Factura" />
+<mapping class="com.depy.modelo.FacturaDetalle" />
+<mapping class="com.depy.modelo.FacturaCuota" />
+<mapping class="com.depy.modelo.FacturaPago" />
+
+<mapping class="com.depy.modelo.NotaCredito" />
+<mapping class="com.depy.modelo.NotaCreditoDetalle" />
+<mapping class="com.depy.modelo.NotaCreditoDoc" />

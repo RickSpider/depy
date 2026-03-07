@@ -1,0 +1,201 @@
+<?page title="NotasCreditos" contentType="text/html;charset=UTF-8"?>
+<?link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-sRIl4kxILFvY47J16cr9ZwB07vP4J8+LH7qKQnuqkuIAvNWLzeN8tE5YBujZqJLB" crossorigin="anonymous"?>
+<zk>
+
+	<window border="normal"
+		viewModel="@id('vm') @init('com.depy.sistema.gestion.NotaCreditoVM')"
+		vflex="1" id="Body" apply="org.zkoss.bind.BindComposer">
+		
+		<caption label="Notas de Credito" style="font-weight:bold"/>
+
+		<hlayout vflex="1">
+
+			<vlayout hflex="1" vflex="1">
+
+				<hbox pack="end" hflex="1">
+				
+					<button label="Refrescar" iconSclass=" fa-solid fa-arrows-rotate" class="doxa-button-orange"
+						onClick="@command('cargarNotasCreditos')"/>
+
+					<button label="Consultar Estados" iconSclass=" fa-solid fa-cloud-arrow-up" class="doxa-button-green"
+						onClick="@command('consultarEstados')"/>
+
+				</hbox>
+
+				<listbox emptyMessage="lista vacía..." mold="paging" autopaging="true"
+					vflex="1" model="@load(vm.lNotasCreditos)" >
+
+					<listhead >
+
+						<listheader label="FECHA" align="center" hflex="min"/>
+						<listheader label="NOTA CREDITO #" align="center" hflex="min" />
+						<listheader label="CDC" align="center" hflex="min" visible="false"/>
+						<listheader label="RUC/DOC #" align="center" hflex="min" />
+						<listheader label="RAZÓN SOCIAL" align="center" />
+						<listheader label="ESTADO" align="center" hflex="min"/>
+						<listheader label="TOTAL" align="center" hflex="min"/>
+						<listheader label="EVENTO " align="center" hflex="min"/>
+						<listheader label="EVENTO FECHA" align="center" hflex="min" visible="false"/>
+						<listheader label="EVENTO ESTADO" align="center" hflex="min"/>
+
+						<listheader align="center" width="150px" />
+
+
+					</listhead>
+
+					<auxhead>
+
+						
+						
+						<auxheader>
+							<textbox value="@bind(vm.filtroColumns[1])"
+								instant="true" onChange="@command('filtrarNotasCreditos')"
+								hflex="1" />
+						</auxheader>
+
+						<auxheader>
+							<textbox value="@bind(vm.filtroColumns[2])"
+								instant="true" onChange="@command('filtrarNotasCreditos')"
+								hflex="1" />
+						</auxheader>		
+						<auxheader>
+							<textbox value="@bind(vm.filtroColumns[3])"
+								instant="true" onChange="@command('filtrarNotasCreditos')"
+								hflex="1" />
+						</auxheader>	
+						<auxheader>
+							<textbox value="@bind(vm.filtroColumns[4])"
+								instant="true" onChange="@command('filtrarNotasCreditos')"
+								hflex="1" />
+						</auxheader>	
+						<auxheader>
+							<textbox value="@bind(vm.filtroColumns[5])"
+								instant="true" onChange="@command('filtrarNotasCreditos')"
+								hflex="1" />
+						</auxheader>				
+						<auxheader>
+							<textbox value="@bind(vm.filtroColumns[6])"
+								instant="true" onChange="@command('filtrarNotasCreditos')"
+								hflex="1" />
+						</auxheader>
+						<auxheader>
+							<textbox value="@bind(vm.filtroColumns[7])"
+								instant="true" onChange="@command('filtrarNotasCreditos')"
+								hflex="1" />
+						</auxheader>
+						<auxheader>
+							<textbox value="@bind(vm.filtroColumns[8])"
+								instant="true" onChange="@command('filtrarNotasCreditos')"
+								hflex="1" />
+						</auxheader>	
+						
+						<auxheader>
+							<textbox value="@bind(vm.filtroColumns[10])"
+								instant="true" onChange="@command('filtrarNotasCreditos')"
+								hflex="1" />
+						</auxheader>
+						
+						<auxheader>
+							<textbox value="@bind(vm.filtroColumns[11])"
+								instant="true" onChange="@command('filtrarNotasCreditos')"
+								hflex="1" />
+						</auxheader>
+						
+					
+						<auxheader />
+
+					</auxhead>
+
+					<template name="model">
+
+						<listitem>
+							
+							
+							<listcell label="@load(each[1])" style="text-align: left;"/>
+							<listcell label="@load(each[2])" style="text-align: left;"/>
+							<listcell label="@load(each[3])" style="text-align: left;"/>
+							<listcell label="@load(each[4])" style="text-align: left;"/>
+							<listcell label="@load(each[5])" style="text-align: left;"/>
+							<listcell tooltiptext="@load(each[6])">
+
+									<label value="@load(each[6])"
+											       sclass="@load(
+											           each[6].toString() eq 'Aprobado' ? 'bs badge rounded-pill text-bg-success' :
+											           each[6].toString() eq 'Rechazado' ? 'bs badge rounded-pill text-bg-danger' :
+											           'badge rounded-pill text-bg-info'
+											       )"/>
+
+							</listcell>
+							<listcell style="text-align: left;" >
+							
+								<doublebox width="100px" value="@bind(each[7])"
+								style="text-align:right" format="#,###.##" readonly="true"/>
+							
+							</listcell>
+							<listcell label="@load(each[9])" style="text-align: left;"/>
+							<listcell label="@load(each[10])" style="text-align: left;"/>
+							<listcell tooltiptext="@load(each[11])">
+							
+								<label value="@load(each[11])"
+											       sclass="@load(
+											           each[11].toString() eq 'Aprobado' ? 'bs badge rounded-pill text-bg-success' :
+											           each[11].toString() eq 'Rechazado' ? 'bs badge rounded-pill text-bg-danger' :
+											           'badge rounded-pill text-bg-info'
+											       )"/>
+							
+							</listcell>
+							
+
+
+							<listcell>
+								<hlayout>
+								
+									<button iconSclass=" z-icon-file-text  "
+										tooltiptext="ver KUDE PDF" 
+										onClick="@command('verKude', id=each[0])"/>
+																		
+									<button iconSclass="z-icon-qrcode "
+										class="doxa-button-green"
+										onClick="@command('openQrSifen',linkQr=each[8])"
+										tooltiptext="Sifen Comprobante Electronico" />
+										
+										<button iconSclass="z-icon-ban "
+										onClick="@command('eventoModal', id=each[0])"
+										class="doxa-button-red"
+										tooltiptext="Comunicar Cancelacion/Inutilizacion"
+										/>
+									
+
+
+								</hlayout>
+
+
+							</listcell>
+
+
+						</listitem>
+
+
+					</template>
+
+					<listfoot>
+						<listfooter span="13" align="left">
+							<hlayout>
+								<label
+									value="@load(vm.lNotasCreditos.size())" />
+								<label value="items" />
+							</hlayout>
+						</listfooter>
+					</listfoot>
+
+
+				</listbox>
+
+			</vlayout>
+
+
+
+		</hlayout>
+
+	</window>
+</zk>

@@ -1,0 +1,92 @@
+<?page title="empresaModal" contentType="text/html;charset=UTF-8"?>
+
+<?component name="finder" templateURI="/doxacore/zul/component/finder.zul"?>
+
+<zk>
+
+
+	<window border="normal" position="center,center" closable="true"
+		mode="modal" action="show: slideDown;hide: slideUp" width="500px">
+
+		<caption label="Empresa Crear/Ver/Editar"
+			style="font-weight:bold" />
+
+		<hlayout hflex="1">
+
+			<tablelayout columns="2">
+
+				<tablechildren>
+					<label value="ID:" style="font-weight:bold" />
+				</tablechildren>
+
+				<tablechildren>
+					<textbox value="@load(vm.empresaSelected.empresaid)"
+						readonly="true" />
+				</tablechildren>
+
+				<tablechildren>
+					<label value="Razón Social:"
+						style="font-weight:bold" />
+				</tablechildren>
+
+				<tablechildren>
+					<textbox
+						value="@bind(vm.empresaSelected.razonSocial)" />
+				</tablechildren>
+
+				<tablechildren>
+					<label value="RUC:" style="font-weight:bold" />
+				</tablechildren>
+
+				<tablechildren>
+					<textbox value="@bind(vm.empresaSelected.ruc)" />
+				</tablechildren>
+
+				<tablechildren>
+					<label value="Fcws ID:" style="font-weight:bold" />
+				</tablechildren>
+
+				<tablechildren>
+					<textbox value="@bind(vm.empresaSelected.fcwsId)" />
+				</tablechildren>
+
+				<tablechildren>
+					<label value="Fcws PASS:" style="font-weight:bold" />
+				</tablechildren>
+
+				<tablechildren>
+					<textbox value="@bind(vm.empresaSelected.fcwsPass)" />
+				</tablechildren>
+
+			</tablelayout>
+
+			<vbox hflex="min" width="200px" height="250px">
+
+				<vbox sclass="doxa-photo" vflex="1" hflex="1"
+					
+					pack="center" align="center">
+					<image id="image" width="100%" height="100%" content="@load(vm.logoFile)"/>
+				</vbox>
+
+				<button hflex="1" iconSclass="z-icon-cloud-upload"
+					tooltiptext="Subir Logo"
+					upload="true,maxsize=3072,accept=.png|.jpg"
+					onUpload="@command('uploadLogo', file=event.media)" />
+
+			</vbox>
+
+		</hlayout>
+
+		<space height="10px" />
+
+		<hlayout>
+
+			<button label="Aceptar" onClick="@command('guardar')" />
+
+		</hlayout>
+
+
+
+
+	</window>
+</zk>

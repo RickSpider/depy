@@ -1,0 +1,128 @@
+<?page title="Empresas" contentType="text/html;charset=UTF-8"?>
+<zk>
+	<window border="normal"
+		viewModel="@id('vm') @init('com.depy.sistema.empresa.EmpresaVM')"
+		vflex="1" id="Body" apply="org.zkoss.bind.BindComposer">
+		
+		<caption label="Empresa" style="font-weight:bold"/>
+
+		<hlayout vflex="1">
+
+			<vlayout hflex="1" vflex="1">
+
+				<hbox pack="end" hflex="1">
+
+					<button label="Agregar" iconSclass=" z-icon-plus"
+						onClick="@command('modalEmpresaAgregar')"
+						disabled="@load(!vm.opCrearEmpresa)" />
+
+				</hbox>
+
+				<listbox emptyMessage="lista vacía..." mold="paging" autopaging="true"
+					vflex="1" model="@load(vm.lEmpresas)" checkmark="true">
+
+					
+
+					<listhead >
+
+						<listheader hflex="min" align="center" />
+						<listheader label="ID" align="center"
+							hflex="min" />
+						<listheader label="RAZÓN SOCIAL" align="center" />
+						<listheader label="RUC" align="center" />
+						
+
+						<listheader align="center" width="150px" />
+
+
+					</listhead>
+					
+					<!--<auxhead>
+						<auxheader />
+						<auxheader label="ID" align="center"/>
+						<auxheader label="RAZÓN SOCIAL" align="center"/>
+						<auxheader label="RUC" align="center"/>
+						<auxheader />
+					</auxhead>   -->
+
+
+					<auxhead>
+
+						<auxheader />
+						<auxheader > 
+							<textbox value="@bind(vm.filtroColumns[0])"
+								instant="true" onChange="@command('filtrarEmpresa')"
+								hflex="1" />
+						</auxheader>
+						<auxheader>
+							<textbox value="@bind(vm.filtroColumns[1])"
+								instant="true" onChange="@command('filtrarEmpresa')"
+								hflex="1" />
+						</auxheader>
+
+						<auxheader>
+							<textbox value="@bind(vm.filtroColumns[2])"
+								instant="true" onChange="@command('filtrarEmpresa')"
+								hflex="1" />
+						</auxheader>						
+					
+						<auxheader />
+
+					</auxhead>
+
+					<template name="model">
+
+						<listitem>
+							<listcell />
+							<listcell label="@load(each[0])" style="text-align: right;"/>
+							<listcell label="@load(each[1])" style="text-align: left;"/>
+							<listcell label="@load(each[2])" style="text-align: left;"/>
+							
+
+
+							<listcell>
+								<hlayout>
+																		
+									<button iconSclass="z-icon-edit"
+										onClick="@command('modalEmpresa', empresaid=each[0])"
+										tooltiptext="Editar"
+										disabled="@load(!vm.opEditarEmpresa)" />
+									<button iconSclass="z-icon-trash-o"
+										class="doxa-button-red"
+										onClick="@command('borrarEmpresaConfirmacion', empresaid=each[0])"
+										tooltiptext="Borrar"
+										disabled="@load(!vm.opBorrarEmpresa)" />
+
+
+								</hlayout>
+
+
+							</listcell>
+
+
+						</listitem>
+
+
+					</template>
+
+					<listfoot>
+						<listfooter span="4" align="left">
+							<hlayout>
+								<label
+									value="@load(vm.lEmpresas.size())" />
+								<label value="items" />
+							</hlayout>
+						</listfooter>
+					</listfoot>
+
+
+				</listbox>
+
+			</vlayout>
+
+
+
+		</hlayout>
+
+	</window>
+</zk>

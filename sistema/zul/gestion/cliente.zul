@@ -1,0 +1,143 @@
+<?page title="Clientes" contentType="text/html;charset=UTF-8"?>
+<zk>
+	<window border="normal"
+		viewModel="@id('vm') @init('com.depy.sistema.gestion.ClienteVM')"
+		vflex="1" id="Body" apply="org.zkoss.bind.BindComposer">
+		
+		<caption label="Clientes" style="font-weight:bold"/>
+
+		<hlayout vflex="1">
+
+			<vlayout hflex="1" vflex="1">
+
+				<hbox pack="end" hflex="1">
+
+					<button label="Agregar" iconSclass=" z-icon-plus"
+						onClick="@command('modalClienteAgregar')"
+						disabled="@load(!vm.opCrearCliente)" />
+
+				</hbox>
+
+				<listbox emptyMessage="lista vacía..." mold="paging" autopaging="true"
+					vflex="1" model="@load(vm.lClientes)" >
+
+					
+
+					<listhead >
+
+						
+						<listheader label="ID" align="center"
+							hflex="min" visible="false"/>
+						<listheader label="RUC/Documento #" align="center" />
+						<listheader label="RAZÓN SOCIAL" align="center" />
+						<listheader label="Email" align="center" />
+						<listheader label="Celular" align="center" />
+						<listheader label="Telefono" align="center" />
+						
+
+						<listheader align="center" width="150px" />
+
+
+					</listhead>
+					
+					
+
+
+					<auxhead>
+
+						
+						<auxheader > 
+							<textbox value="@bind(vm.filtroColumns[0])"
+								instant="true" onChange="@command('filtrarClientes')"
+								hflex="1" />
+						</auxheader>
+						<auxheader>
+							<textbox value="@bind(vm.filtroColumns[1])"
+								instant="true" onChange="@command('filtrarClientes')"
+								hflex="1" />
+						</auxheader>
+
+						<auxheader>
+							<textbox value="@bind(vm.filtroColumns[2])"
+								instant="true" onChange="@command('filtrarClientes')"
+								hflex="1" />
+						</auxheader>		
+						<auxheader>
+							<textbox value="@bind(vm.filtroColumns[3])"
+								instant="true" onChange="@command('filtrarClientes')"
+								hflex="1" />
+						</auxheader>	
+						<auxheader>
+							<textbox value="@bind(vm.filtroColumns[4])"
+								instant="true" onChange="@command('filtrarClientes')"
+								hflex="1" />
+						</auxheader>	
+						<auxheader>
+							<textbox value="@bind(vm.filtroColumns[5])"
+								instant="true" onChange="@command('filtrarClientes')"
+								hflex="1" />
+						</auxheader>					
+					
+						<auxheader />
+
+					</auxhead>
+
+					<template name="model">
+
+						<listitem>
+							
+							<listcell label="@load(each[0])" style="text-align: right;"/>
+							<listcell label="@load(each[1])" style="text-align: left;"/>
+							<listcell label="@load(each[2])" style="text-align: left;"/>
+							<listcell label="@load(each[3])" style="text-align: left;"/>
+							<listcell label="@load(each[4])" style="text-align: left;"/>
+							<listcell label="@load(each[5])" style="text-align: left;"/>
+							
+
+
+							<listcell>
+								<hlayout>
+																		
+									<button iconSclass="z-icon-edit"
+										onClick="@command('modalCliente', clienteid=each[0])"
+										tooltiptext="Editar"
+										disabled="@load(!vm.opEditarCliente)" />
+									<button iconSclass="z-icon-trash-o"
+										class="doxa-button-red"
+										onClick="@command('borrarClientesConfirmacion', Clienteid=each[0])"
+										tooltiptext="Borrar"
+										disabled="@load(!vm.opBorrarCliente)" />
+
+
+								</hlayout>
+
+
+							</listcell>
+
+
+						</listitem>
+
+
+					</template>
+
+					<listfoot>
+						<listfooter span="6" align="left">
+							<hlayout>
+								<label
+									value="@load(vm.lClientes.size())" />
+								<label value="items" />
+							</hlayout>
+						</listfooter>
+					</listfoot>
+
+
+				</listbox>
+
+			</vlayout>
+
+
+
+		</hlayout>
+
+	</window>
+</zk>

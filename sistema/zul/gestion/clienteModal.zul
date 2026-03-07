@@ -1,0 +1,156 @@
+<?page title="clienteModal" contentType="text/html;charset=UTF-8"?>
+
+<zk>
+
+
+	<window border="normal"
+		position="center,center" closable="true" mode="modal"
+		action="show: slideDown;hide: slideUp" width="600px">
+		
+		<caption label="Cliente Crear/Ver/Editar" style="font-weight:bold"/>
+
+		<tablelayout columns="4">
+
+			<tablechildren>
+				<label value="ID:" style="font-weight:bold" />
+			</tablechildren>
+
+			<tablechildren colspan="3">
+				<textbox value="@load(vm.clienteSelected.clienteid)"
+					readonly="true" />
+			</tablechildren>
+
+			
+			
+			<tablechildren>
+				<label value="Documento #:" style="font-weight:bold" />
+			</tablechildren>
+
+			<tablechildren>
+				<textbox value="@bind(vm.clienteSelected.documentoNro)" onChange="@command('onChangeDoc')"/>
+			</tablechildren>
+			
+			<tablechildren>
+				<label value="Tipo Documento:" style="font-weight:bold" />
+			</tablechildren>
+
+			<tablechildren>
+				<searchbox model="@load(vm.lDocumentoTipoSM)" placeholder="Seleccione una Localidad/Ciudad"
+						selectedItem="@bind(vm.documentoTipoSM)"
+						autoclose="true"  multiple="false" >
+						
+						<template name="model">
+							
+							${each.id} - ${each.nombre} 
+							
+						</template>
+
+					</searchbox>
+			</tablechildren>
+			
+			<tablechildren>
+				<label value="RazonSocial:" style="font-weight:bold" />
+			</tablechildren>
+
+			<tablechildren colspan="3">
+				<textbox value="@bind(vm.clienteSelected.razonsocial)" hflex="1"/>
+			</tablechildren>
+			
+			<tablechildren>
+				<label value="Email:" style="font-weight:bold" />
+			</tablechildren>
+
+			<tablechildren>
+				<textbox value="@bind(vm.clienteSelected.email)" />
+			</tablechildren>
+			
+			<tablechildren>
+				<label value="Telefono:" style="font-weight:bold" />
+			</tablechildren>
+
+			<tablechildren>
+				<textbox value="@bind(vm.clienteSelected.telefono)" />
+			</tablechildren>
+			
+			<tablechildren>
+				<label value="Celular:" style="font-weight:bold" />
+			</tablechildren>
+
+			<tablechildren>
+				<textbox value="@bind(vm.clienteSelected.celular)" />
+			</tablechildren>
+			
+			
+
+		
+			
+			<tablechildren>
+				<label value="Localidad:" style="font-weight:bold" />
+			</tablechildren>
+
+			<tablechildren>
+				
+					<searchbox model="@load(vm.lLocalidadSearchModel)" placeholder="Seleccione una Localidad/Ciudad"
+						
+						selectedItem="@bind(vm.localidadSMSelected)"
+						autoclose="true"  multiple="false"
+						onSelect="@command('onSelectedLocalidad')">
+
+
+						<template name="model">
+							
+							${each.localidadid} - ${each.localidad} | ${each.distritoid} - ${each.distrito} | ${each.departamentoid} - ${each.departamento}
+							
+						</template>
+
+					</searchbox>
+				
+			</tablechildren>
+			
+			<tablechildren>
+				<label value="Distrito:" style="font-weight:bold" />
+			</tablechildren>
+
+			<tablechildren>
+				<textbox value="@load(vm.clienteSelected.localidad.distrito.distrito)" readonly="true"/>
+			</tablechildren>
+			
+			<tablechildren>
+				<label value="Departamento:" style="font-weight:bold" />
+			</tablechildren>
+
+			<tablechildren>
+				<textbox value="@load(vm.clienteSelected.localidad.distrito.departamento.departamento)" readonly="true" />
+			</tablechildren>
+			
+			<tablechildren>
+				<label value="Direccion:" style="font-weight:bold" />
+			</tablechildren>
+
+			<tablechildren colspan="3">
+				<textbox value="@bind(vm.clienteSelected.direccion)" hflex="1" rows="3" />
+			</tablechildren>
+			
+			<tablechildren>
+				<label value="Casa #:" style="font-weight:bold" />
+			</tablechildren>
+
+			<tablechildren>
+				<textbox  value="@bind(vm.clienteSelected.casaNro)"/>
+			</tablechildren>
+			
+		</tablelayout>
+
+		<space height="10px" />
+
+		<hlayout>
+
+			<button label="Aceptar" onClick="@command('guardar')" />
+
+		</hlayout>
+
+
+
+
+	</window>
+</zk>

@@ -1,0 +1,21 @@
+<zk>
+
+	<nav label="Main" iconSclass="z-icon-home"
+		children="@load(vm.pageMap[self.label].values()) @template('navitem')"
+		visible="@load(vm.menuVisible( vm.pageMap[self.label].values().size() ))" />
+
+	<!-- Para crear mas menus copiar en nav y solo cambiar el label y el icono -->
+	
+	<nav label="Empresa" iconSclass="z-icon-building"
+		children="@load(vm.pageMap[self.label].values()) @template('navitem')"
+		visible="@load(vm.menuVisible( vm.pageMap[self.label].values().size() ))" />
+		
+	<nav label="Operaciones" iconSclass="fa-solid fa-file-contract"
+		children="@load(vm.pageMap[self.label].values()) @template('navitem')"
+		visible="@load(vm.menuVisible( vm.pageMap[self.label].values().size() ))" />
+		
+	<nav label="Gestion" iconSclass="fa-brands fa-buffer"
+		children="@load(vm.pageMap[self.label].values()) @template('navitem')"
+		visible="@load(vm.menuVisible( vm.pageMap[self.label].values().size() ))" />
+
+</zk>

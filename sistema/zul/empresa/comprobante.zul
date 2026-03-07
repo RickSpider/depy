@@ -1,0 +1,135 @@
+<?page title="Comprobantes" contentType="text/html;charset=UTF-8"?>
+<zk>
+<window title="Comprobante" border="normal"
+		viewModel="@id('vm') @init('com.depy.sistema.empresa.ComprobanteVM')"
+		vflex="1" id="Body" apply="org.zkoss.bind.BindComposer">
+
+		<hlayout vflex="1">
+			
+				<vlayout hflex="1" vflex="1">
+
+					<hbox pack="end" hflex="1" >
+
+						<button label="Agregar"
+							iconSclass=" z-icon-plus" onClick="@command('modalComprobanteAgregar')" disabled="@load(!vm.opCrearComprobante)" />
+
+					</hbox>
+
+					<listbox emptyMessage="lista vacía..." mold="paging"
+						vflex="1" model="@load(vm.lComprobantes)" checkmark="true">
+
+						<listhead>
+
+							<listheader hflex="min" align="center" />
+
+							<listheader label="Comprobante" align="center"
+								/>
+							<listheader label="Timbrado" align="center"
+								 />
+							<listheader label="Establecimiento" align="center"
+								 />
+							<listheader label="Punto Expedicion" align="center"
+								 />
+							<listheader label="Activo" align="center"
+								 hflex="min"/>
+								 
+							<listheader align="center" 
+								hflex="min"/>
+
+
+						</listhead>
+
+
+						<auxhead>
+
+							<auxheader />
+							<auxheader>
+								<textbox
+									value="@bind(vm.filtroColumns[1])" instant="true"
+									onChange="@command('filtrarComprobante')" hflex="1" />
+							</auxheader>
+							
+							<auxheader>
+								<textbox
+									value="@bind(vm.filtroColumns[2])" instant="true"
+									onChange="@command('filtrarComprobante')" hflex="1" />
+							</auxheader>
+							
+							<auxheader>
+								<textbox
+									value="@bind(vm.filtroColumns[3])" instant="true"
+									onChange="@command('filtrarComprobante')" hflex="1" />
+							</auxheader>
+							
+							<auxheader>
+								<textbox
+									value="@bind(vm.filtroColumns[4])" instant="true"
+									onChange="@command('filtrarComprobante')" hflex="1" />
+							</auxheader>
+							
+							<auxheader>
+								<textbox
+									value="@bind(vm.filtroColumns[5])" instant="true"
+									onChange="@command('filtrarComprobante')" hflex="1" />
+							</auxheader>
+							
+						
+							<auxheader />
+						
+						</auxhead>
+
+						<template name="model">
+
+							<listitem>
+								<listcell />
+								
+								<listcell label="@load(each[1])" />
+								<listcell label="@load(each[2])" />
+								<listcell label="@load(each[3])" />
+								<listcell label="@load(each[4])" />
+								<listcell label="@load(each[5])" />
+								
+								<listcell>
+									<hlayout>
+
+										<button iconSclass="z-icon-edit"
+											onClick="@command('modalComprobante', comprobanteid=each[0])"
+											tooltiptext="Editar" disabled="@load(!vm.opEditarComprobante)"/>
+										<button
+											iconSclass="z-icon-trash-o" style="background-color:red"
+											onClick="@command('borrarComprobanteConfirmacion', comprobante=each[0])"
+											tooltiptext="Borrar" disabled="@load(!vm.opBorrarComprobante)"/>
+
+
+									</hlayout>
+
+
+								</listcell>
+
+
+							</listitem>
+
+
+						</template>
+
+						<listfoot>
+							<listfooter span="4" align="left">
+								<hlayout>
+									<label
+										value="@load(vm.lComprobantes.size())" />
+									<label value="items" />
+								</hlayout>
+							</listfooter>
+						</listfoot>
+
+
+					</listbox>
+
+				</vlayout>
+
+		
+			
+		</hlayout>
+
+	</window>
+</zk>
