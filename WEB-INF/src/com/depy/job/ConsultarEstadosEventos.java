@@ -22,7 +22,7 @@ public class ConsultarEstadosEventos implements Job{
 		
 		System.out.println("Iniciando consulta automatica de Eventos NotaCredito...");
 		ulm = new UtilLocalMetodos();
-		ulm.updateEvento(new Register(), ulm.getSql("notaredito/listaNotaCreditoEventoPendiente.sql"), ulm.getSql("notacredito/updateNotaCreditoEvento.sql"));
+		ulm.updateEvento(new Register(), ulm.getSql("notacredito/listaNotaCreditoEventoPendiente.sql"), ulm.getSql("notacredito/updateNotaCreditoEvento.sql"));
 		
 	}
 
