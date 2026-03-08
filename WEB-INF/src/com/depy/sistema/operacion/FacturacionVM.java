@@ -189,8 +189,10 @@ public class FacturacionVM extends TemplateViewModelLocal {
 		
 		this.facturaSelected.setCliente(new Cliente());
 		this.facturaSelected.getCliente().setDocumentoTipo(this.reg.getObjectBySigla(Tipo.class, ParamsLocal.SIGLA_TIPO_DOCUMENTO_RUC));
-		this.documentoTipoSM = new TipoSM(this.facturaSelected.getCliente().getDocumentoTipo());
-		generarSearchModelCliente();
+		//this.documentoTipoSM = new TipoSM(this.facturaSelected.getCliente().getDocumentoTipo());
+		//generarSearchModelCliente();
+		
+		this.cargarClienteDatosCb();
 		
 		modal = (Window) Executions.createComponents("/sistema/zul/operacion/crearClienteModal.zul", this.mainComponent, null);
 		Selectors.wireComponents(modal, this, false);
@@ -198,20 +200,31 @@ public class FacturacionVM extends TemplateViewModelLocal {
 		
 	}
 	
-	private ListModelArray<TipoSM> lDocumentoTipoSM;
-	private TipoSM documentoTipoSM;
+	private List<Tipo> lDocumentoTipo;
 	
-	private void generarSearchModelCliente() {
+	public void cargarClienteDatosCb() {
+		
+		Tipotipo tt = this.reg.getObjectBySigla(Tipotipo.class,ParamsLocal.SIGLA_TIPOTIPO_DOCUMENTO);
+		String [] cols = {"tipotipo"};
+		Object [] value = {tt}; 
+		lDocumentoTipo = this.reg.getAllObjectsByColumns(Tipo.class, cols, value);
+		
+	}
+	
+//	private ListModelArray<TipoSM> lDocumentoTipoSM;
+//	private TipoSM documentoTipoSM;
+	
+	/*private void generarSearchModelCliente() {
 		
 		this.lDocumentoTipoSM = this.crearSearchModel(
-			this.um.getCoreSql("buscarTiposPorSiglaTipotipo.sql").replace("?1", ParamsLocal.SIGLA_TIPOTIPO_DOUCMENTO),
+			this.um.getCoreSql("buscarTiposPorSiglaTipotipo.sql").replace("?1", ParamsLocal.SIGLA_TIPOTIPO_DOCUMENTO),
 	        o -> new TipoSM(
 	        		((Number) o[0]).longValue(),
 			        (String) o[1],
 			        ((Number) o[4]).longValue()
 	            )
 	    );
-	}
+	}*/
 	
 	@Command
 	@NotifyChange("*")
@@ -266,6 +279,11 @@ public class FacturacionVM extends TemplateViewModelLocal {
 	@Command
 	@NotifyChange("*")
 	public void guardarCliente() {
+		
+
+		if (!this.verficarCamposCliente()) {
+			return;
+		}
 
 		String [] columns = {"empresa","documentoNro"};
 	    Object[] valor = {this.getCurrentEmpresa(), this.facturaSelected.getCliente().getDocumentoNro()};
@@ -277,7 +295,7 @@ public class FacturacionVM extends TemplateViewModelLocal {
 			
 		}		
 		
-		this.facturaSelected.getCliente().setDocumentoTipo(this.documentoTipoSM.getTipo());
+		//this.facturaSelected.getCliente().setDocumentoTipo(this.documentoTipoSM.getTipo());
 		
 		this.facturaSelected.getCliente().setDocumentoNro(this.facturaSelected.getCliente().getDocumentoNro().trim());
 		this.facturaSelected.getCliente().setRazonsocial(this.facturaSelected.getCliente().getRazonsocial().trim());
@@ -293,6 +311,30 @@ public class FacturacionVM extends TemplateViewModelLocal {
 		
 		//BindUtils.postNotifyChange(null, null, this, "clienteSMSelected");
 		//BindUtils.postNotifyChange(null, null, this, "clienteSelected");
+	}
+	
+	public boolean verficarCamposCliente() {
+		
+		if (this.facturaSelected.getCliente().getDocumentoNro() == null 
+				|| this.facturaSelected.getCliente().getDocumentoNro().isBlank()) {
+			
+			this.mensajeInfo("Debes cargar un numero de documento.");
+			
+			return false;
+			
+		}
+		
+		if (this.facturaSelected.getCliente().getRazonsocial() == null 
+				|| this.facturaSelected.getCliente().getRazonsocial().isBlank()) {
+			
+			this.mensajeInfo("Debes cargar la Razon social.");
+			
+			return false;
+			
+		}
+		
+		return true;
+		
 	}
 	
 	@Command
@@ -685,22 +727,6 @@ public class FacturacionVM extends TemplateViewModelLocal {
 		this.iva0 = iva0;
 	}
 
-	public ListModelArray<TipoSM> getlDocumentoTipoSM() {
-		return lDocumentoTipoSM;
-	}
-
-	public void setlDocumentoTipoSM(ListModelArray<TipoSM> lDocumentoTipoSM) {
-		this.lDocumentoTipoSM = lDocumentoTipoSM;
-	}
-
-	public TipoSM getDocumentoTipoSM() {
-		return documentoTipoSM;
-	}
-
-	public void setDocumentoTipoSM(TipoSM documentoTipoSM) {
-		this.documentoTipoSM = documentoTipoSM;
-	}
-
 	public List<Tipo> getlCondicionPago() {
 		return lCondicionPago;
 	}
@@ -741,4 +767,13 @@ public class FacturacionVM extends TemplateViewModelLocal {
 		this.sucursalStr = sucursalStr;
 	}
 
+	public List<Tipo> getlDocumentoTipo() {
+		return lDocumentoTipo;
+	}
+
+	public void setlDocumentoTipo(List<Tipo> lDocumentoTipo) {
+		this.lDocumentoTipo = lDocumentoTipo;
+	}
+
+	
 }

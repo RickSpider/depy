@@ -13,8 +13,20 @@
 			<tablechildren>
 				<label value="Tipo Documento:" style="font-weight:bold" />
 			</tablechildren>
-
+			
 			<tablechildren>
+			
+				<combobox width="150px" readonly="true"
+					model="@load(vm.lDocumentoTipo)"
+					selectedItem="@bind(vm.facturaSelected.cliente.documentoTipo)">
+					<template name="model">
+						<comboitem label="@load(each.tipo)" />
+					</template>
+				</combobox>
+				
+			</tablechildren>
+
+		<!--  	<tablechildren>
 				<searchbox model="@load(vm.lDocumentoTipoSM)" placeholder="Seleccione una Localidad/Ciudad"
 						selectedItem="@bind(vm.documentoTipoSM)"
 						autoclose="true"  multiple="false" >
@@ -26,7 +38,7 @@
 						</template>
 
 					</searchbox>
-			</tablechildren>
+			</tablechildren> -->
 			
 			<tablechildren>
 				<label value="Documento #:" style="font-weight:bold" />

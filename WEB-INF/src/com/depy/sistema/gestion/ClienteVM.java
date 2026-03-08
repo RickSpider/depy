@@ -19,10 +19,10 @@ import com.depy.modelo.Cliente;
 import com.depy.modelo.Localidad;
 import com.depy.modelo.Ruc;
 import com.depy.searchModel.LocalidadSM;
-import com.depy.searchModel.TipoSM;
 import com.depy.util.ParamsLocal;
 import com.depy.util.TemplateViewModelLocal;
 import com.doxacore.modelo.Tipo;
+import com.doxacore.modelo.Tipotipo;
 
 public class ClienteVM extends TemplateViewModelLocal {
 
@@ -35,6 +35,8 @@ public class ClienteVM extends TemplateViewModelLocal {
 	private boolean opBorrarCliente;
 
 	private boolean editar = false;
+	
+	private List<Tipo> lDocumentoTipo;
 
 	@Init(superclass = true)
 	public void initClienteVM() {
@@ -101,13 +103,17 @@ public class ClienteVM extends TemplateViewModelLocal {
 
 		this.editar = false;
 		this.modalCliente(-1);
+		
+		
 
 	}
 
 	@Command
 	public void modalCliente(@BindingParam("clienteid") long clienteid) {
+		
+		this.cargarDatosCb();
 	
-		this.documentoTipoSM = null;
+	//	this.documentoTipoSM = null;
 		
 		if (clienteid != -1) {
 
@@ -115,20 +121,20 @@ public class ClienteVM extends TemplateViewModelLocal {
 				return;
 
 			this.editar = true;
-
-			this.clienteSelected = this.reg.getObjectById(Cliente.class.getName(), clienteid);
-			this.clienteSelected.setEmpresa(getCurrentEmpresa());
+			this.clienteSelected = this.reg.findObjectById(Cliente.class, clienteid);
 			this.localidadSMSelected = this.clienteSelected.getLocalidad() != null ? new LocalidadSM( this.clienteSelected.getLocalidad()): null;
-			if (this.clienteSelected.getDocumentoTipo() != null) {
+			
+			/*if (this.clienteSelected.getDocumentoTipo() != null) {
 				this.documentoTipoSM = new TipoSM(this.clienteSelected.getDocumentoTipo());
-			}
+			}*/
 			
 			
 		} else {
 			this.localidadSMSelected = null;
 			this.clienteSelected = new Cliente();
+			this.clienteSelected.setEmpresa(getCurrentEmpresa());
 			this.clienteSelected.setDocumentoTipo(this.reg.getObjectBySigla(Tipo.class, ParamsLocal.SIGLA_TIPO_DOCUMENTO_RUC));
-			this.documentoTipoSM = new TipoSM(this.clienteSelected.getDocumentoTipo());
+		//	this.documentoTipoSM = new TipoSM(this.clienteSelected.getDocumentoTipo());
 		}
 
 		modal = (Window) Executions.createComponents("/sistema/zul/gestion/clienteModal.zul", this.mainComponent, null);
@@ -152,9 +158,16 @@ public class ClienteVM extends TemplateViewModelLocal {
 	@NotifyChange("lClientes")
 	public void guardar() {
 		
-		if (this.documentoTipoSM != null) {
+	/*	if (this.documentoTipoSM != null) {
 			this.clienteSelected.setDocumentoTipo(this.documentoTipoSM.getTipo());
+		}*/
+		
+		if (!this.verficarCampos()) {
+			return;
 		}
+		
+		this.clienteSelected .setDocumentoNro(this.clienteSelected.getDocumentoNro().trim());
+		this.clienteSelected .setRazonsocial(this.clienteSelected.getRazonsocial().trim());
 		
 		this.clienteSelected = this.save(this.clienteSelected);
 
@@ -175,11 +188,44 @@ public class ClienteVM extends TemplateViewModelLocal {
 
 	}
 	
+	public boolean verficarCampos() {
+		
+		if (this.clienteSelected.getDocumentoNro() == null 
+				|| this.clienteSelected.getDocumentoNro().isBlank()) {
+			
+			this.mensajeInfo("Debes cargar un numero de documento.");
+			
+			return false;
+			
+		}
+		
+		if (this.clienteSelected.getRazonsocial() == null 
+				|| this.clienteSelected.getRazonsocial().isBlank()) {
+			
+			this.mensajeInfo("Debes cargar la Razon social.");
+			
+			return false;
+			
+		}
+		
+		boolean alguno = this.localidadSMSelected != null || (this.clienteSelected.getDireccion() != null && !this.clienteSelected.getDireccion().isBlank()) || (this.clienteSelected.getCasaNro() != null && !this.clienteSelected.getCasaNro().isBlank());
+		boolean todos  = this.localidadSMSelected != null && (this.clienteSelected.getDireccion() != null && !this.clienteSelected.getDireccion().isBlank()) && (this.clienteSelected.getCasaNro() != null && !this.clienteSelected.getCasaNro().isBlank());
+
+		if (alguno && !todos) {
+		    this.mensajeInfo("Localidad, dirección y número de casa deben informarse juntos");
+		    return false;
+		}
+		
+		
+		return true;
+		
+	}
+	
 	private ListModelArray<LocalidadSM> lLocalidadSearchModel;
 	private LocalidadSM localidadSMSelected;
 	
-	private ListModelArray<TipoSM> lDocumentoTipoSM;
-	private TipoSM documentoTipoSM;
+//	private ListModelArray<TipoSM> lDocumentoTipoSM;
+//	private TipoSM documentoTipoSM;
 	
 	private void generarSearchModels() {
 		
@@ -196,21 +242,30 @@ public class ClienteVM extends TemplateViewModelLocal {
 	            )
 	    );
 		
-		this.lDocumentoTipoSM = this.crearSearchModel(
+	/*	this.lDocumentoTipoSM = this.crearSearchModel(
 			this.um.getCoreSql("buscarTiposPorSiglaTipotipo.sql").replace("?1", ParamsLocal.SIGLA_TIPOTIPO_DOUCMENTO),
 	        o -> new TipoSM(
 	        		((Number) o[0]).longValue(),
 			        (String) o[1],
 			        ((Number) o[4]).longValue()
 	            )
-	    );
+	    );*/
+	}
+	
+	public void cargarDatosCb() {
+		
+		Tipotipo tt = this.reg.getObjectBySigla(Tipotipo.class,ParamsLocal.SIGLA_TIPOTIPO_DOCUMENTO);
+		String [] cols = {"tipotipo"};
+		Object [] value = {tt}; 
+		lDocumentoTipo = this.reg.getAllObjectsByColumns(Tipo.class, cols, value);
+		
 	}
 	
 	@NotifyChange("*")
 	@Command
 	public void onSelectedLocalidad() {
 		
-		this.clienteSelected.setLocalidad(this.localidadSMSelected != null ? this.reg.getObjectById(Localidad.class.getName(), this.localidadSMSelected.getLocalidadid()) : null );
+		this.clienteSelected.setLocalidad(this.localidadSMSelected != null ? this.reg.findObjectById(Localidad.class, this.localidadSMSelected.getLocalidadid()) : null );
 	
 	}
 	
@@ -306,22 +361,14 @@ public class ClienteVM extends TemplateViewModelLocal {
 		this.localidadSMSelected = localidadSMSelected;
 	}
 
-	public TipoSM getDocumentoTipoSM() {
-		return documentoTipoSM;
+	public List<Tipo> getlDocumentoTipo() {
+		return lDocumentoTipo;
 	}
 
-	public void setDocumentoTipoSM(TipoSM documentoTipoSM) {
-		this.documentoTipoSM = documentoTipoSM;
+	public void setlDocumentoTipo(List<Tipo> lDocumentoTipo) {
+		this.lDocumentoTipo = lDocumentoTipo;
 	}
-
-	public ListModelArray<TipoSM> getlDocumentoTipoSM() {
-		return lDocumentoTipoSM;
-	}
-
-	public void setlDocumentoTipoSM(ListModelArray<TipoSM> lDocumentoTipoSM) {
-		this.lDocumentoTipoSM = lDocumentoTipoSM;
-	}
-
+	
 	
 	
 }

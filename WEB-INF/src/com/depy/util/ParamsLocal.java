@@ -70,7 +70,7 @@ public class ParamsLocal extends Params{
 	public static final String SIGLA_TIPO_IVA_5 = "IVA_5";
 	public static final String SIGLA_TIPO_IVA_0 = "IVA_0";
 	
-	public static final String SIGLA_TIPOTIPO_DOUCMENTO = "DOCUMENTO";
+	public static final String SIGLA_TIPOTIPO_DOCUMENTO = "DOCUMENTO";
 	public static final String SIGLA_TIPO_DOCUMENTO_RUC = "DOCUMENTO_RUC";
 	public static final String SIGLA_TIPO_DOCUMENTO_CI = "DOCUMENTO_CI";
 	public static final String SIGLA_TIPO_DOCUMENTO_PASAPORTE = "DOCUMENTO_PASAPORTE";
