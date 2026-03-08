@@ -4,6 +4,7 @@
     <property name="src.dir"     value="WEB-INF/src"/>
     <property name="classes.dir" value="WEB-INF/classes"/>
     <property name="lib.dir"     value="WEB-INF/lib"/>
+	<property name="javac17" value="/usr/lib/jvm/java-17-openjdk/bin/javac"/>
 
     <!-- Crear carpeta de salida -->
     <target name="init">
@@ -18,7 +19,9 @@
 
     <!-- Compilar clases Java -->
     <target name="compile" depends="init, copy-hbm">
-        <javac srcdir="${src.dir}" destdir="${classes.dir}" includeantruntime="false" >
+        <javac srcdir="${src.dir}" destdir="${classes.dir}" includeantruntime="false" 
+        	executable="${javac17}" fork="true"
+        	source="17" target="17">
             <classpath>
                 <fileset dir="${lib.dir}" includes="**/*.jar"/>
             </classpath>
