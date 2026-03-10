@@ -18,11 +18,11 @@ public class ConsultarEstadosDE implements Job{
 	
 		System.out.println("Iniciando consulta automatica de Facturas...");
 		UtilLocalMetodos ulm = new UtilLocalMetodos();
-		ulm.updateDE(new Register(), ulm.getSql("factura/listaFacturaPendiente.sql"), ulm.getSql("factura/updateFactura.sql"), "factura");
+		ulm.updateDE(new Register(), ulm.getSql("factura/listaFacturaPendiente.sql"), ulm.getSql("factura/updateFactura.sql"));
 		
 		System.out.println("Iniciando consulta automatica de Notas de Credito...");
 		ulm = new UtilLocalMetodos();
-		ulm.updateDE(new Register(), ulm.getSql("notacredito/listaNotaCreditoPendiente.sql"), ulm.getSql("notacredito/updateNotaCredito.sql"), "factura");
+		ulm.updateDE(new Register(), ulm.getSql("notacredito/listaNotaCreditoPendiente.sql"), ulm.getSql("notacredito/updateNotaCredito.sql"));
 		
 	}
 

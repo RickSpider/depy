@@ -322,7 +322,7 @@ public class NotaCreditoVM extends TemplateViewModelLocal {
 	public void consultarEstados() {
 		
 		UtilLocalMetodos ulm = new UtilLocalMetodos();
-		ulm.updateDE(new Register(), ulm.getSql("notacredito/listaNotaCreditoPendiente.sql").replace("?1", this.getCurrentEmpresa().getEmpresaid()+"").replace("--", ""), ulm.getSql("notacredito/updateNotaCredito.sql"), "notacredito");
+		ulm.updateDE(new Register(), ulm.getSql("notacredito/listaNotaCreditoPendiente.sql").replace("?1", this.getCurrentEmpresa().getEmpresaid()+"").replace("--", ""), ulm.getSql("notacredito/updateNotaCredito.sql"));
 	
 		ulm.updateEvento(new Register(), ulm.getSql("notacredito/listaNotaCreditoEventoPendiente.sql").replace("?1", this.getCurrentEmpresa().getEmpresaid()+"").replace("--", ""), ulm.getSql("notacredito/updateNotaCreditoEvento.sql"));
 		

@@ -187,7 +187,7 @@ public class MetodoDE{
 		return lDet;
 	}
 	
-	public ResultRest enviarDE(String URL ,DE de) {
+	public ResultRest enviarDE(String URL, DE de) {
 		
 		Gson gson = new GsonBuilder()
 	                .setDateFormat("yyyy-MM-dd'T'HH:mm:ss-03:00")
@@ -200,7 +200,7 @@ public class MetodoDE{
 		
 	}
 
-	public ResultRest enviarJson(String URL ,String json) {
+	public ResultRest enviarJson(String URL, String json) {
 		
 		HttpOrHttpsConexion con = new HttpOrHttpsConexion();
 	

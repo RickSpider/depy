@@ -322,7 +322,7 @@ public class FacturaVM extends TemplateViewModelLocal {
 	public void consultarEstados() {
 		
 		UtilLocalMetodos ulm = new UtilLocalMetodos();
-		ulm.updateDE(new Register(), ulm.getSql("factura/listaFacturaPendiente.sql").replace("?1", this.getCurrentEmpresa().getEmpresaid()+"").replace("--", ""), ulm.getSql("factura/updateFactura.sql"), "factura");
+		ulm.updateDE(new Register(), ulm.getSql("factura/listaFacturaPendiente.sql").replace("?1", this.getCurrentEmpresa().getEmpresaid()+"").replace("--", ""), ulm.getSql("factura/updateFactura.sql"));
 	
 		ulm.updateEvento(new Register(), ulm.getSql("factura/listaFacturaEventoPendiente.sql").replace("?1", this.getCurrentEmpresa().getEmpresaid()+"").replace("--", ""), ulm.getSql("factura/updateFacturaEvento.sql"));
 		

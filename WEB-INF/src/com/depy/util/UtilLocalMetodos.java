@@ -33,7 +33,7 @@ public class UtilLocalMetodos extends UtilMetodos {
 		return generarBloque(12) + "-" + generarBloque(4) + "-" + generarBloque(4) + "-" + generarBloque(12);
 	}
 	
-	public void updateDE(Register reg, String sqlPendientes, String sqlUpdate, String entidad) {
+	public void updateDE(Register reg, String sqlPendientes, String sqlUpdate) {
 
 		String urlFinal = reg.getObjectByColumn(SistemaPropiedad.class, "clave", "fcwsHOST").getValor()+"/consultar/comprobantexml/";
 		HttpOrHttpsConexion con = new HttpOrHttpsConexion();
