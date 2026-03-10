@@ -22,7 +22,7 @@ public class ConsultarEstadosDE implements Job{
 		
 		System.out.println("Iniciando consulta automatica de Notas de Credito...");
 		ulm = new UtilLocalMetodos();
-		ulm.updateDE(new Register(), ulm.getSql("notacredito/listaNotaCreditoPendiente.sql"), ulm.getSql("factura/updateNotaCredito.sql"), "factura");
+		ulm.updateDE(new Register(), ulm.getSql("notacredito/listaNotaCreditoPendiente.sql"), ulm.getSql("notacredito/updateNotaCredito.sql"), "factura");
 		
 	}
 

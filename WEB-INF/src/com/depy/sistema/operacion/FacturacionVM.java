@@ -33,7 +33,6 @@ import com.depy.modelo.Ruc;
 import com.depy.modelo.Sucursal;
 import com.depy.modelo.SucursalUsuario;
 import com.depy.searchModel.ClienteSM;
-import com.depy.searchModel.TipoSM;
 import com.depy.util.ParamsLocal;
 import com.depy.util.TemplateViewModelLocal;
 import com.depy.util.UtilLocalMetodos;
