@@ -28,7 +28,7 @@
 					<listheader label="documentonro" />
 					<listheader label="Razon Social" width="200px" />
 					<listheader label="Estado" />
-					<listheader label="Total"/>
+					<listheader label="Total" hflex="min"/>
 					<listheader align="center" />
 
 				</listhead>
