@@ -141,7 +141,7 @@ public class FacturaVM extends TemplateViewModelLocal {
 	}
 	
 	@Command
-	public void verKude(@BindingParam("dato") Long id) {
+	public void verKude(@BindingParam("id") Long id) {
 				 	
 	    Map<String, String> params = new HashMap<>();
 		params.put("id", String.valueOf(id));

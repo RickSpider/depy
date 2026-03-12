@@ -623,7 +623,7 @@ public class FacturacionVM extends TemplateViewModelLocal {
 	}
 	
 	@Command
-	public void verKude(@BindingParam("dato") Long id) {
+	public void verKude(@BindingParam("id") Long id) {
 		
 		this.consultarDe(id);
 				 	
