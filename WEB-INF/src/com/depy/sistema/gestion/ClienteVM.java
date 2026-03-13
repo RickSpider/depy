@@ -147,7 +147,7 @@ public class ClienteVM extends TemplateViewModelLocal {
 		 modal.addEventListener("onLater", event -> {
 		        generarSearchModels();
 		        BindUtils.postNotifyChange(null, null, this, "lLocalidadSearchModel");
-		        BindUtils.postNotifyChange(null, null, this, "lDocumentoTipoSM");
+		        //BindUtils.postNotifyChange(null, null, this, "lDocumentoTipoSM");
 		       // Clients.clearBusy();
 		    });
 

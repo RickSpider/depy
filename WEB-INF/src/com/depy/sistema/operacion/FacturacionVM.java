@@ -17,6 +17,7 @@ import org.zkoss.bind.annotation.NotifyChange;
 import org.zkoss.zk.ui.Executions;
 import org.zkoss.zk.ui.event.Event;
 import org.zkoss.zk.ui.event.EventListener;
+import org.zkoss.zk.ui.event.Events;
 import org.zkoss.zk.ui.select.Selectors;
 import org.zkoss.zk.ui.util.Clients;
 import org.zkoss.zul.ListModelArray;
@@ -29,10 +30,12 @@ import com.depy.modelo.Empresa;
 import com.depy.modelo.Factura;
 import com.depy.modelo.FacturaDetalle;
 import com.depy.modelo.FacturaPago;
+import com.depy.modelo.Localidad;
 import com.depy.modelo.Ruc;
 import com.depy.modelo.Sucursal;
 import com.depy.modelo.SucursalUsuario;
 import com.depy.searchModel.ClienteSM;
+import com.depy.searchModel.LocalidadSM;
 import com.depy.util.ParamsLocal;
 import com.depy.util.TemplateViewModelLocal;
 import com.depy.util.UtilLocalMetodos;
@@ -189,16 +192,27 @@ public class FacturacionVM extends TemplateViewModelLocal {
 	@Command
 	public void crearCliente() {
 		
+		this.cargarClienteDatosCb();
+		
 		this.facturaSelected.setCliente(new Cliente());
 		this.facturaSelected.getCliente().setDocumentoTipo(this.reg.getObjectBySigla(Tipo.class, ParamsLocal.SIGLA_TIPO_DOCUMENTO_RUC));
 		//this.documentoTipoSM = new TipoSM(this.facturaSelected.getCliente().getDocumentoTipo());
-		//generarSearchModelCliente();
-		
-		this.cargarClienteDatosCb();
 		
 		modal = (Window) Executions.createComponents("/sistema/zul/operacion/crearClienteModal.zul", this.mainComponent, null);
 		Selectors.wireComponents(modal, this, false);
 		modal.doModal();
+		
+		modal.addEventListener("onLater", event -> {
+		 	this.generarSearchModelCliente();
+		 
+		    BindUtils.postNotifyChange(null, null, this, "lLocalidadSearchModel");
+		   // BindUtils.postNotifyChange(null, null, this, "lDocumentoTipo");
+		    // Clients.clearBusy();
+		});
+
+		 Events.echoEvent("onLater", modal, null);
+		 
+		 //BindUtils.postNotifyChange(null, null, this.facturaSelected, "*");
 		
 	}
 	
@@ -213,20 +227,34 @@ public class FacturacionVM extends TemplateViewModelLocal {
 		
 	}
 	
-//	private ListModelArray<TipoSM> lDocumentoTipoSM;
-//	private TipoSM documentoTipoSM;
+	private ListModelArray<LocalidadSM> lLocalidadSearchModel;
+	private LocalidadSM localidadSMSelected;
+
 	
-	/*private void generarSearchModelCliente() {
+	private void generarSearchModelCliente() {
 		
-		this.lDocumentoTipoSM = this.crearSearchModel(
-			this.um.getCoreSql("buscarTiposPorSiglaTipotipo.sql").replace("?1", ParamsLocal.SIGLA_TIPOTIPO_DOCUMENTO),
-	        o -> new TipoSM(
-	        		((Number) o[0]).longValue(),
-			        (String) o[1],
-			        ((Number) o[4]).longValue()
+		this.lLocalidadSearchModel = this.crearSearchModel(
+				
+	        this.um.getSql("localidad/buscarLocalidad.sql"),
+	        o -> new LocalidadSM(
+	                ((Number) o[0]).longValue(),
+	                (String) o[1],
+	                ((Number) o[2]).longValue(),
+	                (String) o[3],
+	                ((Number) o[4]).longValue(),
+	                (String) o[5]
 	            )
 	    );
-	}*/
+	}
+	
+	
+	@Command
+	@NotifyChange("*")
+	public void onSelectedLocalidad() {
+		
+		this.facturaSelected.getCliente().setLocalidad(this.localidadSMSelected != null ? this.reg.findObjectById(Localidad.class, this.localidadSMSelected.getLocalidadid()) : null );
+	
+	}
 	
 	@Command
 	@NotifyChange("*")
@@ -335,6 +363,15 @@ public class FacturacionVM extends TemplateViewModelLocal {
 			return false;
 			
 		}
+		
+		boolean alguno = this.localidadSMSelected != null || (this.facturaSelected.getCliente().getDireccion() != null && !this.facturaSelected.getCliente().getDireccion().isBlank()) || (this.facturaSelected.getCliente().getCasaNro() != null && !this.facturaSelected.getCliente().getCasaNro().isBlank());
+		boolean todos  = this.localidadSMSelected != null && (this.facturaSelected.getCliente().getDireccion() != null && !this.facturaSelected.getCliente().getDireccion().isBlank()) && (this.facturaSelected.getCliente().getCasaNro() != null && !this.facturaSelected.getCliente().getCasaNro().isBlank());
+
+		if (alguno && !todos) {
+		    this.mensajeInfo("Localidad, dirección y número de casa deben informarse juntos");
+		    return false;
+		}
+		
 		
 		return true;
 		
@@ -779,6 +816,22 @@ public class FacturacionVM extends TemplateViewModelLocal {
 
 	public void setCbPlazo(String cbPlazo) {
 		this.cbPlazo = cbPlazo;
+	}
+
+	public ListModelArray<LocalidadSM> getlLocalidadSearchModel() {
+		return lLocalidadSearchModel;
+	}
+
+	public void setlLocalidadSearchModel(ListModelArray<LocalidadSM> lLocalidadSearchModel) {
+		this.lLocalidadSearchModel = lLocalidadSearchModel;
+	}
+
+	public LocalidadSM getLocalidadSMSelected() {
+		return localidadSMSelected;
+	}
+
+	public void setLocalidadSMSelected(LocalidadSM localidadSMSelected) {
+		this.localidadSMSelected = localidadSMSelected;
 	}
 
 	
