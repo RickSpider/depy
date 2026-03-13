@@ -8,37 +8,7 @@
 		
 		<caption label="Cliente Crear/Ver/Editar" style="font-weight:bold"/>
 
-		<tablelayout columns="2">
-			
-			<tablechildren>
-				<label value="Tipo Documento:" style="font-weight:bold" />
-			</tablechildren>
-			
-			<tablechildren>
-			
-				<combobox width="150px" readonly="true"
-					model="@load(vm.lDocumentoTipo)"
-					selectedItem="@bind(vm.facturaSelected.cliente.documentoTipo)">
-					<template name="model">
-						<comboitem label="@load(each.tipo)" />
-					</template>
-				</combobox>
-				
-			</tablechildren>
-
-		<!--  	<tablechildren>
-				<searchbox model="@load(vm.lDocumentoTipoSM)" placeholder="Seleccione una Localidad/Ciudad"
-						selectedItem="@bind(vm.documentoTipoSM)"
-						autoclose="true"  multiple="false" >
-						
-						<template name="model">
-							
-							${each.id} - ${each.nombre} 
-							
-						</template>
-
-					</searchbox>
-			</tablechildren> -->
+		<tablelayout columns="4">			
 			
 			<tablechildren>
 				<label value="Documento #:" style="font-weight:bold" />
@@ -47,12 +17,27 @@
 			<tablechildren>
 				<textbox value="@bind(vm.facturaSelected.cliente.documentoNro)" onChange="@command('onChangeDoc')"/>
 			</tablechildren>
-	
+			
+			<tablechildren>
+				<label value="Tipo Documento:" style="font-weight:bold" />
+			</tablechildren>
+			
+			<tablechildren>
+				<combobox width="150px" readonly="true"
+					model="@load(vm.lDocumentoTipo)"
+					selectedItem="@bind(vm.facturaSelected.cliente.documentoTipo)">
+					<template name="model">
+						<comboitem label="@load(each.tipo)" />
+					</template>
+				</combobox>
+
+			</tablechildren>
+			
 			<tablechildren>
 				<label value="RazonSocial:" style="font-weight:bold" />
 			</tablechildren>
 
-			<tablechildren width="250px">
+			<tablechildren colspan="3">
 				<textbox value="@bind(vm.facturaSelected.cliente.razonsocial)" hflex="1"/>
 			</tablechildren>
 			
@@ -64,6 +49,83 @@
 				<textbox value="@bind(vm.facturaSelected.cliente.email)" />
 			</tablechildren>
 			
+			<tablechildren>
+				<label value="Telefono:" style="font-weight:bold" />
+			</tablechildren>
+
+			<tablechildren>
+				<textbox value="@bind(vm.facturaSelected.cliente.telefono)" />
+			</tablechildren>
+			
+			<tablechildren>
+				<label value="Celular:" style="font-weight:bold" />
+			</tablechildren>
+
+			<tablechildren>
+				<textbox value="@bind(vm.facturaSelected.cliente.celular)" />
+			</tablechildren>
+			
+			
+
+		
+			
+			<tablechildren>
+				<label value="Localidad:" style="font-weight:bold" />
+			</tablechildren>
+
+			<tablechildren>
+				
+					<searchbox model="@load(vm.lLocalidadSearchModel)" placeholder="Seleccione una Localidad/Ciudad"
+						
+						selectedItem="@bind(vm.localidadSMSelected)"
+						autoclose="true"  multiple="false"
+						onSelect="@command('onSelectedLocalidad')">
+
+
+						<template name="model">
+							
+							${each.localidadid} - ${each.localidad} | ${each.distritoid} - ${each.distrito} | ${each.departamentoid} - ${each.departamento}
+							
+						</template>
+
+					</searchbox>
+				
+			</tablechildren>
+			
+			<tablechildren>
+				<label value="Distrito:" style="font-weight:bold" />
+			</tablechildren>
+
+			<tablechildren>
+				<textbox value="@load(vm.facturaSelected.cliente.localidad.distrito.distrito)" readonly="true"/>
+			</tablechildren>
+			
+			<tablechildren>
+				<label value="Departamento:" style="font-weight:bold" />
+			</tablechildren>
+
+			<tablechildren>
+				<textbox value="@load(vm.facturaSelected.cliente.localidad.distrito.departamento.departamento)" readonly="true" />
+			</tablechildren>
+			
+			<tablechildren>
+				<label value="Direccion:" style="font-weight:bold" />
+			</tablechildren>
+
+			<tablechildren colspan="3">
+				<textbox value="@bind(vm.facturaSelected.cliente.direccion)" hflex="1" rows="3" />
+			</tablechildren>
+			
+			<tablechildren>
+				<label value="Casa #:" style="font-weight:bold" />
+			</tablechildren>
+
+			<tablechildren colspan="3">
+				<vbox>
+					<textbox  value="@bind(vm.facturaSelected.cliente.casaNro)"/>
+					<label value="Nota: Si no existe numero de casa compelatar con 0"/>
+				</vbox>
+			</tablechildren>
 			
 		</tablelayout>
 
