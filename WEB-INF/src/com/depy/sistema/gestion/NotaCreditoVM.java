@@ -19,6 +19,7 @@ import org.zkoss.zk.ui.event.Event;
 import org.zkoss.zk.ui.event.EventListener;
 import org.zkoss.zk.ui.select.Selectors;
 import org.zkoss.zk.ui.util.Clients;
+import org.zkoss.zk.ui.util.Notification;
 import org.zkoss.zul.Messagebox;
 import org.zkoss.zul.Window;
 
@@ -326,8 +327,18 @@ public class NotaCreditoVM extends TemplateViewModelLocal {
 	
 		ulm.updateEvento(new Register(), ulm.getSql("notacredito/listaNotaCreditoEventoPendiente.sql").replace("?1", this.getCurrentEmpresa().getEmpresaid()+"").replace("--", ""), ulm.getSql("notacredito/updateNotaCreditoEvento.sql"));
 		
-		this.cargarNotasCreditos();
+		this.refrescarDatos();
 	}
+	
+	@NotifyChange("*")
+	@Command
+	public void refrescarDatos(){
+		
+		this.cargarNotasCreditos();
+		
+		Notification.show("Refrescando Datos.");
+	}
+	
 
 	public List<Object[]> getlNotasCreditos() {
 		return lNotasCreditos;

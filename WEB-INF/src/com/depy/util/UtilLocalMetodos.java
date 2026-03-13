@@ -84,12 +84,6 @@ public class UtilLocalMetodos extends UtilMetodos {
 		
 	}
 	
-	public void procesarDatosFactura(String sqlUpdate) {
-		
-		//hacer depues para poder meter en uno solo factura remision nota de credito
-		
-	}
-	
 	public void updateEvento(Register reg, String sqlPendientes, String sqlUpdate){
 		
 		String URL = reg.getObjectByColumn(SistemaPropiedad.class, "clave", "fcwsHOST").getValor()+"/consultar/evento/";
@@ -166,6 +160,48 @@ public class UtilLocalMetodos extends UtilMetodos {
 		}
 
 	}
+	
+	 public static boolean validarRuc(String ruc) {
+	        // Verifica el formato básico 6-7 dígitos, guion, DV
+	        if (!ruc.matches("^\\d{6,7}-\\d$")) {
+	            return false;
+	        }
+
+	        String[] partes = ruc.split("-");
+	        String numero = partes[0];
+	        int dvIngresado = Integer.parseInt(partes[1]);
+
+	        int dvCalculado = calcularDV(numero);
+
+	        return dvIngresado == dvCalculado;
+	 }
+	 
+	 public static int calcularDV(String numero) {
+	        int[] ponderadores = {2,3,4,5,6,7,8,9,10,11};
+	        int suma = 0;
+	        int posPonderador = 0;
+
+	        // Recorre de derecha a izquierda
+	        for (int i = numero.length() - 1; i >= 0; i--) {
+	            int digito = Character.getNumericValue(numero.charAt(i));
+	            int ponderador = ponderadores[posPonderador];
+	            suma += digito * ponderador;
+
+	            posPonderador++;
+	            if (posPonderador == ponderadores.length) {
+	                posPonderador = 0;  // vuelve a 2
+	            }
+	        }
+
+	        int resto = suma % 11;
+	        int dv = 11 - resto;
+
+	        if (dv == 10 || dv == 11) {
+	            dv = 0;
+	        }
+
+	        return dv;
+	    }
 	
 	
 	

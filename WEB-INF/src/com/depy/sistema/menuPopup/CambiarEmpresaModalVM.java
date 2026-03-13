@@ -10,6 +10,7 @@ import org.zkoss.zk.ui.Sessions;
 import org.zkoss.zk.ui.util.Clients;
 
 import com.depy.modelo.EmpresaUsuario;
+import com.depy.modelo.SucursalUsuario;
 import com.depy.util.TemplateMenuPopup;
 import com.doxacore.components.finder.FinderModel;
 import com.doxacore.login.UsuarioCredencial;
@@ -79,7 +80,7 @@ public class CambiarEmpresaModalVM extends TemplateMenuPopup {
 
 		if (finder.compareTo(this.empresaFinder.getNameFinder()) == 0) {
 
-			this.empresaUsuarioSelected = this.reg.getObjectById(EmpresaUsuario.class.getName(), id);
+			this.empresaUsuarioSelected = this.reg.findObjectById(EmpresaUsuario.class, id);
 			return;
 			
 		}
@@ -107,6 +108,14 @@ public class CambiarEmpresaModalVM extends TemplateMenuPopup {
 		usuarioCredencial.setExtra(this.empresaUsuarioSelected.getEmpresa().getRazonSocial());
 		Sessions.getCurrent().setAttribute("userCredential", usuarioCredencial);
 		Sessions.getCurrent().setAttribute("empresaid", this.empresaUsuarioSelected.getEmpresa().getEmpresaid());	
+		
+		SucursalUsuario su = this.getCurrentSucursalUsuario();
+		
+		if (su != null) {
+			
+			Sessions.getCurrent().setAttribute("sucursalid", su.getSucursal().getSucursalid());	
+			
+		}
 		
 		this.windowModal.detach();
 		Clients.evalJavaScript("window.location.reload();");

@@ -4,21 +4,15 @@ import org.zkoss.bind.BindUtils;
 import org.zkoss.bind.annotation.AfterCompose;
 import org.zkoss.bind.annotation.BindingParam;
 import org.zkoss.bind.annotation.Command;
-import org.zkoss.bind.annotation.ContextParam;
-import org.zkoss.bind.annotation.ContextType;
 import org.zkoss.bind.annotation.Init;
 import org.zkoss.bind.annotation.NotifyChange;
 import org.zkoss.zk.ui.Sessions;
-import org.zkoss.zk.ui.select.annotation.Wire;
 import org.zkoss.zk.ui.util.Clients;
-import org.zkoss.zul.Window;
 
 import com.depy.modelo.EmpresaUsuario;
 import com.depy.modelo.SucursalUsuario;
 import com.depy.util.TemplateMenuPopup;
 import com.doxacore.components.finder.FinderModel;
-import com.doxacore.login.UsuarioCredencial;
-import com.doxacore.modelo.Usuario;
 
 public class CambiarSucursalModalVM extends TemplateMenuPopup {
 	

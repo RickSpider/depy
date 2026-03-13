@@ -11,7 +11,7 @@
 		<tablelayout columns="4">			
 			
 			<tablechildren>
-				<label value="Documento #:" style="font-weight:bold" />
+				<label value="* Documento #:" style="font-weight:bold" />
 			</tablechildren>
 
 			<tablechildren>
@@ -19,7 +19,7 @@
 			</tablechildren>
 			
 			<tablechildren>
-				<label value="Tipo Documento:" style="font-weight:bold" />
+				<label value="* Tipo Documento:" style="font-weight:bold" />
 			</tablechildren>
 			
 			<tablechildren>
@@ -34,7 +34,7 @@
 			</tablechildren>
 			
 			<tablechildren>
-				<label value="RazonSocial:" style="font-weight:bold" />
+				<label value="* RazonSocial:" style="font-weight:bold" />
 			</tablechildren>
 
 			<tablechildren colspan="3">

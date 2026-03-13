@@ -19,6 +19,7 @@ import org.zkoss.zk.ui.event.Event;
 import org.zkoss.zk.ui.event.EventListener;
 import org.zkoss.zk.ui.select.Selectors;
 import org.zkoss.zk.ui.util.Clients;
+import org.zkoss.zk.ui.util.Notification;
 import org.zkoss.zul.Messagebox;
 import org.zkoss.zul.Window;
 
@@ -326,9 +327,18 @@ public class FacturaVM extends TemplateViewModelLocal {
 	
 		ulm.updateEvento(new Register(), ulm.getSql("factura/listaFacturaEventoPendiente.sql").replace("?1", this.getCurrentEmpresa().getEmpresaid()+"").replace("--", ""), ulm.getSql("factura/updateFacturaEvento.sql"));
 		
-		this.cargarFacturas();
+		this.refrescarDatos();
 	}
-
+	
+	@NotifyChange("*")
+	@Command
+	public void refrescarDatos(){
+		
+		this.cargarFacturas();
+		
+		Notification.show("Refrescando Datos.");
+	}
+	
 	public List<Object[]> getlFacturas() {
 		return lFacturas;
 	}

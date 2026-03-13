@@ -15,7 +15,7 @@
 				<hbox pack="end" hflex="1">
 				
 					<button label="Refrescar" iconSclass=" fa-solid fa-arrows-rotate" class="doxa-button-orange"
-						onClick="@command('consultarEstados')"/>
+						onClick="@command('refrescarDatos')"/>
 
 					<button label="Consultar Estados" iconSclass=" fa-solid fa-cloud-arrow-up" class="doxa-button-green"
 						onClick="@command('consultarEstados')"/>

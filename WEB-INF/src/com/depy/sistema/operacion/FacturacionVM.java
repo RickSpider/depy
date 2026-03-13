@@ -20,6 +20,7 @@ import org.zkoss.zk.ui.event.EventListener;
 import org.zkoss.zk.ui.event.Events;
 import org.zkoss.zk.ui.select.Selectors;
 import org.zkoss.zk.ui.util.Clients;
+import org.zkoss.zk.ui.util.Notification;
 import org.zkoss.zul.ListModelArray;
 import org.zkoss.zul.Messagebox;
 import org.zkoss.zul.Window;
@@ -261,6 +262,14 @@ public class FacturacionVM extends TemplateViewModelLocal {
 	public void onChangeDoc() {
 		
 		String docNro = this.facturaSelected.getCliente().getDocumentoNro();
+		
+		UtilLocalMetodos ulm = new UtilLocalMetodos();
+		if (this.facturaSelected.getCliente().getDocumentoTipo().getSigla().equals(ParamsLocal.SIGLA_TIPO_DOCUMENTO_RUC) && !ulm.validarRuc(docNro)) {
+			
+			this.mensajeError("El documento de RUC proporcionado no es correcto, o no cumple con el formato, verifica el digito verificador o el ruc nuevamente");
+			
+			return;
+		}
 		
 		int idx = docNro.indexOf('-');
 		if (idx > 0) {
