@@ -57,6 +57,7 @@ public class FacturacionVM extends TemplateViewModelLocal {
 	private Date hasta;
 	
 	private String sucursalStr;
+	private String cbPlazo = "dias";
 	
 	@Init(superclass = true)
 	public void initFacturacionVM() {
@@ -94,6 +95,8 @@ public class FacturacionVM extends TemplateViewModelLocal {
 		this.iva0 = 0;
 		this.iva10 = 0;
 		this.iva5 = 0;
+		
+		this.cbPlazo ="dias";
 		
 		this.clienteSMSelected = null;
 		
@@ -251,6 +254,7 @@ public class FacturacionVM extends TemplateViewModelLocal {
 		
 		if (this.facturaSelected.getCondicion().getSigla().equals(ParamsLocal.SIGLA_TIPO_CONDICIONPAGO_CREDITO)) {
 			
+			this.cbPlazo ="dias";
 			this.facturaSelected.setPagos(new ArrayList<>());
 			
 		}else {
@@ -420,16 +424,7 @@ public class FacturacionVM extends TemplateViewModelLocal {
 				this.mensajeInfo("Debes cargar el plazo ya sea en dias o meses.");
 				return false;
 			}
-			
-			if (!this.facturaSelected.getPlazoCredito().contains("dias") && !this.facturaSelected.getPlazoCredito().contains("meses")) {
-				
-				this.mensajeInfo("el plazo debe contener la palabra \"dias\" o \"meses\" como se muestra en ejemplo.");
-				return false;
-				
-			}
-			
-			
-			
+						
 		}
 		
 		for (FacturaDetalle x : this.facturaSelected.getDetalles()) {
@@ -523,6 +518,10 @@ public class FacturacionVM extends TemplateViewModelLocal {
 		if(this.facturaSelected.getCondicion().getSigla().equals(ParamsLocal.SIGLA_TIPO_CONDICIONPAGO_CONTADO)) {
 			
 			this.facturaSelected.getPagos().get(0).setMonto(this.facturaSelected.getTotalDetalle());
+			
+		}else if (this.facturaSelected.getCondicion().getSigla().equals(ParamsLocal.SIGLA_TIPO_CONDICIONPAGO_CREDITO)){
+			
+			this.facturaSelected.setPlazoCredito(this.facturaSelected.getPlazoCredito()+" "+this.cbPlazo);
 			
 		}
 		
@@ -772,6 +771,14 @@ public class FacturacionVM extends TemplateViewModelLocal {
 
 	public void setlDocumentoTipo(List<Tipo> lDocumentoTipo) {
 		this.lDocumentoTipo = lDocumentoTipo;
+	}
+
+	public String getCbPlazo() {
+		return cbPlazo;
+	}
+
+	public void setCbPlazo(String cbPlazo) {
+		this.cbPlazo = cbPlazo;
 	}
 
 	

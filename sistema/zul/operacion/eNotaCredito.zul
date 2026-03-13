@@ -167,7 +167,7 @@
 								selectedItem="@bind(each.tasaIva)"
 								onChange="@command('onChangeIva', detalle=each)">
 								<template name="model" var="x">
-									<comboitem label="@load(x)" />
+										<comboitem label="@load(x eq 0 ? 'Exento' : x)" value="@load(x)"/>
 								</template>
 							</combobox>
 						</listcell>

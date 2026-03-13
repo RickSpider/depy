@@ -1,15 +1,5 @@
 package com.depy.sistema.empresa;
 
-import java.io.BufferedOutputStream;
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.List;
 
 import org.zkoss.bind.BindUtils;
@@ -18,8 +8,6 @@ import org.zkoss.bind.annotation.BindingParam;
 import org.zkoss.bind.annotation.Command;
 import org.zkoss.bind.annotation.Init;
 import org.zkoss.bind.annotation.NotifyChange;
-import org.zkoss.image.AImage;
-import org.zkoss.util.media.Media;
 import org.zkoss.zk.ui.Executions;
 import org.zkoss.zk.ui.event.Event;
 import org.zkoss.zk.ui.event.EventListener;
@@ -33,7 +21,6 @@ import com.depy.util.ParamsLocal;
 import com.depy.util.TemplateViewModelLocal;
 import com.doxacore.modelo.Tipo;
 import com.doxacore.modelo.Tipotipo;
-import com.doxacore.util.SystemInfo;
 
 
 

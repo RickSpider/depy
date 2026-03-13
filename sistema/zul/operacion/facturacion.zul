@@ -15,8 +15,6 @@
 		
 		<hlayout>
 		
-		
-		
 			<tablelayout columns="6">
 				<tablechildren>
 					<label value="RUC/Doc #:" style="font-weight:bold" />
@@ -119,6 +117,12 @@
 						readonly="@load((!vm.facturaSelected.condicion.tipo.equals('Credito')))"
 						onChange="@command('onChangeCondicion')"/>
 						
+						<combobox selectedItem="@bind(vm.cbPlazo)" readonly="true"
+							disabled="@load((!vm.facturaSelected.condicion.tipo.equals('Credito')))">
+						    <comboitem label="Dias" value="dias" />
+						    <comboitem label="Meses" value="meses"/>
+						</combobox>
+						
 						<label class="fa-regular fa-circle-question" popup="popupCredito" hflex="1" vflex="1"/>
 						
 					</hbox>
@@ -177,7 +181,7 @@
 								selectedItem="@bind(each.tasaIva)"
 								onChange="@command('onChangeIva', detalle=each)">
 								<template name="model" var="x">
-									<comboitem label="@load(x)" />
+									<comboitem label="@load(x eq 0 ? 'Exento' : x)" value="@load(x)"/>
 								</template>
 							</combobox>
 						</listcell>
