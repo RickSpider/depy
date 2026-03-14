@@ -54,14 +54,16 @@ public class MetodoDE{
 		de.setFecha(Date.from(doc.getFecha().atZone(ZoneId.systemDefault()).toInstant()));
 		
 		Receptor r = new Receptor();
-		if (!doc.getDocumentoTipo().getSigla().equals(ParamsLocal.SIGLA_TIPO_DOCUMENTO_RUC)) {
+		if (doc.getDocumentoTipo().getSigla().equals(ParamsLocal.SIGLA_TIPO_DOCUMENTO_RUC)) {
+			
+			int separador = doc.getDocumentoNro().indexOf('-');
+			r.setDocNro(doc.getDocumentoNro().substring(0, separador).trim());
+			r.setDv(doc.getDocumentoNro().substring(separador + 1).trim());
 			
 		}else {
 			
-			int separador = doc.getDocumentoNro().indexOf('-');
-			r.setDocNro(doc.getDocumentoNro().substring(0, separador));
-			r.setDv(doc.getDocumentoNro().substring(separador + 1));
-			
+			r.setTipoDocumento(doc.getDocumentoTipo().getCodeExtra());
+			r.setDocNro(doc.getDocumentoNro().trim());
 			
 		}
 		
