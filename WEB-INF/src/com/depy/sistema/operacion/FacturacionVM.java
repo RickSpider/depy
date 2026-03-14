@@ -20,7 +20,6 @@ import org.zkoss.zk.ui.event.EventListener;
 import org.zkoss.zk.ui.event.Events;
 import org.zkoss.zk.ui.select.Selectors;
 import org.zkoss.zk.ui.util.Clients;
-import org.zkoss.zk.ui.util.Notification;
 import org.zkoss.zul.ListModelArray;
 import org.zkoss.zul.Messagebox;
 import org.zkoss.zul.Window;
@@ -475,11 +474,11 @@ public class FacturacionVM extends TemplateViewModelLocal {
 		
 		for (FacturaDetalle x : this.facturaSelected.getDetalles()) {
 			
-			if (x.getItemCodigo() == null || x.getItemCodigo().isBlank()) {
+			/*if (x.getItemCodigo() == null || x.getItemCodigo().isBlank()) {
 				this.mensajeInfo("Tienes items sin codigo.");
 				return false;
 				
-			}
+			}*/
 			
 			if (x.getItemDescripcion() == null ||  x.getItemDescripcion().isBlank()) {
 				this.mensajeInfo("Tienes items sin descripcion.");
@@ -568,6 +567,16 @@ public class FacturacionVM extends TemplateViewModelLocal {
 		}else if (this.facturaSelected.getCondicion().getSigla().equals(ParamsLocal.SIGLA_TIPO_CONDICIONPAGO_CREDITO)){
 			
 			this.facturaSelected.setPlazoCredito(this.facturaSelected.getPlazoCredito()+" "+this.cbPlazo);
+			
+		}
+		
+		int cont = 1;
+		for(FacturaDetalle det : this.facturaSelected.getDetalles()) {
+			
+			if (det.getItemCodigo() == null) {
+				det.setItemCodigo("SC"+String.format("%03d", cont));
+				cont++;
+			}
 			
 		}
 		
