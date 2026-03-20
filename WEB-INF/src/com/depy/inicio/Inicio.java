@@ -32,7 +32,7 @@ public class Inicio {
 		
 		EmpresaUsuario eu =  reg.getObjectByColumns(EmpresaUsuario.class, campo, value);
 		
-		usuarioCredencial.setExtra(eu.getEmpresa().getRazonSocial());		
+		usuarioCredencial.setExtra2(eu.getEmpresa().getRazonSocial());		
 		Sessions.getCurrent().setAttribute("userCredential", usuarioCredencial);
 		
 		if  (eu != null) {
@@ -46,6 +46,7 @@ public class Inicio {
 		
 		if (su != null) {
 			Sessions.getCurrent().setAttribute("sucursalid", su.getSucursal().getSucursalid());
+			usuarioCredencial.setExtra(su.getSucursal().getNombre());
 		}else {
 			Sessions.getCurrent().removeAttribute("sucursalid");
 		}
