@@ -36,6 +36,7 @@ import org.zkoss.zk.ui.Executions;
 
 import com.depy.modelo.Factura;
 import com.depy.modelo.NotaCredito;
+import com.depy.util.ParamsLocal;
 import com.doxacore.util.Register;
 import com.doxacore.util.SystemInfo;
 
@@ -95,10 +96,11 @@ public class KudeViewerVM {
     @Command
     public void createKude(long ceid, String tipode) throws Exception {
     	
-    	
     	Register reg = new Register();
     	String xml = "";
     	String logoPath = "";
+    	
+    	 this.parametros = new HashMap<>();
     	
     	if (tipode.equals("factura")) {
     		
@@ -109,6 +111,13 @@ public class KudeViewerVM {
     			logoPath = factura.getEmpresa().getLogoPath();
     		}
     		xml= this.extraerRDE(prettyPrintXml(factura.getXml())).trim();
+    		
+    		if (factura.getEventoTipo() != null && factura.getEventoTipo().getSigla().equals(ParamsLocal.SIGLA_TIPO_EVENTO_CANCELACION) 
+    				&&factura.getEventoEstado().equals("Aprobado") ) {
+    			
+    			parametros.put("cancelado", true);
+    			
+    		}
     		
     	}else if (tipode.equals("notacredito")) {
     		
@@ -121,11 +130,7 @@ public class KudeViewerVM {
     		xml= this.extraerRDE(prettyPrintXml(notacredito.getXml())).trim();
     		
     	}
-    	
-       
-    	
-    	
-        
+
        // System.out.println(xml);
        
         Map<String, Object> dataFromXML = getTipoDocumentoFromXML(xml);
@@ -135,7 +140,9 @@ public class KudeViewerVM {
       //  System.out.println("jasper path del par 1 vale " + jasperPath);
      //  String pathDestino = SystemInfo.SISTEMA_PATH_ABSOLUTO+"/reportTemplate/";
         
-       this.parametros = new HashMap<>();
+      
+       
+       
        /* if (args.length > 3 && args[3] != null) {
           Gson gson = (new GsonBuilder()).setDateFormat("yyyy-MM-dd'T'HH:mm:ss").create();
           try {
