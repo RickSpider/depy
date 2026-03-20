@@ -105,18 +105,21 @@ public class CambiarEmpresaModalVM extends TemplateMenuPopup {
 		
 		UsuarioCredencial usuarioCredencial = (UsuarioCredencial) Sessions.getCurrent().getAttribute("userCredential");
 		
-		usuarioCredencial.setExtra(this.empresaUsuarioSelected.getEmpresa().getRazonSocial());
-		Sessions.getCurrent().setAttribute("userCredential", usuarioCredencial);
+		
+		usuarioCredencial.setExtra2(this.empresaUsuarioSelected.getEmpresa().getRazonSocial());
+		
 		Sessions.getCurrent().setAttribute("empresaid", this.empresaUsuarioSelected.getEmpresa().getEmpresaid());	
 		
 		SucursalUsuario su = this.getCurrentSucursalUsuario();
 		
+		
 		if (su != null) {
 			
 			Sessions.getCurrent().setAttribute("sucursalid", su.getSucursal().getSucursalid());	
-			
+			usuarioCredencial.setExtra(su.getSucursal().getNombre());
 		}
 		
+		Sessions.getCurrent().setAttribute("userCredential", usuarioCredencial);
 		this.windowModal.detach();
 		Clients.evalJavaScript("window.location.reload();");
 	

@@ -13,6 +13,7 @@ import com.depy.modelo.EmpresaUsuario;
 import com.depy.modelo.SucursalUsuario;
 import com.depy.util.TemplateMenuPopup;
 import com.doxacore.components.finder.FinderModel;
+import com.doxacore.login.UsuarioCredencial;
 
 public class CambiarSucursalModalVM extends TemplateMenuPopup {
 	
@@ -79,7 +80,7 @@ public class CambiarSucursalModalVM extends TemplateMenuPopup {
 
 		if (finder.compareTo(this.sucursalFinder.getNameFinder()) == 0) {
 
-			this.sucursalUsuarioSelected = this.reg.getObjectById(SucursalUsuario.class.getName(), id);
+			this.sucursalUsuarioSelected = this.reg.findObjectById(SucursalUsuario.class, id);
 			return;
 			
 		}
@@ -106,7 +107,12 @@ public class CambiarSucursalModalVM extends TemplateMenuPopup {
 			
 		}
 		
+		UsuarioCredencial usuarioCredencial = (UsuarioCredencial) Sessions.getCurrent().getAttribute("userCredential");
+		
+		
 		Sessions.getCurrent().setAttribute("sucursalid", this.sucursalUsuarioSelected.getSucursal().getSucursalid());	
+		usuarioCredencial.setExtra(this.sucursalUsuarioSelected.getSucursal().getNombre());
+		Sessions.getCurrent().setAttribute("userCredential", usuarioCredencial);
 		
 		this.windowModal.detach();
 		Clients.evalJavaScript("window.location.reload();");
