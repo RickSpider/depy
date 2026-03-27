@@ -5,6 +5,10 @@ import java.security.SecureRandom;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+
 import com.depy.utilde.conexion.HttpOrHttpsConexion;
 import com.depy.utilde.conexion.ResultRest;
 import com.depy.utilde.modelo.Evento;
@@ -15,6 +19,8 @@ import com.doxacore.util.UtilMetodos;
 import com.google.gson.Gson;
 
 public class UtilLocalMetodos extends UtilMetodos {
+	
+	private static final Logger logger = LoggerFactory.getLogger(UtilLocalMetodos.class);
 	
 	
 	private String generarBloque(int longitud) {
@@ -46,33 +52,29 @@ public class UtilLocalMetodos extends UtilMetodos {
 		for (Object[] x : lPendientes) {
 			
 			System.out.println(urlFinal+x[1].toString());
-			
-			try {
 				
-				/*rr = con.consumirREST(urlFinal+x[1].toString(), HttpOrHttpsConexion.GET, null);
-				ResponseComprobante rc = gson.fromJson(rr.getMensaje(), ResponseComprobante.class);*/
+			ResponseComprobante rc = consultarDE(urlFinal+x[1].toString(), con); //nuevo
 				
-				ResponseComprobante rc = consultarDE(urlFinal+x[1].toString(), con); //nuevo
-				
-				String sql = sqlUpdate.replace("?1", rc.getCdc())
-						.replace("?2", rc.getXml())
-						.replace("?3", rc.getEstado())
-						.replace("?4", this.escapeSql(rc.getRespuesta()));
-				
-				//System.out.println("========================= sql =============");
-				//System.out.println(sql);
-				
-				//int af = reg.sqlNativoIUD(sql);
-				
-				lUpdates.add(sql);
-				
-				//System.out.println("afectado "+af);
-				
-				
-			} catch (IOException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
+			if (rc == null) {
+					
+				continue;
+					
 			}
+				
+			String sql = sqlUpdate.replace("?1", rc.getCdc())
+					.replace("?2", rc.getXml())
+					.replace("?3", rc.getEstado())
+					.replace("?4", this.escapeSql(rc.getRespuesta()));
+				
+			//System.out.println("========================= sql =============");
+			//System.out.println(sql);
+				
+			//int af = reg.sqlNativoIUD(sql);
+				
+			lUpdates.add(sql);
+				
+			//System.out.println("afectado "+af);
+
 			
 		}
 		
@@ -112,11 +114,12 @@ public class UtilLocalMetodos extends UtilMetodos {
 					
 					lUpdates.add(sqlUpdate.replace("?1", x[0].toString())
 							.replace("?2", e.getEstado())
-							.replace("?3", e.getMensaje()));
+							.replace("?3", e.getMensaje() != null ? e.getMensaje() : ""));
 					
 				}else {
-					
-					System.out.println("Error al consultar el Evento de Cancelacion.");
+					logger.error("Error al consultar el Evento de Cancelacion.");
+					//System.out.println("Error al consultar el Evento de Cancelacion.");
+					continue;
 				}
 				
 				
@@ -138,15 +141,16 @@ public class UtilLocalMetodos extends UtilMetodos {
 					
 					String update = sqlUpdate.replace("?1", x[0].toString())
 							.replace("?2", e.getEstado())
-							.replace("?3", e.getMensaje());
+							.replace("?3", e.getMensaje() != null ? e.getMensaje() : "");
 					
 					//System.out.println(update);
 					
 					lUpdates.add(update);
 					
 				}else {
-					
-					System.out.println("Error al consultar el Evento de Inutilizacion.");
+					logger.error("Error al consultar el Evento de Inutilizacion");
+					//System.out.println("Error al consultar el Evento de Inutilizacion.");
+					continue;
 				}
 			
 			}
@@ -210,10 +214,25 @@ public class UtilLocalMetodos extends UtilMetodos {
 	    return s.replace("'", "''");
 	}
 	
-	public ResponseComprobante consultarDE(String url, HttpOrHttpsConexion con) throws IOException {
+	public ResponseComprobante consultarDE(String url, HttpOrHttpsConexion con)  {
 		
-		ResultRest rr = con.consumirREST(url, HttpOrHttpsConexion.GET, null);
-		return new Gson().fromJson(rr.getMensaje(), ResponseComprobante.class);
+		ResultRest rr;
+		try {
+			rr = con.consumirREST(url, HttpOrHttpsConexion.GET, null);
+			
+			if (rr.getCode() != 200) {
+				
+				return null;
+				
+			}
+			
+			return new Gson().fromJson(rr.getMensaje(), ResponseComprobante.class);
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			logger.error("Error consultando URL: {}", url, e);
+			return null;
+		}
+		
 		
 		
 	}
