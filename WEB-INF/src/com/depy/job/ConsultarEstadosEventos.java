@@ -24,6 +24,10 @@ public class ConsultarEstadosEventos implements Job{
 		ulm = new UtilLocalMetodos();
 		ulm.updateEvento(new Register(), ulm.getSql("notacredito/listaNotaCreditoEventoPendiente.sql"), ulm.getSql("notacredito/updateNotaCreditoEvento.sql"));
 		
+		System.out.println("Iniciando consulta automatica de Eventos Remision...");
+		ulm = new UtilLocalMetodos();
+		ulm.updateEvento(new Register(), ulm.getSql("remision/listaRemisionEventoPendiente.sql"), ulm.getSql("remision/updateRemisionEvento.sql"));
+		
 	}
 
 }

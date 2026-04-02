@@ -11,6 +11,7 @@ import com.depy.modelo.DocumentoDetalle;
 import com.depy.modelo.Factura;
 import com.depy.modelo.NotaCredito;
 import com.depy.modelo.NotaCreditoDoc;
+import com.depy.modelo.Remision;
 import com.depy.util.ParamsLocal;
 import com.depy.utilde.conexion.HttpOrHttpsConexion;
 import com.depy.utilde.conexion.ResultRest;
@@ -19,10 +20,14 @@ import com.depy.utilde.modelo.Contribuyente;
 import com.depy.utilde.modelo.DE;
 import com.depy.utilde.modelo.DEDetalle;
 import com.depy.utilde.modelo.DocAsociado;
+import com.depy.utilde.modelo.MercaderiaMov;
 import com.depy.utilde.modelo.NotaCreditoDebito;
 import com.depy.utilde.modelo.Receptor;
 import com.depy.utilde.modelo.Timbrado;
 import com.depy.utilde.modelo.TipoPago;
+import com.depy.utilde.modelo.Transporte;
+import com.depy.utilde.modelo.Transportista;
+import com.depy.utilde.modelo.Vehiculo;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 
@@ -69,8 +74,14 @@ public class MetodoDE{
 		
 		r.setRazonSocial(doc.getRazonSocial());
 		
+		System.out.println("Localidad: " + (doc.getLocalidad() != null));
+		System.out.println("Direccion null: " + (doc.getDireccion() != null));
+		System.out.println("Direccion blank: " + 
+		    (doc.getDireccion() != null && !doc.getDireccion().isBlank()));
+		System.out.println("CasaNro: " + (doc.getCasaNro() != null));
+		
 		if (doc.getLocalidad() != null && doc.getDireccion() != null
-				&& doc.getDireccion() != null && !doc.getDireccion().isBlank()) {
+				&& !doc.getDireccion().isBlank() && doc.getCasaNro() != null) {
 			
 			r.setDireccion(doc.getDireccion());
 			r.setDepartamento(doc.getLocalidad().getDistrito().getDepartamento().getDepartamentoid());
@@ -147,11 +158,56 @@ public class MetodoDE{
 			de.setDocAsociados(new ArrayList<>());
 			de.getDocAsociados().add(da);
 
+		} else if (doc instanceof Remision remi) {
+			
+			de.setRemision(new com.depy.utilde.modelo.Remision(remi.getMotivoEmision().getCodeExtra(),remi.getResponsableEmision().getCodeExtra()));
+			de.getRemision().setKilometrosRecorrido(remi.getKilometrosRecorridos());
+			de.getRemision().setFechaEmiFactura(Date.from(remi.getFacturaEmiFecha().atStartOfDay(ZoneId.systemDefault()).toInstant()));
+			
+			MercaderiaMov salida = new MercaderiaMov(remi.getSalidaDireccion(), remi.getSalidaCasaNro(), remi.getSalidaLocalidad().getDistrito().getDepartamento().getDepartamentoid(), remi.getSalidaLocalidad().getLocalidadid());
+			MercaderiaMov entrega = new MercaderiaMov(remi.getEntregaDireccion(), remi.getEntregaCasaNro(), remi.getEntregaLocalidad().getDistrito().getDepartamento().getDepartamentoid(), remi.getEntregaLocalidad().getLocalidadid());
+			
+			List<MercaderiaMov> lEntrega = new ArrayList<MercaderiaMov>();
+			lEntrega.add(entrega);
+			
+			Vehiculo v = new Vehiculo(remi.getVehiculoMarca(), remi.getVehiculoIdent().getCodeExtra(), remi.getVehiculoNro());
+			List<Vehiculo> lVehiculo = new ArrayList<>();
+			lVehiculo.add(v);
+			
+			Transportista tr = new Transportista();
+			tr.setNombre(remi.getTransportistaNombre());
+			tr.setDomicilio(remi.getTransportistaDireccion());
+			
+			if (remi.getTransportistaDocNum().contains("-")) {
+				
+				String[] num = remi.getTransportistaDocNum().split("-");
+				
+				tr.setDocNro(num[0]);
+				tr.setDv(Integer.parseInt(num[1]));
+				
+			}else {
+				
+				tr.setTipoDoc(remi.getTransportistaDocTipo().getCodeExtra());
+				tr.setDocNro(remi.getTransportistaDocNum());
+				
+			}
+
+			tr.setChoferNombre(remi.getChoferNombre());
+			tr.setChoferDireccion(remi.getChoferDireccion());
+			tr.setChoferDocNum(remi.getChoferDocNum());
+			
+			
+			Transporte transp = new Transporte(remi.getTransTipo().getCodeExtra(), remi.getTransModalidadtipo().getCodeExtra(), remi.getTransResponsableFlete().getCodeExtra(),
+					Date.from(remi.getSalidaFecha().atStartOfDay(ZoneId.systemDefault()).toInstant()), 
+					Date.from(remi.getSalidaFecha().atStartOfDay(ZoneId.systemDefault()).toInstant()), 
+					salida, lEntrega,lVehiculo , tr);
+			
+			de.setTransporte(transp);
+			de.setInfoFisco(remi.getInfoFisco());
+			
+			
+		    
 		} 
-		/*else if (doc instanceof Remision r) {
-		    System.out.println(r.getVehiculo());
-		    r.metodoRemisionPropio();
-		} */
 		
 		
 		de.setDetalles(this.procesarDetalle(doc.getDetalles()));
@@ -173,10 +229,10 @@ public class MetodoDE{
 			det.setItemCodigo(x.getItemCodigo());
 			det.setItemDescripcion(x.getItemDescripcion());
 			det.setCantidad(x.getCantidad());
-			det.setPrecioUnitario(x.getPrecioUnitario());
-			det.setAfectacionTributaria(x.getAfectacionTributaria());
-			det.setProporcionIVA(x.getProporcionIva());
-			det.setTasaIVA(x.getTasaIva());
+			det.setPrecioUnitario(x.getPrecioUnitario() != null ? x.getPrecioUnitario() : null);
+			det.setAfectacionTributaria(x.getAfectacionTributaria()!= null ? x.getAfectacionTributaria() : null);
+			det.setProporcionIVA(x.getProporcionIva()!= null ? x.getProporcionIva() : null);
+			det.setTasaIVA(x.getTasaIva()!= null ? x.getTasaIva() : null);
 			
 			if (x.getUnidadMedida() != null) {
 			    det.setItemUndMedida(x.getUnidadMedida().getUnidadmedidaid());
@@ -196,6 +252,8 @@ public class MetodoDE{
 	                .create();
 		
 		String json = gson.toJson(de);
+		
+		System.out.println(json);
 		
 		return this.enviarJson(URL, json);
 		

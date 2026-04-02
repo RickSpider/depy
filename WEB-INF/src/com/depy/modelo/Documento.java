@@ -36,7 +36,7 @@ public abstract class Documento extends ModeloERP{
 	private Tipo documentoTipo;
 	
 	private String documentoNro;
-	private String RazonSocial;
+	private String razonSocial;
 	private String email;
 	private String Direccion;
 	
@@ -75,6 +75,9 @@ public abstract class Documento extends ModeloERP{
 	private String eventoEstado;
 	
 	private String eventoRespuesta;
+	
+	@Column(columnDefinition = "text")
+	private String infoFisco;
 
 	@Override
 	public Object[] getArrayObjectDatos() {
@@ -130,12 +133,14 @@ public abstract class Documento extends ModeloERP{
 		this.documentoNro = documentoNro;
 	}
 
+	
+
 	public String getRazonSocial() {
-		return RazonSocial;
+		return razonSocial;
 	}
 
 	public void setRazonSocial(String razonSocial) {
-		RazonSocial = razonSocial;
+		this.razonSocial = razonSocial;
 	}
 
 	public String getDireccion() {
@@ -298,6 +303,14 @@ public abstract class Documento extends ModeloERP{
 
 	public void setEventoid(Long eventoid) {
 		this.eventoid = eventoid;
+	}
+
+	public String getInfoFisco() {
+		return infoFisco;
+	}
+
+	public void setInfoFisco(String infoFisco) {
+		this.infoFisco = infoFisco;
 	}
 
 	

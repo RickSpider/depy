@@ -24,6 +24,10 @@ public class ConsultarEstadosDE implements Job{
 		ulm = new UtilLocalMetodos();
 		ulm.updateDE(new Register(), ulm.getSql("notacredito/listaNotaCreditoPendiente.sql"), ulm.getSql("notacredito/updateNotaCredito.sql"));
 		
+		System.out.println("Iniciando consulta automatica de Remision...");
+		ulm = new UtilLocalMetodos();
+		ulm.updateDE(new Register(), ulm.getSql("remision/listaRemisionPendiente.sql"), ulm.getSql("remision/updateRemision.sql"));
+		
 	}
 
 }

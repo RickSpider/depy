@@ -1,24 +1,31 @@
 package com.depy.inicio;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.zkoss.zk.ui.Sessions;
 
 import com.depy.modelo.EmpresaUsuario;
 import com.depy.modelo.SucursalUsuario;
+import com.depy.util.UtilLocalMetodos;
 import com.doxacore.login.UsuarioCredencial;
 import com.doxacore.modelo.Usuario;
 import com.doxacore.util.Register;
 import com.doxacore.util.SystemInfo;
 
+
+
 public class Inicio {
 
 
+	private static final Logger logger = LoggerFactory.getLogger(Inicio.class);
+	
 	public void beforeLogin() {
 		
 	}
 
 	public void afterLogin() {
 		
-		System.out.println("=========== Iiciando Sistema "+SystemInfo.SISTEMA_PATH_NOMBRE+" ================");
+		logger.info("=========== Iiciando Sistema "+SystemInfo.SISTEMA_PATH_NOMBRE+" ================");
 		
 
 		Register reg = new Register();

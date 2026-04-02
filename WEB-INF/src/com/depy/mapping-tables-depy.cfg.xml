@@ -17,3 +17,6 @@
 <mapping class="com.depy.modelo.NotaCredito" />
 <mapping class="com.depy.modelo.NotaCreditoDetalle" />
 <mapping class="com.depy.modelo.NotaCreditoDoc" />
+
+<mapping class="com.depy.modelo.Remision" />
+<mapping class="com.depy.modelo.RemisionDetalle" />

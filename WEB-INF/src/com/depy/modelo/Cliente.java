@@ -39,7 +39,7 @@ public class Cliente extends ModeloERP implements Serializable {
 	private Tipo documentoTipo;
 	private String documentoTipoOtro;
 	
-	private String casaNro;
+	private Integer casaNro;
 	private String razonsocial;
 	private String documentoNro;
 	
@@ -85,10 +85,11 @@ public class Cliente extends ModeloERP implements Serializable {
 	public void setTipoOperacion(Tipo tipoOperacion) {
 		this.tipoOperacion = tipoOperacion;
 	}
-	public String getCasaNro() {
+	
+	public Integer getCasaNro() {
 		return casaNro;
 	}
-	public void setCasaNro(String casaNro) {
+	public void setCasaNro(Integer casaNro) {
 		this.casaNro = casaNro;
 	}
 	public String getRazonsocial() {

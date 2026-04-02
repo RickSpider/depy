@@ -1,0 +1,593 @@
+<?page title="remision" contentType="text/html;charset=UTF-8"?>
+
+
+<zk>
+	<window border="normal"
+		viewModel="@id('vm') @init('com.depy.sistema.operacion.ERemisionVM')"
+		vflex="1" id="Body" apply="org.zkoss.bind.BindComposer">
+
+		<caption>
+
+			<label value="Remisión - " style="font-weight:bold" />
+			<label value="@load(vm.sucursalStr)"
+				style="font-weight:bold" />
+
+		</caption>
+
+		<vlayout >
+
+			<hlayout >
+
+				<tablelayout columns="6">
+					<tablechildren>
+						<label value="RUC/Doc #:"
+							style="font-weight:bold" />
+					</tablechildren>
+
+					<tablechildren>
+						<hlayout>
+							<searchbox model="@load(vm.lClienteSM)"
+								placeholder="Seleccione un Cliente" vflex="1"
+								selectedItem="@bind(vm.clienteSMSelected)" autoclose="true"
+								multiple="false" onSelect="@command('onSelectedCliente')">
+								<template name="model">
+
+									${each.documentoNro} |
+									${each.razonSocial}
+
+								</template>
+
+							</searchbox>
+
+						</hlayout>
+
+					</tablechildren>
+
+					<tablechildren>
+						<label value="Razon Social:"
+							style="font-weight:bold" />
+					</tablechildren>
+
+					<tablechildren colspan="3">
+						<textbox
+							value="@load(vm.remisionSelected.razonSocial)" readonly="true"
+							width="350px" />
+					</tablechildren>
+
+					<tablechildren>
+						<label value="Direccion:"
+							style="font-weight:bold" />
+					</tablechildren>
+
+					<tablechildren colspan="3">
+						<textbox
+							value="@load(vm.remisionSelected.direccion)" readonly="true"
+							hflex="1" />
+					</tablechildren>
+
+					<tablechildren>
+						<label value="Casa #:"
+							style="font-weight:bold" />
+					</tablechildren>
+
+					<tablechildren>
+						<textbox
+							value="@load(vm.remisionSelected.casaNro)" readonly="true" />
+					</tablechildren>
+
+					<tablechildren>
+						<label value="Motivo" style="font-weight:bold" />
+					</tablechildren>
+
+					<tablechildren>
+
+						<combobox width="200px" readonly="true"
+							model="@load(vm.lMotivoEmision)"
+							selectedItem="@bind(vm.remisionSelected.motivoEmision)">
+							<template name="model">
+								<comboitem label="@load(each.tipo)" />
+							</template>
+
+						</combobox>
+
+					</tablechildren>
+
+					<tablechildren>
+						<label value="Factura Emision:"
+							style="font-weight:bold" />
+					</tablechildren>
+
+					<tablechildren>
+						<datebox
+							valueInLocalDate="@bind(vm.remisionSelected.facturaEmiFecha)"
+							format="dd/MM/yyyy" />
+					</tablechildren>
+
+					<tablechildren>
+						<label value="Responsable:"
+							style="font-weight:bold" />
+					</tablechildren>
+
+					<tablechildren>
+
+						<combobox width="200px" readonly="true"
+							model="@load(vm.lResponsableRemi)"
+							selectedItem="@bind(vm.remisionSelected.responsableEmision)">
+							<template name="model">
+								<comboitem label="@load(each.tipo)" />
+							</template>
+
+						</combobox>
+
+					</tablechildren>
+
+					<tablechildren>
+						<label value="Info Fisco:"
+							style="font-weight:bold" />
+					</tablechildren>
+
+					<tablechildren>
+
+						<textbox
+							value="@bind(vm.remisionSelected.infoFisco)" />
+
+					</tablechildren>
+
+
+				</tablelayout>
+
+				<hbox hflex="1" align="end" pack="end">
+
+					<button class="doxa-button-orange"
+						onClick="@command('remisionesModal')" label="Remisiones"
+						iconSclass="fa-solid fa-file-lines" />
+
+				</hbox>
+
+
+			</hlayout>
+			
+			<tabbox hflex="min">
+					<tabs id="tabs" hflex="min">
+						<tab label="Entrega" />
+						<tab label="Transportista" />
+						<tab label="Salida" />
+
+
+					</tabs>
+					<tabpanels hflex="min">
+
+						<!-- Entrega -->
+						<tabpanel hflex="min">
+
+							<tablelayout columns="6">
+
+								<tablechildren>
+									<label value="Entrega Fecha:"
+										style="font-weight:bold" />
+								</tablechildren>
+
+								<tablechildren>
+									<datebox
+										valueInLocalDate="@bind(vm.remisionSelected.entregaFecha)"
+										format="dd/MM/yyyy" />
+								</tablechildren>
+
+								<tablechildren>
+									<label value="Direccion:"
+										style="font-weight:bold" />
+								</tablechildren>
+
+								<tablechildren colspan="3">
+									<textbox
+										value="@bind(vm.remisionSelected.entregaDireccion)" hflex="1" />
+								</tablechildren>
+
+								<tablechildren>
+									<label value="Localidad:"
+										style="font-weight:bold" />
+								</tablechildren>
+
+
+								<tablechildren>
+
+									<searchbox
+										model="@load(vm.lLocalidadEntregaSM)"
+										placeholder="Seleccione una Localidad/Ciudad"
+										selectedItem="@bind(vm.localidadEntregaSMSelected)"
+										autoclose="true" onSelect="@command('onSelectedLocalidad')"
+										multiple="false">
+
+
+										<template name="model">
+
+											${each.localidadid} -
+											${each.localidad} |
+											${each.distritoid} -
+											${each.distrito} |
+											${each.departamentoid} -
+											${each.departamento}
+
+										</template>
+
+									</searchbox>
+
+								</tablechildren>
+
+
+								<tablechildren>
+									<label value="Departamento"
+										style="font-weight:bold" />
+								</tablechildren>
+
+								<tablechildren>
+									<textbox
+										value="@load(vm.remisionSelected.entregaLocalidad.distrito.departamento.departamento)"
+										readonly="true" />
+								</tablechildren>
+
+								<tablechildren>
+									<label value="Casa Nº"
+										style="font-weight:bold" />
+								</tablechildren>
+
+								<tablechildren>
+									<textbox
+										value="@bind(vm.remisionSelected.entregaCasaNro)" />
+								</tablechildren>
+
+								<tablechildren>
+									<label value="KM Recorrido:"
+										style="font-weight:bold" />
+								</tablechildren>
+
+								<tablechildren>
+									<intbox
+										value="@bind(vm.remisionSelected.kilometrosRecorridos)" />
+								</tablechildren>
+
+							</tablelayout>
+
+						</tabpanel>
+
+						<!-- Transportista -->
+						<tabpanel hflex="min">
+
+							<groupbox hflex="min">
+
+								<tablelayout columns="6">
+
+									<tablechildren>
+										<label value="Tipo:"
+											style="font-weight:bold" />
+									</tablechildren>
+
+									<tablechildren>
+										<combobox width="200px"
+											readonly="true" model="@load(vm.lTransporteTipo)"
+											selectedItem="@bind(vm.remisionSelected.transTipo)">
+											<template name="model">
+												<comboitem
+													label="@load(each.tipo)" />
+											</template>
+
+										</combobox>
+									</tablechildren>
+
+									<tablechildren>
+										<label value="Modo:"
+											style="font-weight:bold" />
+									</tablechildren>
+
+									<tablechildren>
+
+										<combobox width="200px"
+											readonly="true" model="@load(vm.lTransporteModalidad)"
+											selectedItem="@bind(vm.remisionSelected.transModalidadtipo)">
+											<template name="model">
+												<comboitem
+													label="@load(each.tipo)" />
+											</template>
+
+										</combobox>
+
+									</tablechildren>
+
+									<tablechildren>
+										<label
+											value="Resp. Flete:" style="font-weight:bold" />
+									</tablechildren>
+
+									<tablechildren>
+
+										<combobox width="200px"
+											readonly="true" model="@load(vm.lResponsableFlete)"
+											selectedItem="@bind(vm.remisionSelected.transResponsableFlete)">
+											<template name="model">
+												<comboitem
+													label="@load(each.tipo)" />
+											</template>
+
+										</combobox>
+
+									</tablechildren>
+
+
+									<tablechildren>
+										<label value="Nombre:"
+											style="font-weight:bold" />
+									</tablechildren>
+
+									<tablechildren>
+										<textbox
+											value="@bind(vm.remisionSelected.transportistaNombre)" />
+									</tablechildren>
+
+									<tablechildren>
+										<label value="Doc. Tipo:"
+											style="font-weight:bold" />
+									</tablechildren>
+
+									<tablechildren>
+										<combobox width="150px"
+											readonly="true" model="@load(vm.lDocumentoTipo)"
+											selectedItem="@bind(vm.remisionSelected.transportistaDocTipo)">
+											<template name="model">
+												<comboitem
+													label="@load(each.tipo)" />
+											</template>
+										</combobox>
+									</tablechildren>
+
+									<tablechildren>
+										<label value="Doc. #:"
+											style="font-weight:bold" />
+									</tablechildren>
+
+									<tablechildren>
+										<textbox
+											value="@bind(vm.remisionSelected.transportistaDocNum)" />
+									</tablechildren>
+
+									<tablechildren>
+										<label value="Direccion:"
+											style="font-weight:bold" />
+									</tablechildren>
+
+									<tablechildren colspan="5">
+										<textbox
+											value="@bind(vm.remisionSelected.transportistaDireccion)"
+											hflex="1" />
+									</tablechildren>
+
+									<tablechildren>
+										<label value="Vehiculo Marca:"
+											style="font-weight:bold" />
+									</tablechildren>
+
+									<tablechildren>
+										<textbox
+											value="@bind(vm.remisionSelected.vehiculoMarca)" />
+									</tablechildren>
+
+									<tablechildren>
+										<label
+											value="Vehiculo Identificacion:" style="font-weight:bold" />
+									</tablechildren>
+
+									<tablechildren>
+										<combobox width="150px"
+											readonly="true" model="@load(vm.lVehiculoIdentificacion)"
+											selectedItem="@bind(vm.remisionSelected.vehiculoIdent)">
+											<template name="model">
+												<comboitem
+													label="@load(each.tipo)" />
+											</template>
+										</combobox>
+									</tablechildren>
+
+									<tablechildren>
+										<label value="Vehiculo #:"
+											style="font-weight:bold" />
+									</tablechildren>
+
+									<tablechildren>
+										<textbox
+											value="@bind(vm.remisionSelected.vehiculoNro)" />
+									</tablechildren>
+
+
+
+									<tablechildren>
+										<label value="Chofer Nombre:"
+											style="font-weight:bold" />
+									</tablechildren>
+
+									<tablechildren>
+										<textbox
+											value="@bind(vm.remisionSelected.choferNombre)" />
+									</tablechildren>
+
+									<tablechildren>
+										<label value="Chofer Doc #:"
+											style="font-weight:bold" />
+									</tablechildren>
+
+									<tablechildren>
+										<textbox
+											value="@bind(vm.remisionSelected.choferDocNum)" />
+									</tablechildren>
+
+									<tablechildren>
+										<label value="Chofer Direccion:"
+											style="font-weight:bold" />
+									</tablechildren>
+
+									<tablechildren>
+										<textbox
+											value="@bind(vm.remisionSelected.choferDireccion)" />
+									</tablechildren>
+
+								</tablelayout>
+
+							</groupbox>
+
+
+
+						</tabpanel>
+
+
+						<!-- Salida -->
+						<tabpanel hflex="min">
+
+							<tablelayout columns="6">
+
+								<tablechildren>
+									<label value="Salida Fecha:"
+										style="font-weight:bold" />
+								</tablechildren>
+
+								<tablechildren>
+									<datebox
+										valueInLocalDate="@bind(vm.remisionSelected.salidaFecha)"
+										format="dd/MM/yyyy" />
+								</tablechildren>
+
+								<tablechildren>
+									<label value="Direccion:"
+										style="font-weight:bold" />
+								</tablechildren>
+
+								<tablechildren colspan="3">
+									<textbox
+										value="@load(vm.remisionSelected.salidaDireccion)" hflex="1" />
+								</tablechildren>
+
+								<tablechildren>
+									<label value="Localidad:"
+										style="font-weight:bold" />
+								</tablechildren>
+
+								<tablechildren>
+									<searchbox
+										model="@load(vm.lLocalidadSalidaSM)"
+										placeholder="Seleccione una Localidad/Ciudad"
+										selectedItem="@bind(vm.localidadSalidaSMSelected)"
+										autoclose="true" onSelect="@command('onSelectedLocalidad')"
+										multiple="false">
+
+
+										<template name="model">
+
+											${each.localidadid} -
+											${each.localidad} |
+											${each.distritoid} -
+											${each.distrito} |
+											${each.departamentoid} -
+											${each.departamento}
+
+										</template>
+
+									</searchbox>
+								</tablechildren>
+
+								<tablechildren>
+									<label value="Departamento"
+										style="font-weight:bold" />
+								</tablechildren>
+
+								<tablechildren>
+									<textbox
+										value="@load(vm.remisionSelected.salidaLocalidad.distrito.departamento.departamento)"
+										readonly="true" />
+								</tablechildren>
+
+								<tablechildren>
+									<label value="Casa Nº"
+										style="font-weight:bold" />
+								</tablechildren>
+
+								<tablechildren>
+									<textbox
+										value="@bind(vm.remisionSelected.salidaCasaNro)" />
+								</tablechildren>
+
+							</tablelayout>
+
+						</tabpanel>
+
+					</tabpanels>
+				</tabbox>
+			
+
+			
+
+		</vlayout>
+
+		<space width="5px" />
+
+		<hlayout vflex="1" hflex="1">
+			<listbox vflex="1" hflex="1"
+				model="@load(vm.remisionSelected.detalles)">
+				<listhead>
+
+					<listheader label="Codigo" hflex="min" />
+					<listheader label="Descripcion" />
+					<listheader label="Cantidad" hflex='min' />
+					<listheader hflex='min'>
+						<button iconSclass=" z-icon-plus"
+							class="doxa-button-green" onClick="@command('agregarDetalle')"
+							tooltiptext="Agregar Cliente" />
+					</listheader>
+
+				</listhead>
+				<template name="model">
+
+
+					<listitem>
+						<listcell>
+							<textbox value="@bind(each.itemCodigo)"
+								width="100px" />
+						</listcell>
+						<listcell>
+							<textbox value="@bind(each.itemDescripcion)"
+								hflex="1" />
+						</listcell>
+						<listcell>
+							<doublebox width="100px"
+								value="@bind(each.cantidad)" style="text-align:right"
+								format="#,###.##" onChange="@command('calcularTotales')" />
+						</listcell>
+
+						<listcell>
+							<button iconSclass="z-icon-trash-o"
+								onClick="@command('borrarDetalle', detalle=each)"
+								class="doxa-button-red" tooltiptext="Borrar" />
+
+						</listcell>
+					</listitem>
+
+				</template>
+
+			</listbox>
+
+			<vlayout vflex="2">
+
+				<hlayout>
+
+					<button label="GENERAR REMISION"
+						style="background-color:green"
+						onClick="@command('generarRemision')" />
+
+					<button onClick="@command('limpiarPantalla')"
+						label="LIMPIAR" />
+
+				</hlayout>
+
+			</vlayout>
+
+		</hlayout>
+
+	</window>
+
+</zk>

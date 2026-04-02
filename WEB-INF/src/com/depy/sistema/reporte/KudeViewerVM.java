@@ -36,6 +36,7 @@ import org.zkoss.zk.ui.Executions;
 
 import com.depy.modelo.Factura;
 import com.depy.modelo.NotaCredito;
+import com.depy.modelo.Remision;
 import com.depy.util.ParamsLocal;
 import com.doxacore.util.Register;
 import com.doxacore.util.SystemInfo;
@@ -128,6 +129,16 @@ public class KudeViewerVM {
     			logoPath = notacredito.getEmpresa().getLogoPath();
     		}
     		xml= this.extraerRDE(prettyPrintXml(notacredito.getXml())).trim();
+    		
+    	}if (tipode.equals("remision")) {
+    		
+    		Remision remision = reg.findObjectById(Remision.class, ceid);
+    		if (remision.getSucursal().getLogoPath() != null) {
+    			logoPath = remision.getSucursal().getLogoPath();
+    		}else {
+    			logoPath = remision.getEmpresa().getLogoPath();
+    		}
+    		xml= this.extraerRDE(prettyPrintXml(remision.getXml())).trim();
     		
     	}
 

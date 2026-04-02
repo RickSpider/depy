@@ -21,12 +21,16 @@ import org.zkoss.bind.annotation.NotifyChange;
 import org.zkoss.image.AImage;
 import org.zkoss.util.media.Media;
 import org.zkoss.zk.ui.Executions;
+import org.zkoss.zk.ui.event.Events;
 import org.zkoss.zk.ui.select.Selectors;
 import org.zkoss.zk.ui.util.Notification;
+import org.zkoss.zul.ListModelArray;
 import org.zkoss.zul.Window;
 
+import com.depy.modelo.Localidad;
 import com.depy.modelo.Sucursal;
 import com.depy.modelo.SucursalUsuario;
+import com.depy.searchModel.LocalidadSM;
 import com.depy.util.ParamsLocal;
 import com.depy.util.TemplateViewModelLocal;
 import com.doxacore.components.finder.FinderModel;
@@ -120,7 +124,8 @@ public class SucursalVM extends TemplateViewModelLocal{
 	@Command
 	public void modalSucursal(@BindingParam("sucursalid") long sucursalid) {
 		
-	
+		this.localidadSMSelected = null;
+		
 		this.usuarioSelected = null;
 		
 		this.logoFile = null;
@@ -131,8 +136,10 @@ public class SucursalVM extends TemplateViewModelLocal{
 				return;
 
 			this.editar = true;
-
+			
 			this.sucursalSelected = this.reg.findObjectById(Sucursal.class, sucursalid);
+			
+			this.localidadSMSelected = this.sucursalSelected.getLocalidad() != null ? new LocalidadSM( this.sucursalSelected.getLocalidad()): null;
 			
 			try {
 				if (this.sucursalSelected.getLogoPath() != null) {
@@ -157,7 +164,42 @@ public class SucursalVM extends TemplateViewModelLocal{
 		modal.doModal();
 		
 		this.inicializarFinders();
+		
+		 modal.addEventListener("onLater", event -> {
+		        generarSearchModels();
+		        BindUtils.postNotifyChange(null, null, this, "lLocalidadSearchModel");
+		    });
 
+		 Events.echoEvent("onLater", modal, null);
+
+	}
+	
+	private ListModelArray<LocalidadSM> lLocalidadSearchModel;
+	private LocalidadSM localidadSMSelected;
+	
+	private void generarSearchModels() {
+		
+		this.lLocalidadSearchModel = this.crearSearchModel(
+				
+	        this.um.getSql("localidad/buscarLocalidad.sql"),
+	        o -> new LocalidadSM(
+	                ((Number) o[0]).longValue(),
+	                (String) o[1],
+	                ((Number) o[2]).longValue(),
+	                (String) o[3],
+	                ((Number) o[4]).longValue(),
+	                (String) o[5]
+	            )
+	    );
+		
+	}
+	
+	@NotifyChange("*")
+	@Command
+	public void onSelectedLocalidad() {
+		
+		this.sucursalSelected.setLocalidad(this.localidadSMSelected != null ? this.reg.findObjectById(Localidad.class, this.localidadSMSelected.getLocalidadid()) : null );
+	
 	}
 	
 	@Command
@@ -422,6 +464,22 @@ public class SucursalVM extends TemplateViewModelLocal{
 
 	public void setLogoFile(Media logoFile) {
 		this.logoFile = logoFile;
+	}
+
+	public ListModelArray<LocalidadSM> getlLocalidadSearchModel() {
+		return lLocalidadSearchModel;
+	}
+
+	public void setlLocalidadSearchModel(ListModelArray<LocalidadSM> lLocalidadSearchModel) {
+		this.lLocalidadSearchModel = lLocalidadSearchModel;
+	}
+
+	public LocalidadSM getLocalidadSMSelected() {
+		return localidadSMSelected;
+	}
+
+	public void setLocalidadSMSelected(LocalidadSM localidadSMSelected) {
+		this.localidadSMSelected = localidadSMSelected;
 	}
 	
 	

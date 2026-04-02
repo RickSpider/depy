@@ -470,7 +470,7 @@ public class ENotaCreditoVM extends TemplateViewModelLocal {
 			
 			UtilLocalMetodos ulm = new UtilLocalMetodos();
 			
-			try {
+		
 				ResponseComprobante rc = ulm.consultarDE(this.getSistemaPropiedad("fcwsHOST").getValor()+"/consultar/comprobantexml/"+f.getCdc(), new HttpOrHttpsConexion());
 				
 				f.setXml(rc.getXml());
@@ -478,10 +478,10 @@ public class ENotaCreditoVM extends TemplateViewModelLocal {
 				f.setRespuesta(ulm.escapeSql(rc.getRespuesta()));
 				this.save(f);
 				
-			} catch (IOException e) {
+			
 				System.out.println("Error al consultar el DE");
-				e.printStackTrace();
-			}
+				
+			
 
 		}
 

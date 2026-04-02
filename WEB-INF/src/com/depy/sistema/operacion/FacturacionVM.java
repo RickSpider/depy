@@ -1,6 +1,5 @@
 package com.depy.sistema.operacion;
 
-import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -372,8 +371,8 @@ public class FacturacionVM extends TemplateViewModelLocal {
 			
 		}
 		
-		boolean alguno = this.localidadSMSelected != null || (this.facturaSelected.getCliente().getDireccion() != null && !this.facturaSelected.getCliente().getDireccion().isBlank()) || (this.facturaSelected.getCliente().getCasaNro() != null && !this.facturaSelected.getCliente().getCasaNro().isBlank());
-		boolean todos  = this.localidadSMSelected != null && (this.facturaSelected.getCliente().getDireccion() != null && !this.facturaSelected.getCliente().getDireccion().isBlank()) && (this.facturaSelected.getCliente().getCasaNro() != null && !this.facturaSelected.getCliente().getCasaNro().isBlank());
+		boolean alguno = this.localidadSMSelected != null || (this.facturaSelected.getCliente().getDireccion() != null && !this.facturaSelected.getCliente().getDireccion().isBlank()) || (this.facturaSelected.getCliente().getCasaNro() != null );
+		boolean todos  = this.localidadSMSelected != null && (this.facturaSelected.getCliente().getDireccion() != null && !this.facturaSelected.getCliente().getDireccion().isBlank()) && (this.facturaSelected.getCliente().getCasaNro() != null );
 
 		if (alguno && !todos) {
 		    this.mensajeInfo("Localidad, dirección y número de casa deben informarse juntos");
@@ -540,6 +539,7 @@ public class FacturacionVM extends TemplateViewModelLocal {
 		if (c.getLocalidad() != null && c.getDireccion() != null) {
 			this.facturaSelected.setLocalidad(c.getLocalidad());
 			this.facturaSelected.setDireccion(c.getDireccion());
+			this.facturaSelected.setCasaNro(c.getCasaNro());
 		}
 		
 		
@@ -698,7 +698,7 @@ public class FacturacionVM extends TemplateViewModelLocal {
 			
 			UtilLocalMetodos ulm = new UtilLocalMetodos();
 			
-			try {
+			
 				ResponseComprobante rc = ulm.consultarDE(this.getSistemaPropiedad("fcwsHOST").getValor()+"/consultar/comprobantexml/"+f.getCdc(), new HttpOrHttpsConexion());
 				
 				f.setXml(rc.getXml());
@@ -706,10 +706,10 @@ public class FacturacionVM extends TemplateViewModelLocal {
 				f.setRespuesta(ulm.escapeSql(rc.getRespuesta()));
 				this.save(f);
 				
-			} catch (IOException e) {
+			
 				System.out.println("Error al consultar el DE");
-				e.printStackTrace();
-			}
+				
+			
 
 		}
 

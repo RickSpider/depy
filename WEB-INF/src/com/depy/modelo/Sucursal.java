@@ -41,6 +41,11 @@ public class Sucursal extends ModeloERP implements Serializable{
 	@JoinColumn(name = "comprobantetipoid")
 	private Tipo comprobanteTipo;
 	
+	@ManyToOne
+	@JoinColumn(name = "localidadid")
+	private Localidad localidad;
+	private Integer casaNro = 0;
+		
 	@OneToMany(mappedBy = "sucursal", cascade = {CascadeType.MERGE, CascadeType.REMOVE}, orphanRemoval = true, fetch = FetchType.EAGER)
 	private List<SucursalUsuario> usuarios;
 	
@@ -112,6 +117,22 @@ public class Sucursal extends ModeloERP implements Serializable{
 
 	public void setLogoPath(String logoPath) {
 		this.logoPath = logoPath;
+	}
+
+	public Localidad getLocalidad() {
+		return localidad;
+	}
+
+	public void setLocalidad(Localidad localidad) {
+		this.localidad = localidad;
+	}
+
+	public Integer getCasaNro() {
+		return casaNro;
+	}
+
+	public void setCasaNro(Integer casaNro) {
+		this.casaNro = casaNro;
 	}
 	
 	

@@ -5,62 +5,95 @@
 <zk>
 
 
-	<window border="normal"
-		position="center,center" closable="true" mode="modal"
-		action="show: slideDown;hide: slideUp" width="600px">
-		
-		<caption label="Sucursal Crear/Ver/Editar" style="font-weight:bold"/>
-		
+	<window border="normal" position="center,center" closable="true"
+		mode="modal" action="show: slideDown;hide: slideUp" width="600px">
+
+		<caption label="Sucursal Crear/Ver/Editar"
+			style="font-weight:bold" />
+
 		<hlayout>
-		
-		
-		<tablelayout columns="2">
 
-			<tablechildren>
-				<label value="ID:" style="font-weight:bold" />
-			</tablechildren>
 
-			<tablechildren>
-				<textbox value="@load(vm.sucursalSelected.sucursalid)"
-					readonly="true" />
-			</tablechildren>
+			<tablelayout columns="2">
 
-			<tablechildren>
-				<label value="Nombre:" style="font-weight:bold" />
-			</tablechildren>
+				<tablechildren>
+					<label value="ID:" style="font-weight:bold" />
+				</tablechildren>
 
-			<tablechildren>
-				<textbox value="@bind(vm.sucursalSelected.nombre)" />
-			</tablechildren>
+				<tablechildren>
+					<textbox
+						value="@load(vm.sucursalSelected.sucursalid)" readonly="true" />
+				</tablechildren>
 
-			<tablechildren>
-				<label value="Establecimiento #:"
-					style="font-weight:bold" />
-			</tablechildren>
+				<tablechildren>
+					<label value="Nombre:" style="font-weight:bold" />
+				</tablechildren>
 
-			<tablechildren>
-				<textbox
-					value="@bind(vm.sucursalSelected.establecimiento)" />
-			</tablechildren>
+				<tablechildren>
+					<textbox value="@bind(vm.sucursalSelected.nombre)" />
+				</tablechildren>
 
-			<tablechildren>
-				<label value="Dirección:" style="font-weight:bold" />
-			</tablechildren>
+				<tablechildren>
+					<label value="Establecimiento #:"
+						style="font-weight:bold" />
+				</tablechildren>
 
-			<tablechildren>
-				<textbox value="@bind(vm.sucursalSelected.direccion)" />
-			</tablechildren>
+				<tablechildren>
+					<textbox
+						value="@bind(vm.sucursalSelected.establecimiento)" />
+				</tablechildren>
 
-		</tablelayout>
-		
-		<space height="10px" />
-		
-		<vbox hflex="min" width="200px" height="250px">
+				<tablechildren>
+					<label value="Localidad" style="font-weight:bold" />
+				</tablechildren>
+
+				<tablechildren>
+					<searchbox model="@load(vm.lLocalidadSearchModel)"
+						placeholder="Seleccione una Localidad/Ciudad"
+						selectedItem="@bind(vm.localidadSMSelected)"
+						autoclose="true" onSelect="@command('onSelectedLocalidad')"
+						multiple="false">
+
+
+						<template name="model">
+
+							${each.localidadid} - ${each.localidad} |
+							${each.distritoid} - ${each.distrito} |
+							${each.departamentoid} -
+							${each.departamento}
+
+						</template>
+
+					</searchbox>
+				</tablechildren>
+
+				<tablechildren>
+					<label value="Dirección:" style="font-weight:bold" />
+				</tablechildren>
+
+				<tablechildren>
+					<textbox
+						value="@bind(vm.sucursalSelected.direccion)" />
+				</tablechildren>
+
+				<tablechildren>
+					<label value="Casa Nº:" style="font-weight:bold" />
+				</tablechildren>
+
+				<tablechildren>
+					<textbox value="@bind(vm.sucursalSelected.casaNro)" />
+				</tablechildren>
+
+			</tablelayout>
+
+			<space height="10px" />
+
+			<vbox hflex="min" width="200px" height="250px">
 
 				<vbox sclass="doxa-photo" vflex="1" hflex="1"
-					
 					pack="center" align="center">
-					<image id="image" width="100%" height="100%" content="@load(vm.logoFile)"/>
+					<image id="image" width="100%" height="100%"
+						content="@load(vm.logoFile)" />
 				</vbox>
 
 				<button hflex="1" iconSclass="z-icon-cloud-upload"
@@ -69,23 +102,23 @@
 					onUpload="@command('uploadLogo', file=event.media)" />
 
 			</vbox>
-		
-			</hlayout>
+
+		</hlayout>
 
 		<space height="10px" />
 
 		<tabbox width="100%" sclass="nav_tabs">
 			<tabs id="tabs">
 				<tab label="Usuarios" />
-				
+
 
 			</tabs>
 			<tabpanels>
 				<tabpanel>
 
 					<listbox emptyMessage="lista vacía..." mold="paging"
-						autopaging="true"
-						model="@load(vm.sucursalSelected.usuarios)" checkmark="true" height="200px">
+						autopaging="true" model="@load(vm.sucursalSelected.usuarios)"
+						checkmark="true" height="200px">
 
 						<auxhead>
 
@@ -148,7 +181,8 @@
 								</listcell>
 								<listcell>
 
-									<button iconSclass="z-icon-trash" class="doxa-button-red"/>
+									<button iconSclass="z-icon-trash"
+										class="doxa-button-red" />
 
 								</listcell>
 
@@ -161,7 +195,7 @@
 
 				</tabpanel>
 
-				
+
 
 			</tabpanels>
 

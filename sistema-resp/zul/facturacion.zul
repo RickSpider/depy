@@ -1,0 +1,158 @@
+<?page title="facturacion" contentType="text/html;charset=UTF-8"?>
+<zk xmlns="http://www.zkoss.org/2005/zul"
+	xmlns:h="http://www.w3.org/1999/xhtml">
+
+	<div apply="org.zkoss.bind.BindComposer"
+			viewModel="@id('vm')@init('com.depy.sistemaResp.facturacion.FacturacionVM')">
+
+		<h:div class="page-header">
+
+
+			<h:div class="page-title-block">
+				<h:div class="page-label">Módulo</h:div>
+				<h:div class="page-title">Facturas</h:div>
+				<h:div class="page-meta">
+					Gestión de comprobantes emitidos
+				</h:div>
+			</h:div>
+		</h:div>
+		<h:div class="stats-row">
+			<h:div class="stat-chip">
+				<h:div class="stat-chip-value">${vm.facturaciones.size()}</h:div>
+				<h:div class="stat-chip-label">Total</h:div>
+			</h:div>
+			<h:div class="stat-chip">
+				<h:div class="stat-chip-value" style="color:#10b981">
+					${vm.aprobados}
+				</h:div>
+				<h:div class="stat-chip-label">Aprobadas</h:div>
+			</h:div>
+			<h:div class="stat-chip">
+				<h:div class="stat-chip-value" style="color:#ef4444">
+					${vm.rechazados}
+				</h:div>
+				<h:div class="stat-chip-label">Rechazadas</h:div>
+			</h:div>
+		</h:div>
+		<h:div class="search-bar">
+			<h:div class="search-input-wrap">
+				<html>
+					
+					<![CDATA[ <svg viewBox="0 0 24 24" fill="none"
+					stroke="currentColor" stroke-width="2"
+					stroke-linecap="round" stroke-linejoin="round">
+					<circle cx="11" cy="11" r="8"/><line x1="21" y1="21"
+					x2="16.65" y2="16.65"/> </svg> ]]>
+					
+			</html>
+				<textbox class="search-input" id="searchInput"
+					placeholder="Buscar factura, cliente..." />
+			</h:div>
+		</h:div>
+		<h:div class="filter-bar">
+			<h:button class="filter-pill active"
+				onclick="filterCards(this,'all')">
+				Todas
+			</h:button>
+			<h:button class="filter-pill"
+				onclick="filterCards(this,'pending')">
+				Pendientes
+			</h:button>
+			<h:button class="filter-pill"
+				onclick="filterCards(this,'approved')">
+				Aprobadas
+			</h:button>
+			<h:button class="filter-pill"
+				onclick="filterCards(this,'rejected')">
+				Rechazadas
+			</h:button>
+		</h:div>
+		
+		
+		<h:div class="invoice-grid" id="invoiceGrid" children="@load(vm.facturaciones)" >
+
+			<template  name="children">
+			
+				<h:div class="invoice-card" data-status="@load(
+											           each[7].toString() eq 'Aprovado' ? 'approved' :
+											           each[7].toString() eq 'Rechazado' ? 'rejected' :
+											           'pending'
+											       )">
+				    <h:div class="@load(each[7].toString() eq 'Aprobado' ? 'card-stripe approved':
+				    					each[7].toString() eq 'Rechazado' ? 'card-stripe rejected' : 'card-stripe pending')"></h:div>
+				    <h:div class="card-body">
+				      <h:div class="card-number-label">N° Factura</h:div>
+				      <h:div class="card-number">${each[2]}</h:div>
+				      <h:div class="card-date">
+				       <html><![CDATA[
+				        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+				          <rect x="3" y="4" width="18" height="18" rx="2" ry="2"/>
+				          <line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/>
+				          <line x1="3" y1="10" x2="21" y2="10"/>
+				        </svg>
+				        ]]></html>
+				        ${each[1]}
+				      </h:div>
+				      <h:div class="card-client">
+				        <h:div class="client-dot">FE</h:div>
+				        <h:div>
+				          <h:div class="client-name">${each[2]}</h:div>
+				          <h:div class="client-ruc">RUC: ${each[5]}</h:div>
+				        </h:div>
+				      </h:div>
+				      <h:div class="card-divider"></h:div>
+				      <h:div class="card-amount-row">
+				        <h:div>
+				          <h:div class="card-amount-label">Total</h:div>
+				          <h:div class="card-amount"><label  class="card-amount" value="@load(each[8]) @converter('formatedNumber', format='#,##0.##', locale='es_PY')" /></h:div>
+				        </h:div>
+				        <h:span class="@load(each[7].toString() eq 'Aprobado' ? 'status-badge approved':
+				    					each[7].toString() eq 'Rechazado' ? 'status-badge rejected' : 'status-badge pending')">
+				          <h:span class="status-dot"></h:span>${each[7]}
+				        </h:span>
+				      </h:div>
+				    </h:div>
+				    <h:div class="card-actions">
+				      <h:button class="btn-icon btn-cancel" onclick="showToast('Anulando ${inv.id}…')">
+				       <html><![CDATA[
+				        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+				          <circle cx="12" cy="12" r="10"/>
+				          <line x1="15" y1="9" x2="9" y2="15"/><line x1="9" y1="9" x2="15" y2="15"/>
+				        </svg>
+				        ]]></html>
+				        Anular
+				      </h:button>
+				      <h:button class="btn-icon btn-doc" onclick="showToast('Abriendo ${inv.id}…')">
+				       <html><![CDATA[
+				        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+				          <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
+				          <polyline points="14 2 14 8 20 8"/>
+				        </svg>
+				        ]]></html>
+				        Ver
+				      </h:button>
+				    </h:div>
+				  </h:div>
+			
+			</template>
+
+		</h:div>
+		
+		<div class="pagination-bar" id="paginationBar"></div>
+		
+
+		<!-- FAB: solo visible en módulo facturas -->
+		<h:a class="fab" id="fabNew" title="Nueva Factura">
+			<html>
+				
+				<![CDATA[ <svg viewBox="0 0 24 24"><path d="M19
+				13h-6v6h-2v-6H5v-2h6V5h2v6h6v2z"/></svg> ]]>
+				
+		</html>
+		</h:a>
+
+	</div>
+	
+	
+	
+</zk>

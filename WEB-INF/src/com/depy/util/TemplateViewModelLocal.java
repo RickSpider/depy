@@ -109,4 +109,16 @@ public abstract class TemplateViewModelLocal extends TemplateViewModel {
 	    ListModelArray<T> modelo = new ListModelArray<>(lista);
 	    return modelo;
 	}
+	
+	protected <T> ListModelArray<T> crearSearchModel(List<Object[]> resultados, java.util.function.Function<Object[], T> mapper) {
+	    //List<Object[]> resultados = this.reg.sqlNativo(sql);
+	    List<T> lista = new ArrayList<>(resultados.size());
+
+	    for (Object[] fila : resultados) {
+	        lista.add(mapper.apply(fila));
+	    }
+
+	    ListModelArray<T> modelo = new ListModelArray<>(lista);
+	    return modelo;
+	}
 }

@@ -208,8 +208,8 @@ public class ClienteVM extends TemplateViewModelLocal {
 			
 		}
 		
-		boolean alguno = this.localidadSMSelected != null || (this.clienteSelected.getDireccion() != null && !this.clienteSelected.getDireccion().isBlank()) || (this.clienteSelected.getCasaNro() != null && !this.clienteSelected.getCasaNro().isBlank());
-		boolean todos  = this.localidadSMSelected != null && (this.clienteSelected.getDireccion() != null && !this.clienteSelected.getDireccion().isBlank()) && (this.clienteSelected.getCasaNro() != null && !this.clienteSelected.getCasaNro().isBlank());
+		boolean alguno = this.localidadSMSelected != null || (this.clienteSelected.getDireccion() != null && !this.clienteSelected.getDireccion().isBlank()) || (this.clienteSelected.getCasaNro() != null );
+		boolean todos  = this.localidadSMSelected != null && (this.clienteSelected.getDireccion() != null && !this.clienteSelected.getDireccion().isBlank()) && (this.clienteSelected.getCasaNro() != null );
 
 		if (alguno && !todos) {
 		    this.mensajeInfo("Localidad, dirección y número de casa deben informarse juntos");
