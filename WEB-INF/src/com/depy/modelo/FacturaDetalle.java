@@ -21,9 +21,9 @@ public class FacturaDetalle extends DocumentoDetalle implements Serializable{
 	private static final long serialVersionUID = 8321012325489678576L;
 
 	@Id
-	@Column(name ="ventadetalleid")
+	@Column(name ="faturadetalleid")
 	@GeneratedValue(strategy=GenerationType.IDENTITY)
-	private Long ventadetalleid;
+	private Long faturadetalleid;
 	
 	@ManyToOne
 	@JoinColumn(name = "facturaid", nullable = false, updatable = false)
@@ -51,12 +51,15 @@ public class FacturaDetalle extends DocumentoDetalle implements Serializable{
 		this.proporcionIva = proporcionIva;
 		this.empresa = empresa;
 	}
-	public Long getVentadetalleid() {
-		return ventadetalleid;
+	
+	public Long getFaturadetalleid() {
+		return faturadetalleid;
 	}
-	public void setVentadetalleid(Long ventadetalleid) {
-		this.ventadetalleid = ventadetalleid;
+
+	public void setFaturadetalleid(Long faturadetalleid) {
+		this.faturadetalleid = faturadetalleid;
 	}
+
 	public Factura getFactura() {
 		return factura;
 	}
