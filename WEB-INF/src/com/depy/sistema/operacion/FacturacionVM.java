@@ -436,7 +436,7 @@ public class FacturacionVM extends TemplateViewModelLocal {
 	}
 	
 	@NotifyChange({"totalDetalle", "iva10","iva5","iva0"})
-	public void borrarDetalle(FacturaDetalle detalle) {
+	public void borrarDetalle(@BindingParam("detalle") FacturaDetalle detalle) {
 		
 		this.facturaSelected.getDetalles().remove(detalle);
 		
