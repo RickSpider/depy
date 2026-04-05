@@ -6,156 +6,654 @@
 	xmlns:h="http://www.w3.org/1999/xhtml">
 
 	<div apply="org.zkoss.bind.BindComposer"
-			viewModel="@id('vm')@init('com.depy.sistemaResp.facturacion.FacturacionVM')">
+		viewModel="@id('vm')@init('com.depy.sistemaResp.facturacion.FacturacionVM')">
 
-		<h:div class="page-header">
+		<div visible="@load(vm.pantalla[0])">
+
+			<h:div class="page-header">
 
 
-			<h:div class="page-title-block">
-				<h:div class="page-label">Módulo</h:div>
-				<h:div class="page-title">Facturas</h:div>
-				<h:div class="page-meta">
-					Gestión de comprobantes emitidos
+				<h:div class="page-title-block">
+					<h:div class="page-label">Módulo</h:div>
+					<h:div class="page-title">Facturas</h:div>
+					<h:div class="page-meta">
+						Gestión de comprobantes emitidos
+					</h:div>
 				</h:div>
 			</h:div>
-		</h:div>
-		<h:div class="stats-row">
-			<h:div class="stat-chip">
-				<h:div class="stat-chip-value">${vm.facturaciones.size()}</h:div>
-				<h:div class="stat-chip-label">Total</h:div>
-			</h:div>
-			<h:div class="stat-chip">
-				<h:div class="stat-chip-value" style="color:#10b981">
-					${vm.aprobados}
+			<h:div class="stats-row">
+				<h:div class="stat-chip">
+					<h:div class="stat-chip-value">
+						${vm.facturaciones.size()}
+					</h:div>
+					<h:div class="stat-chip-label">Total</h:div>
 				</h:div>
-				<h:div class="stat-chip-label">Aprobadas</h:div>
-			</h:div>
-			<h:div class="stat-chip">
-				<h:div class="stat-chip-value" style="color:#ef4444">
-					${vm.rechazados}
+				<h:div class="stat-chip">
+					<h:div class="stat-chip-value"
+						style="color:#10b981">
+						${vm.aprobados}
+					</h:div>
+					<h:div class="stat-chip-label">Aprobadas</h:div>
 				</h:div>
-				<h:div class="stat-chip-label">Rechazadas</h:div>
+				<h:div class="stat-chip">
+					<h:div class="stat-chip-value"
+						style="color:#ef4444">
+						${vm.rechazados}
+					</h:div>
+					<h:div class="stat-chip-label">Rechazadas</h:div>
+				</h:div>
 			</h:div>
-		</h:div>
-		<h:div class="search-bar">
-			<div class="search-input-wrap">
+			<h:div class="search-bar">
+				<div class="search-input-wrap">
+					<html>
+
+						
+						<![CDATA[ <svg viewBox="0 0 24 24" fill="none"
+						stroke="currentColor" stroke-width="2"
+						stroke-linecap="round" stroke-linejoin="round">
+						<circle cx="11" cy="11" r="8"/><line x1="21"
+						y1="21" x2="16.65" y2="16.65"/> </svg> ]]>
+						
+						
+				</html>
+					<textbox value="@bind(vm.filtro)"
+						onChanging="@command('filtrarTexto')" instant="true"
+						onOK="@command('filtrarTexto')"
+						placeholder="Buscar factura, cliente..." hflex="1" />
+				</div>
+			</h:div>
+			<h:div class="filter-bar">
+				<h:button id="btnfTodos" class="filter-pill active"
+					onClick="@command('filtroBtn', id=self.id)">
+					Todos
+				</h:button>
+				<h:button id="btnfPendiente" class="filter-pill"
+					onClick="@command('filtroBtn', id=self.id)">
+					Pendientes
+				</h:button>
+				<h:button id="btnfAprobado" class="filter-pill"
+					onClick="@command('filtroBtn', id=self.id)">
+					Aprobadas
+				</h:button>
+				<h:button id="btnfRechazado" class="filter-pill"
+					onClick="@command('filtroBtn', id=self.id)">
+					Rechazadas
+				</h:button>
+			</h:div>
+
+
+			<h:div class="invoice-grid" id="invoiceGrid"
+				children="@load(vm.facturaciones)">
+
+				<template name="children">
+
+					<h:div class="invoice-card"
+						data-status="@load(
+												           each[7].toString() eq 'Aprobado' ? 'approved' :
+												           each[7].toString() eq 'Rechazado' ? 'rejected' :
+												           'pending'
+												       )">
+						<h:div
+							class="@load(each[7].toString() eq 'Aprobado' ? 'card-stripe approved':
+					    					each[7].toString() eq 'Rechazado' ? 'card-stripe rejected' : 'card-stripe pending')">
+						</h:div>
+						<h:div class="card-body">
+							<h:div class="card-number-label">
+								N° Factura
+							</h:div>
+							<h:div class="card-number">
+								${each[2]}
+							</h:div>
+							<h:div class="card-date">
+								<html>
+									<![CDATA[ <svg viewBox="0 0 24 24"
+									fill="none" stroke="currentColor"
+									stroke-width="2"
+									stroke-linecap="round"
+									stroke-linejoin="round"> <rect x="3"
+									y="4" width="18" height="18" rx="2"
+									ry="2"/> <line x1="16" y1="2"
+									x2="16" y2="6"/><line x1="8" y1="2"
+									x2="8" y2="6"/> <line x1="3" y1="10"
+									x2="21" y2="10"/> </svg> ]]>
+								</html>
+								${each[1]}
+							</h:div>
+							<h:div class="card-client">
+								<h:div class="client-dot">FE</h:div>
+								<h:div>
+									<h:div class="client-name">
+										${each[2]}
+									</h:div>
+									<h:div class="client-ruc">
+										RUC: ${each[5]}
+									</h:div>
+								</h:div>
+							</h:div>
+							<h:div class="card-divider"></h:div>
+							<h:div class="card-amount-row">
+								<h:div>
+									<h:div class="card-amount-label">
+										Total
+									</h:div>
+									<h:div class="card-amount">
+										<label class="card-amount"
+											value="@load(each[8]) @converter('formatedNumber', format='#,##0.##', locale='es_PY')" />
+									</h:div>
+								</h:div>
+								<h:span
+									class="@load(each[7].toString() eq 'Aprobado' ? 'status-badge approved':
+					    					each[7].toString() eq 'Rechazado' ? 'status-badge rejected' : 'status-badge pending')">
+									<h:span class="status-dot"></h:span>
+									${each[7]}
+								</h:span>
+							</h:div>
+						</h:div>
+						<h:div class="card-actions">
+							<h:button class="btn-icon btn-cancel"
+								onclick="showToast('Anulando ${inv.id}…')">
+								<html>
+									<![CDATA[ <svg viewBox="0 0 24 24"
+									fill="none" stroke="currentColor"
+									stroke-width="2"
+									stroke-linecap="round"
+									stroke-linejoin="round"> <circle
+									cx="12" cy="12" r="10"/> <line
+									x1="15" y1="9" x2="9" y2="15"/><line
+									x1="9" y1="9" x2="15" y2="15"/>
+									</svg> ]]>
+								</html>
+								Anular
+							</h:button>
+							<h:button class="btn-icon btn-doc"
+								onclick="showToast('Abriendo ${inv.id}…')">
+								<html>
+									<![CDATA[ <svg viewBox="0 0 24 24"
+									fill="none" stroke="currentColor"
+									stroke-width="2"
+									stroke-linecap="round"
+									stroke-linejoin="round"> <path
+									d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0
+									0 2 2h12a2 2 0 0 0 2-2V8z"/>
+									<polyline points="14 2 14 8 20 8"/>
+									</svg> ]]>
+								</html>
+								Ver
+							</h:button>
+						</h:div>
+					</h:div>
+
+				</template>
+
+			</h:div>
+
+			<div class="pagination-bar" id="paginationBar"></div>
+
+
+			<!-- FAB: solo visible en módulo facturas -->
+			<h:a class="fab" id="fabNew" title="Nueva Factura"
+				onClick="@command('cambiarPantalla', pantalla=1)">
 				<html>
+
 					
-					<![CDATA[ <svg viewBox="0 0 24 24" fill="none"
-					stroke="currentColor" stroke-width="2"
-					stroke-linecap="round" stroke-linejoin="round">
-					<circle cx="11" cy="11" r="8"/><line x1="21" y1="21"
-					x2="16.65" y2="16.65"/> </svg> ]]>
+					<![CDATA[ <svg viewBox="0 0 24 24"><path d="M19
+					13h-6v6h-2v-6H5v-2h6V5h2v6h6v2z"/></svg> ]]>
+					
 					
 			</html>
-				<textbox value="@bind(vm.filtro)" onChanging="@command('filtrarTexto')" instant="true" onOK="@command('filtrarTexto')"
-					placeholder="Buscar factura, cliente..." hflex="1" />
-			</div>
-		</h:div>
-		<h:div  class="filter-bar">
-			<h:button id="btnfTodos" class="filter-pill active"
-				onClick="@command('filtroBtn', id=self.id)">
-				Todos
-			</h:button>
-			<h:button id="btnfPendiente" class="filter-pill"
-				onClick="@command('filtroBtn', id=self.id)">
-				Pendientes
-			</h:button>
-			<h:button id="btnfAprobado" class="filter-pill"
-				onClick="@command('filtroBtn', id=self.id)">
-				Aprobadas
-			</h:button>
-			<h:button id="btnfRechazado" class="filter-pill"
-				onClick="@command('filtroBtn', id=self.id)">
-				Rechazadas
-			</h:button>
-		</h:div>
-		
-		
-		<h:div class="invoice-grid" id="invoiceGrid" children="@load(vm.facturaciones)" >
+			</h:a>
 
-			<template  name="children">
-			
-				<h:div class="invoice-card" data-status="@load(
-											           each[7].toString() eq 'Aprobado' ? 'approved' :
-											           each[7].toString() eq 'Rechazado' ? 'rejected' :
-											           'pending'
-											       )">
-				    <h:div class="@load(each[7].toString() eq 'Aprobado' ? 'card-stripe approved':
-				    					each[7].toString() eq 'Rechazado' ? 'card-stripe rejected' : 'card-stripe pending')"></h:div>
-				    <h:div class="card-body">
-				      <h:div class="card-number-label">N° Factura</h:div>
-				      <h:div class="card-number">${each[2]}</h:div>
-				      <h:div class="card-date">
-				       <html><![CDATA[
-				        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-				          <rect x="3" y="4" width="18" height="18" rx="2" ry="2"/>
-				          <line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/>
-				          <line x1="3" y1="10" x2="21" y2="10"/>
-				        </svg>
-				        ]]></html>
-				        ${each[1]}
-				      </h:div>
-				      <h:div class="card-client">
-				        <h:div class="client-dot">FE</h:div>
-				        <h:div>
-				          <h:div class="client-name">${each[2]}</h:div>
-				          <h:div class="client-ruc">RUC: ${each[5]}</h:div>
-				        </h:div>
-				      </h:div>
-				      <h:div class="card-divider"></h:div>
-				      <h:div class="card-amount-row">
-				        <h:div>
-				          <h:div class="card-amount-label">Total</h:div>
-				          <h:div class="card-amount"><label  class="card-amount" value="@load(each[8]) @converter('formatedNumber', format='#,##0.##', locale='es_PY')" /></h:div>
-				        </h:div>
-				        <h:span class="@load(each[7].toString() eq 'Aprobado' ? 'status-badge approved':
-				    					each[7].toString() eq 'Rechazado' ? 'status-badge rejected' : 'status-badge pending')">
-				          <h:span class="status-dot"></h:span>${each[7]}
-				        </h:span>
-				      </h:div>
-				    </h:div>
-				    <h:div class="card-actions">
-				      <h:button class="btn-icon btn-cancel" onclick="showToast('Anulando ${inv.id}…')">
-				       <html><![CDATA[
-				        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-				          <circle cx="12" cy="12" r="10"/>
-				          <line x1="15" y1="9" x2="9" y2="15"/><line x1="9" y1="9" x2="15" y2="15"/>
-				        </svg>
-				        ]]></html>
-				        Anular
-				      </h:button>
-				      <h:button class="btn-icon btn-doc" onclick="showToast('Abriendo ${inv.id}…')">
-				       <html><![CDATA[
-				        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-				          <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
-				          <polyline points="14 2 14 8 20 8"/>
-				        </svg>
-				        ]]></html>
-				        Ver
-				      </h:button>
-				    </h:div>
-				  </h:div>
-			
-			</template>
+		</div>
 
-		</h:div>
-		
-		<div class="pagination-bar" id="paginationBar"></div>
-		
+		<div visible="@load(vm.pantalla[1])">
 
-		<!-- FAB: solo visible en módulo facturas -->
-		<h:a class="fab" id="fabNew" title="Nueva Factura">
-			<html>
-				
-				<![CDATA[ <svg viewBox="0 0 24 24"><path d="M19
-				13h-6v6h-2v-6H5v-2h6V5h2v6h6v2z"/></svg> ]]>
-				
-		</html>
-		</h:a>
+
+			<h:div>
+
+				<!-- Header -->
+
+				<h:div class="form-header">
+					<h:div class="form-header-inner">
+						<h:div>
+							<h:div class="page-label">Nueva</h:div>
+							<h:div class="page-title"
+								style="font-size:22px">
+								Emisión de Factura
+							</h:div>
+							<h:div class="page-meta">
+								Complete los datos del comprobante
+							</h:div>
+						</h:div>
+						<h:button class="back-btn"
+							onClick="@command('cambiarPantalla', pantalla=0)">
+							<html>
+								<![CDATA[ <svg viewBox="0 0 24 24"
+								fill="none" stroke="currentColor"
+								stroke-width="2" stroke-linecap="round"
+								stroke-linejoin="round"> <line x1="19"
+								y1="12" x2="5" y2="12"/> <polyline
+								points="12 19 5 12 12 5"/> </svg> ]]>
+							</html>
+							Volver
+						</h:button>
+					</h:div>
+
+				</h:div>
+
+				<h:div class="form-body">
+
+					<!-- ── CARD 1: DATOS GENERALES ── -->
+					<h:div class="form-card">
+						<h:div class="form-card-header">
+							<html>
+								<![CDATA[ <svg viewBox="0 0 24 24"
+								fill="none" stroke="currentColor"
+								stroke-width="2" stroke-linecap="round"
+								stroke-linejoin="round"> <path d="M20
+								14.66V20a2 2 0 0 1-2 2H4a2 2 0 0
+								1-2-2V6a2 2 0 0 1 2-2h5.34"/> <polygon
+								points="18 2 22 6 12 16 8 16 8 12 18
+								2"/> </svg> ]]>
+							</html>
+							<h:span class="form-card-title">
+								Datos Generales
+							</h:span>
+						</h:div>
+						<h:div class="form-card-body">
+
+							<!-- RUC -->
+							<h:div class="form-row"
+								style="margin-bottom:14px">
+								<h:div class="form-group">
+									<h:label class="form-label">
+										RUC / C.I. Cliente
+										<h:span class="required">
+											*
+										</h:span>
+									</h:label>
+									<h:div class="input-with-prefix">
+										<h:span class="input-prefix">
+											RUC
+										</h:span>
+										<h:input class="form-control"
+											type="text" id="rucInput" placeholder="80012345-6"
+											oninput="this.value=this.value.replace(/[^0-9\-]/g,'')" />
+									</h:div>
+								</h:div>
+							</h:div>
+
+							<!-- Razón social -->
+							<h:div class="form-row"
+								style="margin-bottom:14px">
+								<h:div class="form-group">
+									<h:label class="form-label">
+										Razón Social / Nombre
+										<h:span class="required">
+											*
+										</h:span>
+									</h:label>
+									<h:input class="form-control"
+										type="text" id="razonInput"
+										placeholder="Nombre del cliente o empresa" />
+								</h:div>
+							</h:div>
+
+						
+
+						</h:div>
+					</h:div>
+
+					<!-- ── CARD 2: CONDICIONES ── -->
+					<h:div class="form-card">
+						<h:div class="form-card-header">
+							<html>
+								<![CDATA[ <svg viewBox="0 0 24 24"
+								fill="none" stroke="currentColor"
+								stroke-width="2" stroke-linecap="round"
+								stroke-linejoin="round"> <rect x="1"
+								y="4" width="22" height="16" rx="2"
+								ry="2"/> <line x1="1" y1="10" x2="23"
+								y2="10"/> </svg> ]]>
+							</html>
+							<h:span class="form-card-title">
+								Condiciones de Pago
+							</h:span>
+						</h:div>
+						<h:div class="form-card-body">
+
+							<h:div class="form-row"
+								style="margin-bottom:14px">
+
+								<!-- Condición -->
+								<h:div class="form-group">
+									<h:label class="form-label">
+										Condición
+										<h:span class="required">
+											*
+										</h:span>
+									</h:label>
+									
+									<h:div class="toggle-group">
+										<h:button
+											class="toggle-btn active" id="btnContado"
+											onClick="@command('onChangeCondicion', id=self.id)">
+											Contado
+										</h:button>
+										<h:button class="toggle-btn"
+											id="btnCredito" onClick="@command('onChangeCondicion', id=self.id)">
+											Crédito
+										</h:button>
+									</h:div>									
+									
+									
+								</h:div>
+							</h:div>
+
+							<!-- Crédito: plazo (condicional) -->
+							<h:div class="conditional-field"
+								id="creditoFields">
+								<h:div class="form-row cols-2">
+									<h:div class="form-group">
+										<h:label class="form-label">
+											Plazo
+											<h:span class="required">
+												*
+											</h:span>
+										</h:label>
+										<h:input class="form-control"
+											type="number" id="plazoInput" min="1" placeholder="30"
+											oninput="this.value=this.value.replace(/[^0-9]/g,'')" />
+									</h:div>
+									<h:div class="form-group">
+										<h:label class="form-label">
+											Unidad
+											<h:span class="required">
+												*
+											</h:span>
+										</h:label>
+										<h:select class="form-control"
+											id="plazoUnidad">
+											<h:option value="dias">
+												Días
+											</h:option>
+											<h:option value="meses">
+												Meses
+											</h:option>
+										</h:select>
+									</h:div>
+								</h:div>
+							</h:div>
+
+						</h:div>
+					</h:div>
+
+					<!-- ── CARD 3: MONEDA ── -->
+					<h:div class="form-card">
+						<h:div class="form-card-header">
+							<html>
+								<![CDATA[ <svg viewBox="0 0 24 24"
+								fill="none" stroke="currentColor"
+								stroke-width="2" stroke-linecap="round"
+								stroke-linejoin="round"> <circle cx="12"
+								cy="12" r="10"/> <line x1="12" y1="8"
+								x2="12" y2="12"/> <line x1="12" y1="16"
+								x2="12.01" y2="16"/> </svg> ]]>
+							</html>
+							<h:span class="form-card-title">
+								Moneda
+							</h:span>
+						</h:div>
+						<h:div class="form-card-body">
+
+							<h:div class="form-row cols-2">
+								<h:div class="form-group">
+									<h:label class="form-label">
+										Moneda
+										<h:span class="required">
+											*
+										</h:span>
+									</h:label>
+									<h:div class="currency-toggle">
+										<h:button
+											class="currency-btn active" id="btnPyg"
+											onClick="@command('onChangeMoneda', id=self.id)">
+											₲ Guaraní
+										</h:button>
+										<h:button class="currency-btn"
+											id="btnUsd" onClick="@command('onChangeMoneda', id=self.id)">
+											$ Dólar
+										</h:button>
+									</h:div>
+								</h:div>
+
+								<!-- Tipo de cambio (solo visible para USD) -->
+								<h:div
+									class="form-group conditional-field" id="tipoCambioGroup">
+									<h:label class="form-label">
+										Tipo de Cambio
+										<h:span class="required">
+											*
+										</h:span>
+									</h:label>
+									<h:div class="input-with-prefix">
+										<h:span class="input-prefix">
+											₲ /US$
+										</h:span>
+										<h:input class="form-control"
+											type="text" id="tipoCambio" placeholder="7.500"
+											oninput="this.value=this.value.replace(/[^0-9\.]/g,''); recalcAll();" />
+									</h:div>
+								</h:div>
+							</h:div>
+
+						</h:div>
+					</h:div>
+
+					<!-- ── CARD 4: ÍTEMS ── -->
+					<h:div class="form-card">
+						<h:div class="form-card-header">
+							<html>
+								<![CDATA[ <svg viewBox="0 0 24 24"
+								fill="none" stroke="currentColor"
+								stroke-width="2" stroke-linecap="round"
+								stroke-linejoin="round"> <line x1="8"
+								y1="6" x2="21" y2="6"/> <line x1="8"
+								y1="12" x2="21" y2="12"/> <line x1="8"
+								y1="18" x2="21" y2="18"/> <line x1="3"
+								y1="6" x2="3.01" y2="6"/> <line x1="3"
+								y1="12" x2="3.01" y2="12"/> <line x1="3"
+								y1="18" x2="3.01" y2="18"/> </svg> ]]>
+							</html>
+							<h:span class="form-card-title">
+								Detalle de Ítems
+							</h:span>
+						</h:div>
+
+						<!-- TABLE -->
+						<h:div class="items-table-wrap">
+							<h:table class="items-table">
+								<h:thead>
+									<h:tr>
+										<h:th style="width:100px">
+											Código
+										</h:th>
+										<h:th>Descripción</h:th>
+										<h:th
+											style="width:110px; text-align:right">
+											P. Unitario
+										</h:th>
+										<h:th
+											style="width:80px; text-align:right">
+											Cantidad
+										</h:th>
+										<h:th style="width:90px">
+											IVA
+										</h:th>
+										<h:th
+											style="width:120px; text-align:right">
+											Total
+										</h:th>
+										<h:th style="width:46px"></h:th>
+									</h:tr>
+								</h:thead>
+								<h:tbody id="itemsBody" children="@load(vm.facturaSelected.detalles)">
+									
+									<template name="children">
+										<h:tr>
+											<h:td><textbox value ="@bind(each.itemCodigo)" class="cell-input" type="text" placeholder="COD-001" style="width:90px"/></h:td>
+										    <h:td><textbox value ="@bind(each.itemDescripcion)" class="cell-input" type="text" placeholder="Descripción del producto o servicio" style="min-width:180px"/></h:td>
+										    <h:td><doublebox onChange="@command('calcularTotales', detalle=each)"  value ="@bind(each.precioUnitario)" format="#,###.##" class="cell-input"  style="width:100px;text-align:right"/></h:td>
+										    <h:td><doublebox onChange="@command('calcularTotales', detalle=each)" value ="@bind(each.cantidad)" class="cell-input"  format="#,###.##" style="text-align:right;" /></h:td>
+										    <h:td>
+										      <h:select class="cell-input" style="width:80px" onchange="calcRow(${id})">
+										        <h:option value="10">10%</h:option>
+										        <h:option value="5">5%</h:option>
+										        <h:option value="0">Exento</h:option>
+										      </h:select>
+										    </h:td>
+										    	<h:td class="td-total" >
+										    		<doublebox class=" cell-input" style="width:100px; text-align:right;"
+															format="#,###.##" value="@load((each.cantidad*each.precioUnitario))" 
+															readonly="true" />
+												</h:td>
+										    <h:td>
+										      <h:button class="btn-row-delete"  title="Eliminar fila" onClick="@command('borrarDetalle', data=each)">
+										      <html><![CDATA[
+										        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+										          <polyline points="3 6 5 6 21 6"/>
+										          <path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/>
+										          <path d="M10 11v6"/><path d="M14 11v6"/>
+										          <path d="M9 6V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2"/>
+										        </svg>
+										        ]]></html>
+										      </h:button>
+										    </h:td>
+										</h:tr>
+									</template>
+									
+								
+									<!-- rows injected by JS -->
+								</h:tbody>
+							</h:table>
+						</h:div>
+
+						<!-- ADD ROW -->
+						<h:div class="add-row-wrap">
+							<h:button class="btn-add-row"
+								onClick="@command('agregarDetalle')">
+								<html>
+									<![CDATA[ <svg viewBox="0 0 24 24"
+									fill="none" stroke="currentColor"
+									stroke-width="2.5"
+									stroke-linecap="round"
+									stroke-linejoin="round"> <line
+									x1="12" y1="5" x2="12" y2="19"/>
+									<line x1="5" y1="12" x2="19"
+									y2="12"/> </svg> ]]>
+								</html>
+								Agregar ítem
+							</h:button>
+						</h:div>
+
+						<!-- TOTALES -->
+						<h:div
+							style="padding:18px; border-top:1px solid var(--gray-100);">
+							<h:div
+								style="display:flex; justify-content:flex-end;">
+								<h:div class="totals-panel">
+									<h:div class="totals-row">
+										<h:span>IVA 10%</h:span>
+										<h:span id="totalIva10">
+											<label 
+											value="@load(vm.iva10) @converter('formatedNumber', format='#,##0.##', locale='es_PY')" class="totals-final-value" />
+										</h:span>
+									</h:div>
+									<h:div class="totals-row">
+										<h:span>IVA 5%</h:span>
+										<h:span id="totalIva5">
+											<label 
+											value="@load(vm.iva5) @converter('formatedNumber', format='#,##0.##', locale='es_PY')" class="totals-final-value" />
+										</h:span>
+									</h:div>
+									<h:div class="totals-row">
+										<h:span>Exento</h:span>
+										<h:span id="totalExento">
+											<label 
+											value="@load(vm.iva0) @converter('formatedNumber', format='#,##0.##', locale='es_PY')" class="totals-final-value" />
+										</h:span>
+									</h:div>
+									<h:div class="totals-final">
+										<h:span
+											class="totals-final-label">
+											Total General
+										</h:span>
+										<h:span
+											 id="totalGeneral">
+											<label 
+											value="@load(vm.facturaSelected.totalDetalle) @converter('formatedNumber', format='#,##0.##', locale='es_PY')" class="totals-final-value" />
+										</h:span>
+									</h:div>
+								</h:div>
+							</h:div>
+						</h:div>
+
+					</h:div><!-- /card items -->
+
+					<!-- ── ACTIONS ── -->
+					<h:div class="form-actions">
+						<h:button class="btn-danger"
+							onClick="@command('cambiarPantalla', pantalla=0)">
+							<html>
+								<![CDATA[ <svg viewBox="0 0 24 24"
+								fill="none" stroke="currentColor"
+								stroke-width="2" stroke-linecap="round"
+								stroke-linejoin="round"
+								style="width:18px;height:18px"> <line
+								x1="18" y1="6" x2="6" y2="18"/> <line
+								x1="6" y1="6" x2="18" y2="18"/> </svg>
+								]]>
+							</html>
+							Salir
+						</h:button>
+						<h:button class="btn-secondary"
+							onclick="showToast('Borrador guardado')">
+							<html>
+								<![CDATA[ <svg viewBox="0 0 24 24"
+								fill="none" stroke="currentColor"
+								stroke-width="2" stroke-linecap="round"
+								stroke-linejoin="round"
+								style="width:18px;height:18px"> <path
+								d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1
+								2-2h11l5 5v11a2 2 0 0 1-2 2z"/>
+								<polyline points="17 21 17 13 7 13 7
+								21"/> <polyline points="7 3 7 8 15 8"/>
+								</svg> ]]>
+							</html>
+							Guardar borrador
+						</h:button>
+						<h:button class="btn-primary"
+							onclick="facturar()">
+							<html>
+								<![CDATA[ <svg viewBox="0 0 24 24"
+								fill="none" stroke="currentColor"
+								stroke-width="2.5"
+								stroke-linecap="round"
+								stroke-linejoin="round"
+								style="width:18px;height:18px;fill:none">
+								<polyline points="20 6 9 17 4 12"/>
+								</svg> ]]>
+							</html>
+							Facturar
+						</h:button>
+					</h:div>
+
+				</h:div><!-- /form-body -->
+
+
+			</h:div>
+
+		</div>
 
 	</div>
-	
-	
-	
+
 </zk>
