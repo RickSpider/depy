@@ -4,7 +4,9 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.zkoss.bind.BindUtils;
 import org.zkoss.bind.annotation.AfterCompose;
@@ -18,6 +20,9 @@ import org.zkoss.zk.ui.util.Clients;
 import com.depy.modelo.Empresa;
 import com.depy.modelo.Factura;
 import com.depy.modelo.FacturaDetalle;
+import com.depy.modelo.FacturaPago;
+import com.depy.util.ParamsLocal;
+import com.doxacore.modelo.Tipo;
 import com.doxacore.util.Register;
 import com.doxacore.util.UtilMetodos;
 
@@ -36,8 +41,6 @@ public class FacturacionVM{
 	private int rechazados;
 	private int aprobados;
 	
-	
-	
 	private Boolean[] pantalla = {true, false};
 	
 	@Init(superclass = true)
@@ -50,6 +53,7 @@ public class FacturacionVM{
 		this.hasta = this.um.modificarHorasMinutosSegundos(this.desde, 23, 59, 59, 99);
 		
 		this.cargarDatos();
+		this.cargarDatosTipos();
 	
 	}
 
@@ -89,6 +93,36 @@ public class FacturacionVM{
 			
 		}
 			
+	}
+	
+	private List<Integer> lIva;
+	private Map<String, Tipo> mapTipos;
+	
+	public void cargarDatosTipos() {
+		
+		List <Tipo> lTipos = this.reg.getAllObjectsByColumnIn(Tipo.class,"tipotipo.sigla", List.of(
+			    ParamsLocal.SIGLA_TIPOTIPO_CONDICIONPAGO,
+			    ParamsLocal.SIGLA_TIPOTIPO_MONEDA,
+			    ParamsLocal.SIGLA_TIPOTIPO_IVA,
+			    ParamsLocal.SIGLA_TIPOTIPO_DOCUMENTO,
+			    ParamsLocal.SIGLA_TIPO_COMPROBANTE_FACTURA,
+			    ParamsLocal.SIGLA_TIPO_FORMAPAGO_EFECTIVO
+			) );
+		
+		
+		this.mapTipos = new HashMap<>();
+		this.lIva = new ArrayList<>();
+		for (Tipo t : lTipos) {
+			mapTipos.put(t.getSigla(), t);
+			
+			if (t.getTipotipo().getSigla().equals(ParamsLocal.SIGLA_TIPOTIPO_IVA)) {
+				
+				this.lIva.add(Integer.valueOf(t.getTipo()));
+				
+			}
+			
+		}
+		
 	}
 	
 	@NotifyChange("facturaciones")
@@ -166,9 +200,30 @@ public class FacturacionVM{
 		
 		this.pantalla[pantalla] = true;
 		
+		
+		
 		if (pantalla == 1) {
 			
+			this.iva0 = 0;
+			this.iva10 = 0;
+			this.iva5 = 0;
+			
+		
+			
 			this.facturaSelected = new Factura();
+			this.facturaSelected.setMoneda(this.mapTipos.get(ParamsLocal.SIGLA_TIPO_MONEDA_GUARANIES));
+			this.facturaSelected.setMonedaCambio(1.0);
+			//this.facturaSelected.setSucursal(getCurrentSucursal());
+
+			FacturaPago fp = new FacturaPago();
+			fp.setPagoTipo(this.mapTipos.get(ParamsLocal.SIGLA_TIPO_FORMAPAGO_EFECTIVO));
+			fp.setFactura(facturaSelected);
+			fp.setEmpresa(getCurrentEmpresa());
+			
+			this.facturaSelected.getPagos().add(fp);
+			
+			this.facturaSelected.setCondicion(this.mapTipos.get(ParamsLocal.SIGLA_TIPO_CONDICIONPAGO_CONTADO));			
+						
 			this.agregarDetalle();
 			
 		}
@@ -182,6 +237,23 @@ public class FacturacionVM{
 		
 			String condStr = id.replace("btn", "").toLowerCase();
 			
+			if (condStr.equals("contado")) {
+				
+				this.facturaSelected.setCondicion(this.mapTipos.get(ParamsLocal.SIGLA_TIPO_CONDICIONPAGO_CONTADO));	
+				this.facturaSelected.setPlazoCredito(null);
+				this.facturaSelected.setPagos(new ArrayList<>());
+				FacturaPago fp = new FacturaPago();
+				fp.setFactura(this.facturaSelected);
+				fp.setPagoTipo(this.mapTipos.get(ParamsLocal.SIGLA_TIPO_FORMAPAGO_EFECTIVO));
+				fp.setEmpresa(getCurrentEmpresa());
+				this.facturaSelected.getPagos().add(fp);
+				
+			}else {
+				this.facturaSelected.setCondicion(this.mapTipos.get(ParamsLocal.SIGLA_TIPO_CONDICIONPAGO_CREDITO));
+				//this.cbPlazo ="dias";
+				this.facturaSelected.setPagos(new ArrayList<>());
+			}
+			
 			Clients.evalJavaScript(
 					"document.getElementById('btnContado').classList.toggle('active', '"+condStr+"'=== 'contado');\n"
 					+ "document.getElementById('btnCredito').classList.toggle('active', '"+condStr+"'=== 'credito');\n"
@@ -193,6 +265,13 @@ public class FacturacionVM{
 	public void onChangeMoneda(@BindingParam("id") String id) {
 		
 		String moneda = id.replace("btn", "").toUpperCase();
+		
+		if(moneda.equals("PYG")) {
+			this.facturaSelected.setMoneda(this.mapTipos.get(ParamsLocal.SIGLA_TIPO_MONEDA_GUARANIES));
+			this.facturaSelected.setMonedaCambio(1.0);
+		}else if (moneda.equals("USD")) {
+			this.facturaSelected.setMoneda(this.mapTipos.get(ParamsLocal.SIGLA_TIPO_MONEDA_DOLARES));			
+		}
 		
 		Clients.evalJavaScript(
 				" document.getElementById('btnPyg').classList.toggle('active', '"+moneda+"' === 'PYG');\n"
@@ -238,9 +317,13 @@ public class FacturacionVM{
 		
 		double totalDetalle = 0;
 		
+		this.iva0 =0;
+		this.iva5 =0;
+		this.iva10 =0;
+		
 		for (FacturaDetalle d : this.facturaSelected.getDetalles()) {
 			
-			double totalLine = d.getCantidad()*d.getPrecioUnitario();
+			double totalLine = d.getCantidad()*(d.getPrecioUnitario() != null ? d.getPrecioUnitario() : 0);
 			
 			 switch ((int) d.getTasaIva()) {
 	         case 10 -> iva10 += totalLine / 11;
@@ -253,6 +336,27 @@ public class FacturacionVM{
 		}
 		
 		this.facturaSelected.setTotalDetalle(totalDetalle);
+	}
+	
+	@Command
+	@NotifyChange({"iva5","iva10","exento","facturaSelected"})
+	public void onChangeIva(@BindingParam("detalle") FacturaDetalle det) {
+		
+		 switch ((int) det.getTasaIva()) {
+	         case 10, 5 : {
+	        	 det.setAfectacionTributaria(1l);
+	        	 det.setProporcionIva(100);
+	        	 break;
+	         }
+	         case 0 : {
+	        	 det.setAfectacionTributaria(3l);
+	        	 det.setProporcionIva(0);
+	        	 break;
+	         }
+         
+		 }
+		
+		this.calcularTotales();
 	}
 
 	public List<Object[]> getFacturaciones() {
@@ -341,6 +445,14 @@ public class FacturacionVM{
 
 	public void setIva0(double iva0) {
 		this.iva0 = iva0;
+	}
+
+	public List<Integer> getlIva() {
+		return lIva;
+	}
+
+	public Map<String, Tipo> getMapTipos() {
+		return mapTipos;
 	}
 	
 	

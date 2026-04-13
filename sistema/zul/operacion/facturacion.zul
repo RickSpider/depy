@@ -23,9 +23,9 @@
 				<tablechildren>
 					<hlayout>
 						<searchbox model="@load(vm.lClienteSM)"
-							placeholder="Seleccione un Cliente" vflex="1"
+							placeholder="Seleccione un Cliente" vflex="1" 
 							selectedItem="@bind(vm.clienteSMSelected)" autoclose="true"
-							multiple="false">
+							multiple="false" >
 							<template name="model">
 
 								${each.documentoNro} |
@@ -127,6 +127,15 @@
 						
 					</hbox>
 					
+				</tablechildren>
+				
+				<tablechildren>
+					<label value="Fecha:"
+						style="font-weight:bold" />
+				</tablechildren>
+
+				<tablechildren>
+					<datebox valueInLocalDateTime="@bind(vm.facturaSelected.fecha)" format="dd/MM/yyy HH:mm:ss" width="180px"/>					
 				</tablechildren>
 
 			</tablelayout>

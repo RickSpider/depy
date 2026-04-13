@@ -45,7 +45,6 @@ import com.depy.utilde.modelo.DE;
 import com.depy.utilde.modelo.Kude;
 import com.depy.utilde.response.ResponseComprobante;
 import com.doxacore.modelo.Tipo;
-import com.doxacore.modelo.Tipotipo;
 import com.google.gson.Gson;
 
 import org.zkoss.bind.annotation.Command;
@@ -61,14 +60,19 @@ public class FacturacionVM extends TemplateViewModelLocal {
 	private String sucursalStr;
 	private String cbPlazo = "dias";
 	
+	private Tipo facturaDefault;
+	private Tipo efectivoDefault;
+	
 	@Init(superclass = true)
 	public void initFacturacionVM() {
 		
 		this.desde = this.um.modificarHorasMinutosSegundos(new Date(), 0, 0, 0, 0);
 		this.hasta = this.um.modificarHorasMinutosSegundos(this.desde, 23, 59, 59, 99);
 		
+		
+		
 		generarSearchModels();
-		cargarDatosCb();
+		cargarDatosTipos();
 		limpiarPantalla();
 		
 		this.sucursalStr = this.getCurrentSucursalUsuario().getSucursal().getNombre();
@@ -103,13 +107,15 @@ public class FacturacionVM extends TemplateViewModelLocal {
 		this.clienteSMSelected = null;
 		
 		this.facturaSelected = new Factura();
+		this.facturaSelected.setFecha(LocalDateTime.now());
 		this.facturaSelected.setMonedaCambio(1.0);
 		this.facturaSelected.setSucursal(getCurrentSucursal());
 		
 		
 		
 		FacturaPago fp = new FacturaPago();
-		fp.setPagoTipo(this.reg.getObjectBySigla(Tipo.class, ParamsLocal.SIGLA_TIPO_FORMAPAGO_EFECTIVO));
+		//fp.setPagoTipo(this.reg.getObjectBySigla(Tipo.class, ParamsLocal.SIGLA_TIPO_FORMAPAGO_EFECTIVO));
+		fp.setPagoTipo(this.efectivoDefault);
 		fp.setFactura(facturaSelected);
 		fp.setEmpresa(getCurrentEmpresa());
 		
@@ -147,6 +153,8 @@ public class FacturacionVM extends TemplateViewModelLocal {
 	
 	public void generarClienteSM(){
 		
+		//List<Object[]> lclientes = this.reg.sqlNativo(this.um.getSql("cliente/buscarCliente.sql").replace("?1", this.getCurrentEmpresa().getEmpresaid()+""));
+		
 		this.lClienteSM = this.crearSearchModel(				
 	        this.um.getSql("cliente/buscarCliente.sql").replace("?1", this.getCurrentEmpresa().getEmpresaid()+""),
 	        o -> new ClienteSM(
@@ -159,14 +167,59 @@ public class FacturacionVM extends TemplateViewModelLocal {
 		
 	}
 	
-	private List<Integer> lIva = new ArrayList<>();
+	private List<Integer> lIva;
 	private List<Tipo> lCondicionPago;
 	private List<Tipo>lMoneda;
 	
 	
-	public void cargarDatosCb() {
+	public void cargarDatosTipos() {
 		
-		Tipotipo tt = this.reg.getObjectBySigla(Tipotipo.class,ParamsLocal.SIGLA_TIPOTIPO_CONDICIONPAGO);
+		List <Tipo> lTipos = this.reg.getAllObjectsByColumnIn(Tipo.class,"tipotipo.sigla", List.of(
+			    ParamsLocal.SIGLA_TIPOTIPO_CONDICIONPAGO,
+			    ParamsLocal.SIGLA_TIPOTIPO_MONEDA,
+			    ParamsLocal.SIGLA_TIPOTIPO_IVA,
+			    ParamsLocal.SIGLA_TIPOTIPO_DOCUMENTO,
+			    ParamsLocal.SIGLA_TIPOTIPO_COMPROBANTE,
+			    ParamsLocal.SIGLA_TIPOTIPO_FORMAPAGO
+			) );
+		
+		this.lCondicionPago = new ArrayList<Tipo>();
+		this.lMoneda = new ArrayList<Tipo>();
+		this.lIva = new ArrayList<>();
+		this.lDocumentoTipo = new ArrayList<>();
+		
+		
+		for (Tipo t : lTipos) {
+			
+			if (t.getTipotipo().getSigla().equals(ParamsLocal.SIGLA_TIPOTIPO_CONDICIONPAGO)) {
+				
+				lCondicionPago.add(t);
+				
+			}else if (t.getTipotipo().getSigla().equals(ParamsLocal.SIGLA_TIPOTIPO_MONEDA)) {
+				
+				lMoneda.add(t);
+				
+			}else if (t.getTipotipo().getSigla().equals(ParamsLocal.SIGLA_TIPOTIPO_IVA)) {
+				
+				this.lIva.add(Integer.valueOf(t.getTipo()));
+				
+			}else if (t.getTipotipo().getSigla().equals(ParamsLocal.SIGLA_TIPOTIPO_DOCUMENTO)) {
+				
+				lDocumentoTipo.add(t);
+				
+			}
+			
+			if (t.getSigla().equals(ParamsLocal.SIGLA_TIPO_COMPROBANTE_FACTURA)) {
+				this.facturaDefault = t;
+			}
+			
+			if (t.getSigla().equals(ParamsLocal.SIGLA_TIPO_FORMAPAGO_EFECTIVO)) {
+				this.efectivoDefault = t;
+			}
+			
+		}
+				
+		/*Tipotipo tt = this.reg.getObjectBySigla(Tipotipo.class,ParamsLocal.SIGLA_TIPOTIPO_CONDICIONPAGO);
 		String [] cols = {"tipotipo"};
 		Object [] value = {tt}; 
 		lCondicionPago = this.reg.getAllObjectsByColumns(Tipo.class, cols, value);
@@ -181,7 +234,7 @@ public class FacturacionVM extends TemplateViewModelLocal {
 			
 			this.lIva.add(Integer.valueOf(x[1].toString()));
 			
-		} 
+		} */
 
 	}
 	
@@ -191,10 +244,21 @@ public class FacturacionVM extends TemplateViewModelLocal {
 	@Command
 	public void crearCliente() {
 		
-		this.cargarClienteDatosCb();
+		//this.cargarClienteDatosCb();
 		
 		this.facturaSelected.setCliente(new Cliente());
-		this.facturaSelected.getCliente().setDocumentoTipo(this.reg.getObjectBySigla(Tipo.class, ParamsLocal.SIGLA_TIPO_DOCUMENTO_RUC));
+		
+		for (Tipo t : this.lDocumentoTipo) {
+			
+			if (t.getSigla().equals(ParamsLocal.SIGLA_TIPO_DOCUMENTO_RUC)) {
+				
+				this.facturaSelected.getCliente().setDocumentoTipo(t);
+				break;
+			}
+			
+		}
+		
+		//this.facturaSelected.getCliente().setDocumentoTipo(this.reg.getObjectBySigla(Tipo.class, ParamsLocal.SIGLA_TIPO_DOCUMENTO_RUC));
 		//this.documentoTipoSM = new TipoSM(this.facturaSelected.getCliente().getDocumentoTipo());
 		
 		modal = (Window) Executions.createComponents("/sistema/zul/operacion/crearClienteModal.zul", this.mainComponent, null);
@@ -217,14 +281,14 @@ public class FacturacionVM extends TemplateViewModelLocal {
 	
 	private List<Tipo> lDocumentoTipo;
 	
-	public void cargarClienteDatosCb() {
+	/*public void cargarClienteDatosCb() {
 		
 		Tipotipo tt = this.reg.getObjectBySigla(Tipotipo.class,ParamsLocal.SIGLA_TIPOTIPO_DOCUMENTO);
 		String [] cols = {"tipotipo"};
 		Object [] value = {tt}; 
 		lDocumentoTipo = this.reg.getAllObjectsByColumns(Tipo.class, cols, value);
 		
-	}
+	}*/
 	
 	private ListModelArray<LocalidadSM> lLocalidadSearchModel;
 	private LocalidadSM localidadSMSelected;
@@ -298,7 +362,8 @@ public class FacturacionVM extends TemplateViewModelLocal {
 			this.facturaSelected.setPagos(new ArrayList<>());
 			FacturaPago fp = new FacturaPago();
 			fp.setFactura(this.facturaSelected);
-			fp.setPagoTipo(this.reg.getObjectBySigla(Tipo.class, ParamsLocal.SIGLA_TIPO_FORMAPAGO_EFECTIVO));
+			//fp.setPagoTipo(this.reg.getObjectBySigla(Tipo.class, ParamsLocal.SIGLA_TIPO_FORMAPAGO_EFECTIVO));
+			fp.setPagoTipo(efectivoDefault);
 			fp.setEmpresa(getCurrentEmpresa());
 			this.facturaSelected.getPagos().add(fp);
 		}
@@ -447,7 +512,7 @@ public class FacturacionVM extends TemplateViewModelLocal {
 	}
 	
 	
-	private double iva10, iva5, iva0 = 0;
+	private double iva10 = 0, iva5 = 0, iva0 = 0;
 		
 	public double getTotalDetalle() {
 
@@ -524,7 +589,7 @@ public class FacturacionVM extends TemplateViewModelLocal {
 	
 	public void procesarFactura() {
 		
-		this.facturaSelected.setFecha(LocalDateTime.now());
+		
 		
 				
 		Cliente c = this.reg.findObjectById(Cliente.class, this.clienteSMSelected.getId());
@@ -545,10 +610,16 @@ public class FacturacionVM extends TemplateViewModelLocal {
 		
 		SucursalUsuario su =  this.getCurrentSucursalUsuario();
 			
-		Tipo t = this.reg.getObjectBySigla(Tipo.class, ParamsLocal.SIGLA_TIPO_COMPROBANTE_FACTURA);
+		//Tipo t = this.reg.getObjectBySigla(Tipo.class, ParamsLocal.SIGLA_TIPO_COMPROBANTE_FACTURA);
+		
+		
 		
 		String [] columns = {"empresa","comprobanteTipo","establecimiento","puntoExpedicion","activo"};
-		Object [] values = {this.getCurrentEmpresa(), t ,su.getSucursal().getEstablecimiento() , su.getPuntoExpedicion(),true};
+		Object [] values = {su.getEmpresa(), this.facturaDefault ,su.getSucursal().getEstablecimiento() , su.getPuntoExpedicion(),true};
+		
+		
+		System.out.println("Factura Default: "+this.facturaDefault.getSigla());
+		
 		
 		Comprobante comp = this.reg.getObjectByColumns(Comprobante.class, columns, values);
 		this.facturaSelected.setTimbrado(comp.getTimbrado());
@@ -619,14 +690,14 @@ public class FacturacionVM extends TemplateViewModelLocal {
 		
 		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 		
-		this.facturaciones = this.reg.sqlNativo(
+		this.facturaciones = new ArrayList<> (this.reg.sqlNativo(
 				this.um.getSql("factura/listaFactura.sql")
 				.replace("?1", this.getCurrentEmpresa().getEmpresaid()+"")
 				.replace("?2", this.getCurrentSucursal().getSucursalid()+"")
 				.replace("?3", sdf.format(desde))
 				.replace("?4", sdf.format(hasta))
 				.replace("--1", "")
-				.replace("--2", ""));
+				.replace("--2", "")));
 		
 		
 	}

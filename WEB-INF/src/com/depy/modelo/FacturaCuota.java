@@ -16,7 +16,7 @@ import jakarta.persistence.Table;
 public class FacturaCuota {
 	
 	@Id
-	@Column(name ="ventacuotaid")
+	@Column(name ="facturacuotaid")
 	@GeneratedValue(strategy=GenerationType.IDENTITY)
 	private Long facturacuotaid;
 	

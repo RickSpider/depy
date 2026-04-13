@@ -192,7 +192,7 @@
 								<tablechildren>
 
 									<searchbox
-										model="@load(vm.lLocalidadEntregaSM)"
+										model="@load(vm.lLocalidadSearchModel)"
 										placeholder="Seleccione una Localidad/Ciudad"
 										selectedItem="@bind(vm.localidadEntregaSMSelected)"
 										autoclose="true" onSelect="@command('onSelectedLocalidad')"
@@ -470,7 +470,7 @@
 
 								<tablechildren>
 									<searchbox
-										model="@load(vm.lLocalidadSalidaSM)"
+										model="@load(vm.lLocalidadSearchModel)"
 										placeholder="Seleccione una Localidad/Ciudad"
 										selectedItem="@bind(vm.localidadSalidaSMSelected)"
 										autoclose="true" onSelect="@command('onSelectedLocalidad')"

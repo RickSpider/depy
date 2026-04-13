@@ -58,10 +58,7 @@
 						</h:div>
 					</h:div>
 
-					<h:div class="home-brand-name">
-						DE
-						<h:span class="accent">PY</h:span>
-					</h:div>
+					<h:div class="home-brand-name">DE<h:span class="accent">PY</h:span></h:div>
 					<h:div class="home-brand-full">
 						Documentos Electrónicos Paraguay
 					</h:div>

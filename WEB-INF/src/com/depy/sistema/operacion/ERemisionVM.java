@@ -141,10 +141,10 @@ public class ERemisionVM extends TemplateViewModelLocal {
 
 	}
 
-	private ListModelArray<LocalidadSM> lLocalidadEntregaSM;
+	//private ListModelArray<LocalidadSM> lLocalidadEntregaSM;
 	private LocalidadSM localidadEntregaSMSelected;
 	
-	private ListModelArray<LocalidadSM> lLocalidadSalidaSM;
+	//private ListModelArray<LocalidadSM> lLocalidadSalidaSM;
 	private LocalidadSM localidadSalidaSMSelected;
 
 	
@@ -152,8 +152,8 @@ public class ERemisionVM extends TemplateViewModelLocal {
 		
 		List<Object[]> resultados = this.reg.sqlNativo(this.um.getSql("localidad/buscarLocalidad.sql"));
 		
-		this.lLocalidadEntregaSM = this.crearSearchModel(
-				
+		//this.lLocalidadEntregaSM = this.crearSearchModel(
+		this.lLocalidadSearchModel = this.crearSearchModel(
 	        resultados,
 	        o -> new LocalidadSM(
 	                ((Number) o[0]).longValue(),
@@ -165,8 +165,8 @@ public class ERemisionVM extends TemplateViewModelLocal {
 	            )
 	    );
 		
-		this.lLocalidadSalidaSM = this.crearSearchModel(
-				
+		
+		/*this.lLocalidadSearchModel = this.crearSearchModel(
 		        resultados,
 		        o -> new LocalidadSM(
 		                ((Number) o[0]).longValue(),
@@ -176,7 +176,7 @@ public class ERemisionVM extends TemplateViewModelLocal {
 		                ((Number) o[4]).longValue(),
 		                (String) o[5]
 		            )
-		    );
+		    );*/
 	}
 	
 	public void generarClienteSM(){
@@ -243,8 +243,17 @@ public class ERemisionVM extends TemplateViewModelLocal {
 	
 	public void cargarDatosCb() {
 		
-			
-		List <Tipo> lTipos = this.reg.getAllObjects(Tipo.class);
+		//List <Tipo> lTipos = this.reg.getAllObjects(Tipo.class);
+		
+		List <Tipo> lTipos = this.reg.getAllObjectsByColumnIn(Tipo.class,"tipotipo.sigla", List.of(
+				ParamsLocal.SIGLA_TIPOTIPO_DOCUMENTO,
+				ParamsLocal.SIGLA_TIPOTIPO_TRANSPORTE,
+				ParamsLocal.SIGLA_TIPOTIPO_TRANSPORTEMODALIDAD,
+				ParamsLocal.SIGLA_TIPOTIPO_RESPONSABLEREMI,
+				ParamsLocal.SIGLA_TIPOTIPO_RESPONSABLEFLETE,
+				ParamsLocal.SIGLA_TIPOTIPO_MOTIVOREMISION,
+				ParamsLocal.SIGLA_TIPOTIPO_VEHICULOIDENTIFICACION
+			) );
 		
 		for (Tipo t : lTipos) {
 		    String key = t.getTipotipo().getSigla();
@@ -256,9 +265,9 @@ public class ERemisionVM extends TemplateViewModelLocal {
 	}
 	
 	private ListModelArray<LocalidadSM> lLocalidadSearchModel;
-	private LocalidadSM localidadSMSelected;
+	//private LocalidadSM localidadSMSelected;
 
-	
+	/*
 	private void generarSearchModelCliente() {
 		
 		this.lLocalidadSearchModel = this.crearSearchModel(
@@ -273,7 +282,7 @@ public class ERemisionVM extends TemplateViewModelLocal {
 	                (String) o[5]
 	            )
 	    );
-	}
+	}*/
 	
 	
 	@Command
@@ -343,13 +352,13 @@ public class ERemisionVM extends TemplateViewModelLocal {
 			
 		}
 		
-		boolean alguno = this.localidadSMSelected != null || (this.remisionSelected.getCliente().getDireccion() != null && !this.remisionSelected.getCliente().getDireccion().isBlank()) || (this.remisionSelected.getCliente().getCasaNro() != null );
+		/*boolean alguno = this.localidadSMSelected != null || (this.remisionSelected.getCliente().getDireccion() != null && !this.remisionSelected.getCliente().getDireccion().isBlank()) || (this.remisionSelected.getCliente().getCasaNro() != null );
 		boolean todos  = this.localidadSMSelected != null && (this.remisionSelected.getCliente().getDireccion() != null && !this.remisionSelected.getCliente().getDireccion().isBlank()) && (this.remisionSelected.getCliente().getCasaNro() != null );
 
 		if (alguno && !todos) {
 		    this.mensajeInfo("Localidad, dirección y número de casa deben informarse juntos");
 		    return false;
-		}
+		}*/
 		
 		
 		return true;
@@ -687,21 +696,21 @@ public class ERemisionVM extends TemplateViewModelLocal {
 		this.lLocalidadSearchModel = lLocalidadSearchModel;
 	}
 
-	public LocalidadSM getLocalidadSMSelected() {
+	/*public LocalidadSM getLocalidadSMSelected() {
 		return localidadSMSelected;
 	}
 
 	public void setLocalidadSMSelected(LocalidadSM localidadSMSelected) {
 		this.localidadSMSelected = localidadSMSelected;
-	}
+	}*/
 
-	public ListModelArray<LocalidadSM> getlLocalidadEntregaSM() {
+/*	public ListModelArray<LocalidadSM> getlLocalidadEntregaSM() {
 		return lLocalidadEntregaSM;
 	}
 
 	public void setlLocalidadEntregaSM(ListModelArray<LocalidadSM> lLocalidadEntregaSM) {
 		this.lLocalidadEntregaSM = lLocalidadEntregaSM;
-	}
+	}*/
 
 	public LocalidadSM getLocalidadEntregaSMSelected() {
 		return localidadEntregaSMSelected;
@@ -711,13 +720,13 @@ public class ERemisionVM extends TemplateViewModelLocal {
 		this.localidadEntregaSMSelected = localidadEntregaSMSelected;
 	}
 
-	public ListModelArray<LocalidadSM> getlLocalidadSalidaSM() {
+	/*public ListModelArray<LocalidadSM> getlLocalidadSalidaSM() {
 		return lLocalidadSalidaSM;
 	}
 
 	public void setlLocalidadSalidaSM(ListModelArray<LocalidadSM> lLocalidadSalidaSM) {
 		this.lLocalidadSalidaSM = lLocalidadSalidaSM;
-	}
+	}*/
 
 	public LocalidadSM getLocalidadSalidaSMSelected() {
 		return localidadSalidaSMSelected;

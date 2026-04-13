@@ -474,9 +474,9 @@
 							<h:table class="items-table">
 								<h:thead>
 									<h:tr>
-										<h:th style="width:100px">
+										<!-- <h:th style="width:100px">
 											Código
-										</h:th>
+										</h:th>  -->
 										<h:th>Descripción</h:th>
 										<h:th
 											style="width:110px; text-align:right">
@@ -500,16 +500,26 @@
 									
 									<template name="children">
 										<h:tr>
-											<h:td><textbox value ="@bind(each.itemCodigo)" class="cell-input" type="text" placeholder="COD-001" style="width:90px"/></h:td>
+											<!-- <h:td><textbox value ="@bind(each.itemCodigo)" class="cell-input" type="text" placeholder="COD-001" style="width:90px"/></h:td> -->
 										    <h:td><textbox value ="@bind(each.itemDescripcion)" class="cell-input" type="text" placeholder="Descripción del producto o servicio" style="min-width:180px"/></h:td>
 										    <h:td><doublebox onChange="@command('calcularTotales', detalle=each)"  value ="@bind(each.precioUnitario)" format="#,###.##" class="cell-input"  style="width:100px;text-align:right"/></h:td>
 										    <h:td><doublebox onChange="@command('calcularTotales', detalle=each)" value ="@bind(each.cantidad)" class="cell-input"  format="#,###.##" style="text-align:right;" /></h:td>
 										    <h:td>
-										      <h:select class="cell-input" style="width:80px" onchange="calcRow(${id})">
+										    
+											    <combobox readonly="true" 
+													model="@load(vm.lIva)"
+													selectedItem="@bind(each.tasaIva)"
+													onChange="@command('onChangeIva', detalle=each)">
+													<template name="model" var="x">
+														<comboitem label="@load(x eq 0 ? 'Exento' : x)" value="@load(x)"/>
+													</template>
+												</combobox>
+										    
+										      <!--  <h:select class="cell-input" style="width:80px" onchange="calcRow(${id})">
 										        <h:option value="10">10%</h:option>
 										        <h:option value="5">5%</h:option>
 										        <h:option value="0">Exento</h:option>
-										      </h:select>
+										      </h:select> -->
 										    </h:td>
 										    	<h:td class="td-total" >
 										    		<doublebox class=" cell-input" style="width:100px; text-align:right;"
