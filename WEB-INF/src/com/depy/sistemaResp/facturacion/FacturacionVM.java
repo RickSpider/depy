@@ -1,6 +1,6 @@
 package com.depy.sistemaResp.facturacion;
 
-import java.text.SimpleDateFormat;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
@@ -17,19 +17,27 @@ import org.zkoss.bind.annotation.NotifyChange;
 import org.zkoss.zk.ui.Sessions;
 import org.zkoss.zk.ui.util.Clients;
 
+import com.depy.modelo.Cliente;
+import com.depy.modelo.Comprobante;
 import com.depy.modelo.Empresa;
 import com.depy.modelo.Factura;
 import com.depy.modelo.FacturaDetalle;
 import com.depy.modelo.FacturaPago;
+import com.depy.modelo.Ruc;
+import com.depy.modelo.Sucursal;
+import com.depy.sistemaResp.TemplateViewModelLocalResp;
 import com.depy.util.ParamsLocal;
+import com.depy.utilde.MetodoDE;
+import com.depy.utilde.conexion.ResultRest;
+import com.depy.utilde.modelo.DE;
+import com.depy.utilde.modelo.Kude;
 import com.doxacore.modelo.Tipo;
-import com.doxacore.util.Register;
-import com.doxacore.util.UtilMetodos;
 
-public class FacturacionVM{
+import com.google.gson.Gson;
+
+public class FacturacionVM extends TemplateViewModelLocalResp{
 	
-	private UtilMetodos um;
-	private Register reg;
+	
 	
 	private Factura facturaSelected;
 
@@ -41,13 +49,17 @@ public class FacturacionVM{
 	private int rechazados;
 	private int aprobados;
 	
+	private Tipo facturaDefault;
+	private Tipo efectivoDefault;
+	
+	private String cbPlazo = "dias";
+	
 	private Boolean[] pantalla = {true, false};
 	
 	@Init(superclass = true)
 	public void initFacturacionVM() {
 		
-		this.reg = new Register();
-		this.um = new UtilMetodos();
+		
 		
 		this.desde = this.um.modificarHorasMinutosSegundos(new Date(), 0, 0, 0, 0);
 		this.hasta = this.um.modificarHorasMinutosSegundos(this.desde, 23, 59, 59, 99);
@@ -65,7 +77,7 @@ public class FacturacionVM{
 	@NotifyChange({"facturaciones", "aprobados", "rechazados"})
 	public void cargarDatos() {
 		
-		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+		//SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 		
 		List<Object[]> aux = new ArrayList<>(this.reg.sqlNativo(
 				this.um.getSql("factura/listaFactura.sql")
@@ -105,8 +117,8 @@ public class FacturacionVM{
 			    ParamsLocal.SIGLA_TIPOTIPO_MONEDA,
 			    ParamsLocal.SIGLA_TIPOTIPO_IVA,
 			    ParamsLocal.SIGLA_TIPOTIPO_DOCUMENTO,
-			    ParamsLocal.SIGLA_TIPO_COMPROBANTE_FACTURA,
-			    ParamsLocal.SIGLA_TIPO_FORMAPAGO_EFECTIVO
+			    ParamsLocal.SIGLA_TIPOTIPO_COMPROBANTE,
+			    ParamsLocal.SIGLA_TIPOTIPO_FORMAPAGO
 			) );
 		
 		
@@ -119,6 +131,14 @@ public class FacturacionVM{
 				
 				this.lIva.add(Integer.valueOf(t.getTipo()));
 				
+			}
+			
+			if (t.getSigla().equals(ParamsLocal.SIGLA_TIPO_COMPROBANTE_FACTURA)) {
+				this.facturaDefault = t;
+			}
+			
+			if (t.getSigla().equals(ParamsLocal.SIGLA_TIPO_FORMAPAGO_EFECTIVO)) {
+				this.efectivoDefault = t;
 			}
 			
 		}
@@ -211,6 +231,7 @@ public class FacturacionVM{
 		
 			
 			this.facturaSelected = new Factura();
+			this.facturaSelected.setFecha(LocalDateTime.now());
 			this.facturaSelected.setMoneda(this.mapTipos.get(ParamsLocal.SIGLA_TIPO_MONEDA_GUARANIES));
 			this.facturaSelected.setMonedaCambio(1.0);
 			//this.facturaSelected.setSucursal(getCurrentSucursal());
@@ -258,6 +279,64 @@ public class FacturacionVM{
 					"document.getElementById('btnContado').classList.toggle('active', '"+condStr+"'=== 'contado');\n"
 					+ "document.getElementById('btnCredito').classList.toggle('active', '"+condStr+"'=== 'credito');\n"
 					+ "document.getElementById('creditoFields').classList.toggle('show', '"+condStr+"' === 'credito');");
+		
+	}
+	
+	@Command
+	public void onChangeDoc() {
+		
+		String docNro =this.facturaSelected.getDocumentoNro().trim();
+		this.facturaSelected.setDocumentoNro(docNro);
+		
+		//UtilLocalMetodos ulm = new UtilLocalMetodos();
+		/*if (this.facturaSelected.getCliente().getDocumentoTipo().getSigla().equals(ParamsLocal.SIGLA_TIPO_DOCUMENTO_RUC) && !ulm.validarRuc(docNro)) {
+			
+			this.mensajeError("El documento de RUC proporcionado no es correcto, o no cumple con el formato, verifica el digito verificador o el ruc nuevamente");
+			
+			return;
+		}*/
+		
+		int idx = docNro.indexOf('-');
+		if (idx > 0) {
+			
+			String [] cols = {"empresa", "documentoNro"};
+			Object [] value = {this.getCurrentEmpresa(), this.facturaSelected.getDocumentoNro()}; 
+			
+			Cliente c = this.reg.getObjectByColumns(Cliente.class, cols, value);
+			
+			if (c != null) {
+				
+				this.facturaSelected.setCliente(c);
+				this.facturaSelected.setDocumentoNro(c.getDocumentoNro());
+				this.facturaSelected.setRazonSocial(c.getRazonsocial());
+				this.facturaSelected.setDocumentoTipo(c.getDocumentoTipo());
+				
+				this.facturaSelected.setEmail(c.getEmail());
+						
+				if (c.getLocalidad() != null && c.getDireccion() != null) {
+					this.facturaSelected.setLocalidad(c.getLocalidad());
+					this.facturaSelected.setDireccion(c.getDireccion());
+					this.facturaSelected.setCasaNro(c.getCasaNro());
+				}
+				
+			}else {
+				
+				String [] columns = {"ruc","dv"};
+			    Object[] valor = {docNro.substring(0, idx), docNro.substring(idx + 1)};
+			   
+			    Ruc ruc = this.reg.getObjectByColumns(Ruc.class, columns, valor);
+			    
+			    this.facturaSelected.setRazonSocial(ruc != null ? ruc.getRazonSocial(): null);
+			    
+			    this.facturaSelected.setDocumentoTipo(ruc != null ?  this.mapTipos.get(ParamsLocal.SIGLA_TIPO_DOCUMENTO_RUC):null );
+
+			}
+		    
+		}
+		
+		BindUtils.postNotifyChange(null, null, this.facturaSelected, "docNro");
+		BindUtils.postNotifyChange(null, null, this.facturaSelected, "razonSocial");
+		BindUtils.postNotifyChange(null, null, this.facturaSelected, "email");
 		
 	}
 	
@@ -358,6 +437,78 @@ public class FacturacionVM{
 		
 		this.calcularTotales();
 	}
+	
+	public void procesarFactura() {
+		
+				
+		String [] columns = {"empresa","comprobanteTipo","establecimiento","puntoExpedicion","activo"};
+		Object [] values = {su.getEmpresa(), this.facturaDefault ,su.getSucursal().getEstablecimiento() , su.getPuntoExpedicion(),true};
+		
+		
+		//System.out.println("Factura Default: "+this.facturaDefault.getSigla());
+		
+		
+		Comprobante comp = this.reg.getObjectByColumns(Comprobante.class, columns, values);
+		this.facturaSelected.setTimbrado(comp.getTimbrado());
+		this.facturaSelected.setTimbradoFecha(comp.getFechaInicio());
+		this.facturaSelected.setTimbradoDocNro(comp.getEstablecimiento()+"-"+comp.getPuntoExpedicion()+"-"+String.format("%07d", comp.getSigteNro()));
+		this.facturaSelected.setTimbradoSerie(comp.getSerie());
+		
+		comp.setSigteNro(comp.getSigteNro()+1);
+		
+		this.save(comp);
+		
+		if(this.facturaSelected.getCondicion().getSigla().equals(ParamsLocal.SIGLA_TIPO_CONDICIONPAGO_CONTADO)) {
+			
+			this.facturaSelected.getPagos().get(0).setMonto(this.facturaSelected.getTotalDetalle());
+			
+		}else if (this.facturaSelected.getCondicion().getSigla().equals(ParamsLocal.SIGLA_TIPO_CONDICIONPAGO_CREDITO)){
+			
+			this.facturaSelected.setPlazoCredito(this.facturaSelected.getPlazoCredito()+" "+this.cbPlazo);
+			
+		}
+		
+		int cont = 1;
+		for(FacturaDetalle det : this.facturaSelected.getDetalles()) {
+			
+			if (det.getItemCodigo() == null) {
+				det.setItemCodigo("SC"+String.format("%03d", cont));
+				cont++;
+			}
+			
+		}
+		
+		this.facturaSelected = this.save(this.facturaSelected);
+		
+		this.enviarFactura(this.facturaSelected, su.getSucursal());
+		
+		//this.verKude(this.facturaSelected.getFacturaid());
+		
+		//this.limpiarPantalla();
+		
+		BindUtils.postNotifyChange(null, null, this, "*");
+
+	}
+	
+	public void enviarFactura(Factura f, Sucursal s) {
+		
+		MetodoDE mde = new MetodoDE();
+		Empresa e = this.reg.findObjectById(Empresa.class, this.getCurrentEmpresa().getEmpresaid());
+		DE de = mde.getDe(s.getNombre(), f,e.getFcwsId(), e.getFcwsPass());
+		
+		ResultRest rr = mde.enviarDE(this.getSistemaPropiedad("fcwsHOST").getValor()+"/factura", de);
+		
+		if (rr != null) {
+			
+			Gson gson = new Gson();
+			Kude k = gson.fromJson(rr.getMensaje(), Kude.class);
+			
+			f.setCdc(k.getCdc());
+			f.setQr(k.getQr());
+			
+			this.save(f);
+		}
+	}
 
 	public List<Object[]> getFacturaciones() {
 		return facturaciones;
@@ -454,6 +605,8 @@ public class FacturacionVM{
 	public Map<String, Tipo> getMapTipos() {
 		return mapTipos;
 	}
+	
+	
 	
 	
 	
