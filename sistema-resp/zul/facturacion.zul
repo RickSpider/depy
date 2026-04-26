@@ -44,23 +44,21 @@
 				</h:div>
 			</h:div>
 			<h:div class="search-bar">
-				<div class="search-input-wrap">
+				<h:div class="search-input-wrap">
 					<html>
-
-						
+					
 						<![CDATA[ <svg viewBox="0 0 24 24" fill="none"
 						stroke="currentColor" stroke-width="2"
 						stroke-linecap="round" stroke-linejoin="round">
 						<circle cx="11" cy="11" r="8"/><line x1="21"
 						y1="21" x2="16.65" y2="16.65"/> </svg> ]]>
-						
-						
-				</html>
-					<textbox value="@bind(vm.filtro)"
+
+					</html>
+					<textbox class="search-input" value="@bind(vm.filtro)"
 						onChanging="@command('filtrarTexto')" instant="true"
 						onOK="@command('filtrarTexto')"
 						placeholder="Buscar factura, cliente..." hflex="1" />
-				</div>
+				</h:div>
 			</h:div>
 			<h:div class="filter-bar">
 				<h:button id="btnfTodos" class="filter-pill active"
@@ -262,7 +260,7 @@
 						<h:div class="form-card-body">
 
 							<!-- RUC -->
-							<h:div class="form-row"
+							<h:div class="form-row cols-2"
 								style="margin-bottom:14px">
 								<h:div class="form-group">
 									<h:label class="form-label">
@@ -273,13 +271,85 @@
 									</h:label>
 									<h:div class="input-with-prefix">
 										<h:span class="input-prefix">
-											RUC
+											#
 										</h:span>
-										<h:input class="form-control"
-											type="text" id="rucInput" placeholder="80012345-6"
-											oninput="this.value=this.value.replace(/[^0-9\-]/g,'')" />
+										<textbox value="@bind(vm.facturaSelected.documentoNro)" class="form-control"
+											placeholder="80012345-6" onChange="@command('onChangeDoc')"
+											/>
 									</h:div>
 								</h:div>
+								
+								<h:div class="form-group">
+									
+						            <h:label class="form-label">Fecha <h:span class="required">*</h:span></h:label>
+						            
+								    <style>
+										.custom-datebox {
+										    position: relative;
+										    display: block;
+										    width: 100%;
+										}
+										
+										/* Input */
+										.custom-datebox .z-datebox-input {
+										    height: 40px;
+										    border-radius: 10px;
+										    border: 1px solid #dcdcdc;
+										    padding: 6px 40px 6px 12px;
+										    font-size: 14px;
+										    width: 100%;
+										    box-sizing: border-box;
+										}
+										
+										.custom-datebox .z-datebox-button {
+										    position: absolute;
+										    right: 10px;
+										    top: 50%;
+										    transform: translateY(-50%);
+										    background: transparent;
+										    border: none;
+										    display: flex;
+										    align-items: center;
+										    justify-content: center;
+										    padding: 0 !important;
+										    height: auto !important;   
+										}
+										
+										.custom-datebox .z-icon-calendar {
+											display: flex;
+											padding-top: 15px;
+											}
+											
+										.custom-datebox .z-datebox-input:focus {
+										    border-color: var(--sky);
+										    box-shadow: 0 0 0 3px rgba(14,165,233,.12);
+										    outline: none;
+										}
+										
+										.z-datebox-popup {
+										    width: auto !important;
+										    max-width: 280px !important;
+										    min-width: 250px !important;
+										    box-sizing: border-box;
+										    overflow: hidden;
+										}
+										
+										/* Evitar que el calendario se expanda horizontalmente */
+										.z-datebox-popup-content {
+										    width: auto !important;
+										}
+										
+										/* Seguridad extra contra layouts flex */
+										.z-popup-content {
+										    max-width: 280px !important;
+										}
+
+									</style>
+
+							        <datebox valueInLocalDateTime="@bind(vm.facturaSelected.fecha)" format="dd/MM/yyyy hh:mm:ss"  sclass="custom-datebox" readonly="true"/>
+							         
+						          </h:div>
+								
 							</h:div>
 
 							<!-- Razón social -->
@@ -292,9 +362,28 @@
 											*
 										</h:span>
 									</h:label>
-									<h:input class="form-control"
-										type="text" id="razonInput"
-										placeholder="Nombre del cliente o empresa" />
+									<h:div class="input-with-prefix">
+									<h:span class="input-prefix">
+											N/R
+										</h:span>
+										<textbox value="@bind(vm.facturaSelected.razonSocial)" class="form-control" placeholder="Nombre del cliente o empresa..."/>
+									</h:div>
+								</h:div>
+							</h:div>
+							
+							<!-- Email -->
+							<h:div class="form-row"
+								style="margin-bottom:14px">
+								<h:div class="form-group">
+									<h:label class="form-label">
+										Email
+									</h:label>
+									<h:div class="input-with-prefix">
+									<h:span class="input-prefix">
+											@
+										</h:span>
+										<textbox value="@bind(vm.facturaSelected.email)" class="form-control" placeholder="mail@mail.com..."/>
+									</h:div>
 								</h:div>
 							</h:div>
 

@@ -18,7 +18,7 @@
 					</html>
 		</span>
 		Facturas
-		<span class="nav-badge">12</span>
+		<!-- <span class="nav-badge">12</span>  -->
 	</h:a>
 	
 	
