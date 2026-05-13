@@ -96,8 +96,8 @@ public class FacturacionVM extends TemplateViewModelLocalResp{
 		
 		List<Object[]> aux = new ArrayList<>(this.reg.sqlNativo(
 				this.um.getSql("factura/listaFactura.sql")
-				.replace("?1", 1+"")
-				//.replace("?2", 1+"")
+				.replace("?1", this.su.getEmpresa().getEmpresaid()+"")
+				.replace("?2", this.su.getSucursal().getSucursalid()+"")
 				//.replace("?3", sdf.format(desde))
 				//.replace("?4", sdf.format(hasta))
 				//.replace("--1", "")
