@@ -1,8 +1,13 @@
 package com.depy.sistema.gestion;
 
+import java.text.SimpleDateFormat;
 import java.time.Duration;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.time.ZoneId;
+import java.time.temporal.TemporalAdjusters;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -49,9 +54,28 @@ public class FacturaVM extends TemplateViewModelLocal {
 	private boolean opBorrarFactura;
 
 	private boolean editar = false;
+	
+	private Date desde;
+	private Date hasta;
 
 	@Init(superclass = true)
 	public void initFacturaVM() {
+		
+		this.desde = Date.from(
+			    LocalDate.now()
+		        .withDayOfMonth(1)
+		        .atTime(LocalTime.MIN)
+		        .atZone(ZoneId.systemDefault())
+		        .toInstant()
+		);
+		
+		this.hasta = Date.from(
+			    LocalDate.now()
+		        .with(TemporalAdjusters.lastDayOfMonth())
+		        .atTime(LocalTime.MAX)
+		        .atZone(ZoneId.systemDefault())
+		        .toInstant()
+		);
 
 		this.inicializarFiltros();
 		this.cargarFacturas();
@@ -87,7 +111,7 @@ public class FacturaVM extends TemplateViewModelLocal {
 
 	@Command
 	@NotifyChange("lFacturas")
-	public void filtrarFactura() {
+	public void filtrarFacturas() {
 
 		this.lFacturas = this.filtrarListaObject(this.filtroColumns, this.lFacturasOri);
 
@@ -96,12 +120,28 @@ public class FacturaVM extends TemplateViewModelLocal {
 	@Command
 	@NotifyChange("*")
 	public void cargarFacturas() {
+		
+		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 
 		this.lFacturas = this.reg.sqlNativo(
-				this.um.getSql("factura/listaFactura.sql").replace("?1", this.getCurrentEmpresa().getEmpresaid() + ""));
-		this.lFacturasOri = this.lFacturas;
+				this.um.getSql("factura/listaFactura.sql")
+				.replace("?1", this.getCurrentEmpresa().getEmpresaid() + "")
+				.replace("?3", sdf.format(this.desde))
+				.replace("?4", sdf.format(this.hasta))
+				.replace("--2", "")
+				);
+		
+		this.lFacturasOri = new ArrayList<Object[]>(this.lFacturas);
 
-		this.filtrarFactura();
+		this.filtrarFacturas();
+
+	}
+	
+	@Command
+	@NotifyChange("lFacturas")
+	public void onChangeFiltroFechas() {
+
+		this.cargarFacturas();
 
 	}
 	
@@ -402,5 +442,23 @@ public class FacturaVM extends TemplateViewModelLocal {
 	public void setEventoSelected(Evento eventoSelected) {
 		this.eventoSelected = eventoSelected;
 	}
+
+	public Date getDesde() {
+		return desde;
+	}
+
+	public void setDesde(Date desde) {
+		this.desde = desde;
+	}
+
+	public Date getHasta() {
+		return hasta;
+	}
+
+	public void setHasta(Date hasta) {
+		this.hasta = hasta;
+	}
+	
+	
 
 }

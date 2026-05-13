@@ -1,8 +1,12 @@
 package com.depy.sistema.gestion;
 
+import java.text.SimpleDateFormat;
 import java.time.Duration;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.time.ZoneId;
+import java.time.temporal.TemporalAdjusters;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -49,9 +53,29 @@ public class RemisionVM extends TemplateViewModelLocal {
 	private boolean opBorrarRemision;
 
 	private boolean editar = false;
+	
+	private Date desde;
+	private Date hasta;
 
 	@Init(superclass = true)
 	public void initRemisionVM() {
+		
+		this.desde = Date.from(
+			    LocalDate.now()
+		        .withDayOfMonth(1)
+		        .atTime(LocalTime.MIN)
+		        .atZone(ZoneId.systemDefault())
+		        .toInstant()
+		);
+		
+		this.hasta = Date.from(
+			    LocalDate.now()
+		        .with(TemporalAdjusters.lastDayOfMonth())
+		        .atTime(LocalTime.MAX)
+		        .atZone(ZoneId.systemDefault())
+		        .toInstant()
+		);
+
 
 		this.inicializarFiltros();
 		this.cargarRemisiones();
@@ -87,7 +111,7 @@ public class RemisionVM extends TemplateViewModelLocal {
 
 	@Command
 	@NotifyChange("lRemisiones")
-	public void filtrarRemision() {
+	public void filtrarRemisiones() {
 
 		this.lRemisiones = this.filtrarListaObject(this.filtroColumns, this.lRemisionesOri);
 
@@ -97,11 +121,23 @@ public class RemisionVM extends TemplateViewModelLocal {
 	@NotifyChange("*")
 	public void cargarRemisiones() {
 
+		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 		this.lRemisiones = this.reg.sqlNativo(
-				this.um.getSql("remision/listaRemision.sql").replace("?1", this.getCurrentEmpresa().getEmpresaid() + ""));
+				this.um.getSql("remision/listaRemision.sql").replace("?1", this.getCurrentEmpresa().getEmpresaid() + "")
+				.replace("?3", sdf.format(this.desde))
+				.replace("?4", sdf.format(this.hasta))
+				.replace("--2", ""));
 		this.lRemisionesOri = this.lRemisiones;
 
-		this.filtrarRemision();
+		this.filtrarRemisiones();
+
+	}
+	
+	@Command
+	@NotifyChange("lRemisiones")
+	public void onChangeFiltroFechas() {
+
+		this.cargarRemisiones();
 
 	}
 	
@@ -403,5 +439,23 @@ public class RemisionVM extends TemplateViewModelLocal {
 	public void setEventoSelected(Evento eventoSelected) {
 		this.eventoSelected = eventoSelected;
 	}
+
+	public Date getDesde() {
+		return desde;
+	}
+
+	public void setDesde(Date desde) {
+		this.desde = desde;
+	}
+
+	public Date getHasta() {
+		return hasta;
+	}
+
+	public void setHasta(Date hasta) {
+		this.hasta = hasta;
+	}
+	
+	
 
 }

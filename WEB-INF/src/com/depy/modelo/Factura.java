@@ -221,7 +221,4 @@ public class Factura extends Documento implements Serializable {
 		this.totalDetalle = totalDetalle;
 	}
 
-	
-
-	
 }

@@ -2,7 +2,19 @@ SELECT
 clienteid,
 documentoNro,
 razonsocial,
-direccion
+direccion,
+empresaid
 FROM clientes
 where empresaid = ?1
-order by clienteid asc;
+
+UNION ALL
+
+SELECT
+clienteid,
+documentoNro,
+razonsocial,
+direccion,
+empresaid
+FROM clientes
+where empresaid is null
+order by empresaid desc, clienteid asc;

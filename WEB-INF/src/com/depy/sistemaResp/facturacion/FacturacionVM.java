@@ -1,6 +1,10 @@
 package com.depy.sistemaResp.facturacion;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.LocalTime;
+import java.time.ZoneId;
+import java.time.temporal.TemporalAdjusters;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
@@ -16,6 +20,7 @@ import org.zkoss.bind.annotation.Init;
 import org.zkoss.bind.annotation.NotifyChange;
 import org.zkoss.zk.ui.Sessions;
 import org.zkoss.zk.ui.util.Clients;
+import org.zkoss.zk.ui.util.Notification;
 
 import com.depy.modelo.Cliente;
 import com.depy.modelo.Comprobante;
@@ -24,7 +29,6 @@ import com.depy.modelo.Factura;
 import com.depy.modelo.FacturaDetalle;
 import com.depy.modelo.FacturaPago;
 import com.depy.modelo.Ruc;
-import com.depy.modelo.Sucursal;
 import com.depy.sistemaResp.TemplateViewModelLocalResp;
 import com.depy.util.ParamsLocal;
 import com.depy.utilde.MetodoDE;
@@ -59,10 +63,21 @@ public class FacturacionVM extends TemplateViewModelLocalResp{
 	@Init(superclass = true)
 	public void initFacturacionVM() {
 		
+		this.desde = Date.from(
+			    LocalDate.now()
+		        .withDayOfMonth(1)
+		        .atTime(LocalTime.MIN)
+		        .atZone(ZoneId.systemDefault())
+		        .toInstant()
+		);
 		
-		
-		this.desde = this.um.modificarHorasMinutosSegundos(new Date(), 0, 0, 0, 0);
-		this.hasta = this.um.modificarHorasMinutosSegundos(this.desde, 23, 59, 59, 99);
+		this.hasta = Date.from(
+			    LocalDate.now()
+		        .with(TemporalAdjusters.lastDayOfMonth())
+		        .atTime(LocalTime.MAX)
+		        .atZone(ZoneId.systemDefault())
+		        .toInstant()
+		);
 		
 		this.cargarDatos();
 		this.cargarDatosTipos();
@@ -222,6 +237,7 @@ public class FacturacionVM extends TemplateViewModelLocalResp{
 		
 		
 		
+		
 		if (pantalla == 1) {
 			
 			this.iva0 = 0;
@@ -234,7 +250,8 @@ public class FacturacionVM extends TemplateViewModelLocalResp{
 			this.facturaSelected.setFecha(LocalDateTime.now());
 			this.facturaSelected.setMoneda(this.mapTipos.get(ParamsLocal.SIGLA_TIPO_MONEDA_GUARANIES));
 			this.facturaSelected.setMonedaCambio(1.0);
-			//this.facturaSelected.setSucursal(getCurrentSucursal());
+			this.facturaSelected.setSucursal(this.su.getSucursal());
+			this.facturaSelected.setEmpresa(getCurrentEmpresa());
 
 			FacturaPago fp = new FacturaPago();
 			fp.setPagoTipo(this.mapTipos.get(ParamsLocal.SIGLA_TIPO_FORMAPAGO_EFECTIVO));
@@ -246,6 +263,9 @@ public class FacturacionVM extends TemplateViewModelLocalResp{
 			this.facturaSelected.setCondicion(this.mapTipos.get(ParamsLocal.SIGLA_TIPO_CONDICIONPAGO_CONTADO));			
 						
 			this.agregarDetalle();
+			
+			this.onChangeCondicion("btnContado");
+			this.onChangeMoneda("btnPyg");
 			
 		}
 		
@@ -271,7 +291,7 @@ public class FacturacionVM extends TemplateViewModelLocalResp{
 				
 			}else {
 				this.facturaSelected.setCondicion(this.mapTipos.get(ParamsLocal.SIGLA_TIPO_CONDICIONPAGO_CREDITO));
-				//this.cbPlazo ="dias";
+				this.cbPlazo ="Dias";
 				this.facturaSelected.setPagos(new ArrayList<>());
 			}
 			
@@ -368,7 +388,7 @@ public class FacturacionVM extends TemplateViewModelLocalResp{
 	}
 	
 	@Command
-	@NotifyChange({"iva5","iva10","exento","facturaSelected"})
+	@NotifyChange({"iva5","iva10","iva0","facturaSelected"})
 	public void borrarDetalle(@BindingParam("data") FacturaDetalle detalle) {
 		
 		this.facturaSelected.getDetalles().remove(detalle);
@@ -391,7 +411,7 @@ public class FacturacionVM extends TemplateViewModelLocalResp{
 	private double iva0 = 0;
 	
 	@Command
-	@NotifyChange({"iva5","iva10","exento","facturaSelected"})
+	@NotifyChange({"iva5","iva10","iva0","facturaSelected.totalDetalle"})
 	public void calcularTotales() {
 		
 		double totalDetalle = 0;
@@ -415,10 +435,12 @@ public class FacturacionVM extends TemplateViewModelLocalResp{
 		}
 		
 		this.facturaSelected.setTotalDetalle(totalDetalle);
+		
+		BindUtils.postNotifyChange(null, null, this.facturaSelected, "totalDetalle");
 	}
 	
 	@Command
-	@NotifyChange({"iva5","iva10","exento","facturaSelected"})
+	@NotifyChange({"iva5","iva10","iva0"})
 	public void onChangeIva(@BindingParam("detalle") FacturaDetalle det) {
 		
 		 switch ((int) det.getTasaIva()) {
@@ -438,8 +460,54 @@ public class FacturacionVM extends TemplateViewModelLocalResp{
 		this.calcularTotales();
 	}
 	
+	public boolean verificarCampos() {
+		
+		if (!this.facturaSelected.getMoneda().getSigla().equals(ParamsLocal.SIGLA_TIPO_MONEDA_GUARANIES) && this.facturaSelected.getMonedaCambio() == 1 ) {
+			Notification.show("Cuando la moneda no es Guaranies(PYG) el cambio debe ser mayor a 1 (uno).");
+			return false;
+		}
+		
+		if (this.facturaSelected.getCondicion().getSigla().equals(ParamsLocal.SIGLA_TIPO_CONDICIONPAGO_CREDITO)) {
+			
+			if (this.facturaSelected.getPlazoCredito() == null || this.facturaSelected.getPlazoCredito().isBlank()) {
+				Notification.show("Debes cargar el plazo ya sea en dias o meses.");
+				//this.mensajeInfo("Debes cargar el plazo ya sea en dias o meses.");
+				return false;
+			}
+						
+		}
+		
+		for (FacturaDetalle x : this.facturaSelected.getDetalles()) {
+			
+			/*if (x.getItemCodigo() == null || x.getItemCodigo().isBlank()) {
+				this.mensajeInfo("Tienes items sin codigo.");
+				return false;
+				
+			}*/
+			
+			if (x.getItemDescripcion() == null ||  x.getItemDescripcion().isBlank()) {
+				Notification.show("Tienes items sin descripcion.");
+				//this.mensajeInfo("Tienes items sin descripcion.");
+				return false;
+			}
+			
+			if (x.getPrecioUnitario() == null ||  x.getPrecioUnitario()<=0) {
+				Notification.show("El precio debe ser mayor o igual a 1 (uno).");
+				//this.mensajeInfo("El precio debe ser mayor o igual a 1 (uno).");
+				return false;
+			}
+
+		}
+		
+		return true;
+	}
+	
+	@Command
 	public void procesarFactura() {
 		
+		if (!this.verificarCampos()) {
+			return;
+		}
 				
 		String [] columns = {"empresa","comprobanteTipo","establecimiento","puntoExpedicion","activo"};
 		Object [] values = {su.getEmpresa(), this.facturaDefault ,su.getSucursal().getEstablecimiento() , su.getPuntoExpedicion(),true};
@@ -480,21 +548,25 @@ public class FacturacionVM extends TemplateViewModelLocalResp{
 		
 		this.facturaSelected = this.save(this.facturaSelected);
 		
-		this.enviarFactura(this.facturaSelected, su.getSucursal());
+		this.enviarFactura(this.facturaSelected);
 		
 		//this.verKude(this.facturaSelected.getFacturaid());
 		
 		//this.limpiarPantalla();
 		
+		this.cambiarPantalla(0);
+		
+		cargarDatos();
+		
 		BindUtils.postNotifyChange(null, null, this, "*");
 
 	}
 	
-	public void enviarFactura(Factura f, Sucursal s) {
+	public void enviarFactura(Factura f) {
 		
 		MetodoDE mde = new MetodoDE();
 		Empresa e = this.reg.findObjectById(Empresa.class, this.getCurrentEmpresa().getEmpresaid());
-		DE de = mde.getDe(s.getNombre(), f,e.getFcwsId(), e.getFcwsPass());
+		DE de = mde.getDe(f.getSucursal().getNombre(), f,e.getFcwsId(), e.getFcwsPass());
 		
 		ResultRest rr = mde.enviarDE(this.getSistemaPropiedad("fcwsHOST").getValor()+"/factura", de);
 		
@@ -604,6 +676,22 @@ public class FacturacionVM extends TemplateViewModelLocalResp{
 
 	public Map<String, Tipo> getMapTipos() {
 		return mapTipos;
+	}
+
+	public Tipo getEfectivoDefault() {
+		return efectivoDefault;
+	}
+
+	public void setEfectivoDefault(Tipo efectivoDefault) {
+		this.efectivoDefault = efectivoDefault;
+	}
+
+	public String getCbPlazo() {
+		return cbPlazo;
+	}
+
+	public void setCbPlazo(String cbPlazo) {
+		this.cbPlazo = cbPlazo;
 	}
 	
 	

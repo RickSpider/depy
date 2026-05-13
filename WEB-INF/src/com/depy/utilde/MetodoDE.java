@@ -20,6 +20,7 @@ import com.depy.utilde.modelo.Contribuyente;
 import com.depy.utilde.modelo.DE;
 import com.depy.utilde.modelo.DEDetalle;
 import com.depy.utilde.modelo.DocAsociado;
+import com.depy.utilde.modelo.InfoComprasPublicas;
 import com.depy.utilde.modelo.MercaderiaMov;
 import com.depy.utilde.modelo.NotaCreditoDebito;
 import com.depy.utilde.modelo.Receptor;
@@ -132,6 +133,22 @@ public class MetodoDE{
 			
 			de.setCondicionOperacion(co);
 			
+			if (!f.getCpModalidad().isBlank() 
+					&& f.getCpEntidad() != null 
+					&& f.getCpAno() != null
+					&& f.getCpFechaEmision() != null
+					&& f.getCpSecuencia() != null
+					) {
+				
+				de.setInfComprasPublicas(new InfoComprasPublicas());
+				de.getInfComprasPublicas().setModalidad(f.getCpModalidad());
+				de.getInfComprasPublicas().setEntidad(f.getCpEntidad());
+				de.getInfComprasPublicas().setAno(f.getCpAno());
+				de.getInfComprasPublicas().setSecuencia(f.getCpSecuencia());;
+				de.getInfComprasPublicas().setFechaEmision(Date.from(f.getCpFechaEmision().atStartOfDay(ZoneId.systemDefault()).toInstant()));
+				
+			}
+			
 		   
 		} else if (doc instanceof NotaCredito n) {
 			
@@ -233,6 +250,14 @@ public class MetodoDE{
 			det.setAfectacionTributaria(x.getAfectacionTributaria()!= null ? x.getAfectacionTributaria() : null);
 			det.setProporcionIVA(x.getProporcionIva()!= null ? x.getProporcionIva() : null);
 			det.setTasaIVA(x.getTasaIva()!= null ? x.getTasaIva() : null);
+			
+			if (!x.getDncpE().isBlank() && !x.getDncpG().isBlank() ) {
+				
+				det.setDncpG(x.getDncpG());
+				det.setDncpE(x.getDncpE());
+				
+				
+			}
 			
 			if (x.getUnidadMedida() != null) {
 			    det.setItemUndMedida(x.getUnidadMedida().getUnidadmedidaid());

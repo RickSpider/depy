@@ -11,6 +11,32 @@
 		<hlayout vflex="1">
 
 			<vlayout hflex="1" vflex="1">
+				<hlayout hflex="1">
+				
+					<hbox pack="start" >
+				
+					<tablelayout columns="4">
+						<tablechildren>
+								<label value="Desde:"
+									style="font-weight:bold" />
+							</tablechildren>
+							<tablechildren>
+								<datebox value="@bind(vm.desde)"
+									format="dd/MM/yyyy HH:mm:ss"									
+									 width="150px" onChange="@command('onChangeFiltroFechas')"/>
+							</tablechildren>
+	
+							<tablechildren>
+								<label value="Hasta:"
+									style="font-weight:bold" />
+							</tablechildren>
+							<tablechildren>
+								<datebox value="@bind(vm.hasta)"
+									format="dd/MM/yyyy HH:mm:ss"									
+									 width="150px" onChange="@command('onChangeFiltroFechas')"/>
+							</tablechildren>
+					</tablelayout>
+				</hbox>
 
 				<hbox pack="end" hflex="1">
 				
@@ -21,6 +47,9 @@
 						onClick="@command('consultarEstados')"/>
 
 				</hbox>
+				
+				</hlayout>
+				
 
 				<listbox emptyMessage="lista vacía..." mold="paging" autopaging="true"
 					vflex="1" model="@load(vm.lFacturas)" >

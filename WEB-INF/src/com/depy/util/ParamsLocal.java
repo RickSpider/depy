@@ -76,6 +76,7 @@ public class ParamsLocal extends Params{
 	public static final String SIGLA_TIPO_DOCUMENTO_PASAPORTE = "DOCUMENTO_PASAPORTE";
 	public static final String SIGLA_TIPO_DOCUMENTO_CE = "DOCUMENTO_CE";
 	public static final String SIGLA_TIPO_DOCUMENTO_CR = "DOCUMENTO_CR";
+	public static final String SIGLA_TIPO_DOCUMENTO_INNOMINADO = "DOCUMENTO_INNOMINADO";
 	
 	public static final String SIGLA_TIPOTIPO_COMPROBANTE= "COMPROBANTE";
 	public static final String SIGLA_TIPO_COMPROBANTE_FACTURA = "COMPROBANTE_FACTURA";

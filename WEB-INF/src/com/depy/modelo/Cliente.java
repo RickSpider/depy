@@ -2,6 +2,8 @@ package com.depy.modelo;
 
 import java.io.Serializable;
 
+import org.hibernate.annotations.ColumnDefault;
+
 import com.doxacore.modelo.Departamento;
 import com.doxacore.modelo.Pais;
 import com.doxacore.modelo.Tipo;
@@ -45,6 +47,7 @@ public class Cliente extends ModeloERP implements Serializable {
 	
 	
 	private String direccion;
+	
 	@ManyToOne
     @JoinColumn(name = "paisid")
 	private Pais pais;
@@ -61,6 +64,9 @@ public class Cliente extends ModeloERP implements Serializable {
 	private String email;
 	private String telefono;
 	private String celular;
+	
+	@ColumnDefault("false")
+	private Boolean gubernamental;
 	
 	
 	@Override
@@ -158,6 +164,13 @@ public class Cliente extends ModeloERP implements Serializable {
 	public void setDocumentoTipoOtro(String documentoTipoOtro) {
 		this.documentoTipoOtro = documentoTipoOtro;
 	}
+	public Boolean getGubernamental() {
+		return gubernamental;
+	}
+	public void setGubernamental(Boolean gubernamental) {
+		this.gubernamental = gubernamental;
+	}
+	
 	
 	
 	

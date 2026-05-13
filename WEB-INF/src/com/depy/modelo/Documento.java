@@ -2,6 +2,7 @@ package com.depy.modelo;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
 
 import org.hibernate.annotations.ColumnDefault;
@@ -313,6 +314,4 @@ public abstract class Documento extends ModeloERP{
 		this.infoFisco = infoFisco;
 	}
 
-	
-	
 }

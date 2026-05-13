@@ -63,13 +63,13 @@ public class FacturacionVM extends TemplateViewModelLocal {
 	private Tipo facturaDefault;
 	private Tipo efectivoDefault;
 	
+	private boolean dncpOpen = false;
+	
 	@Init(superclass = true)
 	public void initFacturacionVM() {
 		
 		this.desde = this.um.modificarHorasMinutosSegundos(new Date(), 0, 0, 0, 0);
 		this.hasta = this.um.modificarHorasMinutosSegundos(this.desde, 23, 59, 59, 99);
-		
-		
 		
 		generarSearchModels();
 		cargarDatosTipos();
@@ -193,11 +193,11 @@ public class FacturacionVM extends TemplateViewModelLocal {
 			
 			if (t.getTipotipo().getSigla().equals(ParamsLocal.SIGLA_TIPOTIPO_CONDICIONPAGO)) {
 				
-				lCondicionPago.add(t);
+				this.lCondicionPago.add(t);
 				
 			}else if (t.getTipotipo().getSigla().equals(ParamsLocal.SIGLA_TIPOTIPO_MONEDA)) {
 				
-				lMoneda.add(t);
+				this.lMoneda.add(t);
 				
 			}else if (t.getTipotipo().getSigla().equals(ParamsLocal.SIGLA_TIPOTIPO_IVA)) {
 				
@@ -205,7 +205,7 @@ public class FacturacionVM extends TemplateViewModelLocal {
 				
 			}else if (t.getTipotipo().getSigla().equals(ParamsLocal.SIGLA_TIPOTIPO_DOCUMENTO)) {
 				
-				lDocumentoTipo.add(t);
+				this.lDocumentoTipo.add(t);
 				
 			}
 			
@@ -588,9 +588,6 @@ public class FacturacionVM extends TemplateViewModelLocal {
 	}
 	
 	public void procesarFactura() {
-		
-		
-		
 				
 		Cliente c = this.reg.findObjectById(Cliente.class, this.clienteSMSelected.getId());
 		
@@ -618,7 +615,7 @@ public class FacturacionVM extends TemplateViewModelLocal {
 		Object [] values = {su.getEmpresa(), this.facturaDefault ,su.getSucursal().getEstablecimiento() , su.getPuntoExpedicion(),true};
 		
 		
-		System.out.println("Factura Default: "+this.facturaDefault.getSigla());
+		//System.out.println("Factura Default: "+this.facturaDefault.getSigla());
 		
 		
 		Comprobante comp = this.reg.getObjectByColumns(Comprobante.class, columns, values);
@@ -655,8 +652,6 @@ public class FacturacionVM extends TemplateViewModelLocal {
 		
 		this.enviarFactura(this.facturaSelected, su.getSucursal());
 		
-		this.verKude(this.facturaSelected.getFacturaid());
-		
 		this.limpiarPantalla();
 		
 		BindUtils.postNotifyChange(null, null, this, "*");
@@ -680,6 +675,11 @@ public class FacturacionVM extends TemplateViewModelLocal {
 			f.setQr(k.getQr());
 			
 			this.save(f);
+			
+			this.verKude(this.facturaSelected.getFacturaid());
+		}else {
+			this.save(f);
+			this.mensajeError("Ocurrio un error al enviar la factura, se reintentara en unos minutos");
 		}
 	}
 	
@@ -923,5 +923,14 @@ public class FacturacionVM extends TemplateViewModelLocal {
 		this.localidadSMSelected = localidadSMSelected;
 	}
 
+	public boolean isDncpOpen() {
+		return dncpOpen;
+	}
+
+	public void setDncpOpen(boolean dncpOpen) {
+		this.dncpOpen = dncpOpen;
+	}
+
+	
 	
 }

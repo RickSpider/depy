@@ -75,7 +75,7 @@ public class ClienteVM extends TemplateViewModelLocal {
 
 	@Command
 	@NotifyChange("lClientes")
-	public void filtrarCliente() {
+	public void filtrarClientes() {
 
 		this.lClientes = this.filtrarListaObject(this.filtroColumns, this.lClientesOri);
 
@@ -87,7 +87,7 @@ public class ClienteVM extends TemplateViewModelLocal {
 				this.um.getSql("cliente/listaCliente.sql").replace("?1", this.getCurrentEmpresa().getEmpresaid() + ""));
 		this.lClientesOri = this.lClientes;
 
-		this.filtrarCliente();
+		this.filtrarClientes();
 
 	}
 

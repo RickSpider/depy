@@ -13,7 +13,11 @@ te.tipo,
 TO_CHAR(f.eventofecha, 'dd-mm-yyyy HH24:MI:SS') as eventofecha,
 f.eventoEstado,
 tm.tipo,
-f.monedaCambio
+f.monedaCambio,
+case 
+	when tm.tipo like 'PYG' THEN '₲' 
+	when tm.tipo like 'USD' then '$'
+	END AS simboloMoneda
 from facturas f
 left join tipos tc on tc.tipoid = f.condicionid
 left join tipos te on te.tipoid = f.eventotipoid

@@ -1,0 +1,121 @@
+/* =========================
+		CUSTOM COMBOBOX 
+ ========================= */
+.custom-combobox {
+	display: inline-block;
+}
+
+/* INPUT */
+.custom-combobox .z-combobox-input {
+	height: 34px !important;
+	border: 1px solid #dcdcdc !important;
+	border-radius: 10px !important;
+	background: #fff !important;
+	padding: 0 14px;
+	font-size: 14px;
+	box-sizing: border-box !important;
+}
+
+/* BOTÓN */
+.custom-combobox .z-combobox-button {
+	width: 36px !important;
+	box-sizing: border-box !important;
+	height: 34px !important;
+	border: 1px solid #bdbdbd !important;
+	border-left: 0 !important;
+	border-radius: 0 12px 12px 0 !important;
+	background: #f3f3f3 !important;
+	padding: 0 !important;
+	text-align: center;
+}
+
+/* ICONO */
+.custom-combobox .z-combobox-button i {
+	position: static !important;
+	margin: 0 !important;
+	padding: 0 !important;
+	width: 100%;
+	height: 100%;
+	line-height: 34px !important;
+	text-align: center;
+	font-size: 12px;
+	color: #607d8b;
+}
+
+/* HOVER */
+.custom-combobox:hover .z-combobox-input, .custom-combobox:hover .z-combobox-button
+	{
+	border-color: #90caf9 !important;
+}
+
+/* FOCUS */
+.custom-combobox:focus-within .z-combobox-input, .custom-combobox:focus-within .z-combobox-button
+	{
+	border-color: #4da3ff !important;
+	box-shadow: 0 0 0 2px rgba(77, 163, 255, .18), 0 0 7px
+		rgba(77, 163, 255, .35) !important;
+	z-index: 2;
+}
+
+/*====================
+	CUSTOM DATEBOX
+======================*/
+.custom-datebox {
+	position: relative;
+	display: block;
+	width: 100%;
+}
+
+/* Input */
+.custom-datebox .z-datebox-input {
+	height: 40px;
+	border-radius: 10px;
+	border: 1px solid #dcdcdc;
+	padding: 6px 40px 6px 12px;
+	font-size: 14px;
+	width: 100%;
+	box-sizing: border-box;
+}
+
+.custom-datebox .z-datebox-button {
+	position: absolute;
+	right: 10px;
+	top: 50%;
+	transform: translateY(-50%);
+	background: transparent;
+	border: none;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	padding: 0 !important;
+	height: auto !important;
+}
+
+.custom-datebox .z-icon-calendar {
+	display: flex;
+	padding-top: 15px;
+}
+
+.custom-datebox .z-datebox-input:focus {
+	border-color: var(--sky);
+	box-shadow: 0 0 0 3px rgba(14, 165, 233, .12);
+	outline: none;
+}
+
+.z-datebox-popup {
+	width: auto !important;
+	max-width: 280px !important;
+	min-width: 250px !important;
+	box-sizing: border-box;
+	overflow: hidden;
+}
+
+/* Evitar que el calendario se expanda horizontalmente */
+.z-datebox-popup-content {
+	width: auto !important;
+}
+
+/* Seguridad extra contra layouts flex */
+.z-popup-content {
+	max-width: 280px !important;
+}

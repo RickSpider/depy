@@ -148,6 +148,51 @@
 			</hbox>
 			
 		</hlayout>
+		
+		<groupbox id="dncp" open="@bind(vm.dncpOpen)" >
+			<caption label="Datos DNCP"/>
+			
+			<tablelayout columns="10">
+			
+				<tablechildren>
+					<label value="Modalidad:"
+						style="font-weight:bold" />
+				</tablechildren>
+				<tablechildren>
+					<textbox value="@bind(vm.facturaSelected.cpModalidad)" maxlength="2" width="80px"/>
+				</tablechildren>
+				<tablechildren>
+					<label value="Entidad:"
+						style="font-weight:bold" />
+				</tablechildren>
+				<tablechildren>
+					<textbox value="@bind(vm.facturaSelected.cpEntidad)" maxlength="5" width="80px"/>
+				</tablechildren>
+				<tablechildren>
+					<label value="Año:"
+						style="font-weight:bold" />
+				</tablechildren>
+				<tablechildren>
+					<textbox value="@bind(vm.facturaSelected.cpAno)" maxlength="2" width="80px"/>
+				</tablechildren>
+				<tablechildren>
+					<label value="Secuencia:"
+						style="font-weight:bold" />
+				</tablechildren>
+				<tablechildren>
+					<textbox value="@bind(vm.facturaSelected.cpSecuencia)" maxlength="7" width="80px"/>
+				</tablechildren>
+				<tablechildren>
+					<label value="Emision cod. Fecha:"
+						style="font-weight:bold" />
+				</tablechildren>
+				<tablechildren>
+					<datebox valueInLocalDate="@bind(vm.facturaSelected.cpFechaEmision)" format="dd/MM/yyy" width="130px"/>		
+				</tablechildren>
+			
+			</tablelayout>
+			
+		</groupbox>
 
 		<hlayout vflex="1" hflex="1">
 			<listbox vflex="1" hflex="1"
@@ -156,6 +201,8 @@
 
 					<listheader label="Codigo" hflex="min" />
 					<listheader label="Descripcion" />
+					<listheader label ="DncpG" visible="@load(vm.dncpOpen)" width="80px"/>
+					<listheader label ="DncpE" visible="@load(vm.dncpOpen)" width="70px"/>
 					<listheader label="Precio Unitario" hflex='min' />
 					<listheader label="Cantidad" hflex='min' />
 					<listheader label="IVA" hflex='min' />
@@ -171,11 +218,20 @@
 
 					<listitem>
 						<listcell>
-							<textbox value="@bind(each.itemCodigo)"  width="100px" />
+							<textbox value="@bind(each.itemCodigo)"  width="100px" maxlength="20"/>
 						</listcell>
 						<listcell>
-							<textbox value="@bind(each.itemDescripcion)" hflex="1" />
+							<textbox value="@bind(each.itemDescripcion)" hflex="1" maxlength="120"/>
 						</listcell>
+						
+						<listcell>
+							<textbox value="@bind(each.dncpG)" width="70px" maxlength="8"/>
+						</listcell>
+						
+						<listcell>
+							<textbox value="@bind(each.dncpE)" width="60px" maxlength="4"/>
+						</listcell>
+						
 						<listcell>
 							<doublebox width="100px" value="@bind(each.precioUnitario)"
 								style="text-align:right" format="#,###.##" onChange="@command('calcularTotales')" />
