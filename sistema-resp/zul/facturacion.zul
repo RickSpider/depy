@@ -151,8 +151,8 @@
 							</h:div>
 						</h:div>
 						<h:div class="card-actions">
-							<h:button class="btn-icon btn-cancel"
-								onclick="showToast('Anulando ${inv.id}…')">
+							<!-- <h:button class="btn-icon btn-cancel"
+								onclick="showToast('No implementado')">
 								<html>
 									<![CDATA[ <svg viewBox="0 0 24 24"
 									fill="none" stroke="currentColor"
@@ -165,9 +165,9 @@
 									</svg> ]]>
 								</html>
 								Anular
-							</h:button>
+							</h:button> -->
 							<h:button class="btn-icon btn-doc"
-								onclick="showToast('Abriendo ${inv.id}…')">
+								onclick="showToast('No implementado')">
 								<html>
 									<![CDATA[ <svg viewBox="0 0 24 24"
 									fill="none" stroke="currentColor"

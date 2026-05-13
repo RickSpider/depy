@@ -133,7 +133,8 @@ public class MetodoDE{
 			
 			de.setCondicionOperacion(co);
 			
-			if (!f.getCpModalidad().isBlank() 
+			if (f.getCpModalidad() != null &&
+					!f.getCpModalidad().isBlank() 
 					&& f.getCpEntidad() != null 
 					&& f.getCpAno() != null
 					&& f.getCpFechaEmision() != null
@@ -251,7 +252,8 @@ public class MetodoDE{
 			det.setProporcionIVA(x.getProporcionIva()!= null ? x.getProporcionIva() : null);
 			det.setTasaIVA(x.getTasaIva()!= null ? x.getTasaIva() : null);
 			
-			if (!x.getDncpE().isBlank() && !x.getDncpG().isBlank() ) {
+			if (x.getDncpE() != null && !x.getDncpE().isBlank() 
+					&& x.getDncpG() != null && !x.getDncpG().isBlank() ) {
 				
 				det.setDncpG(x.getDncpG());
 				det.setDncpE(x.getDncpE());
