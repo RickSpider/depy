@@ -1,20 +1,14 @@
 <?page title="facturacion" contentType="text/html;charset=UTF-8"?>
 
-
-
 <zk xmlns="http://www.zkoss.org/2005/zul"
 	xmlns:h="http://www.w3.org/1999/xhtml">
 	
 	<style src="/sistema-resp/css/customZkoss.min.css" />
 
 	<div apply="org.zkoss.bind.BindComposer"
-		viewModel="@id('vm')@init('com.depy.sistemaResp.facturacion.FacturacionVM')">
-
+		viewModel="@id('vm')@init('com.depy.sistemaResp.facturacion.FacturacionRVM')">
 		<div visible="@load(vm.pantalla[0])">
-
 			<h:div class="page-header">
-
-
 				<h:div class="page-title-block">
 					<h:div class="page-label">Módulo</h:div>
 					<h:div class="page-title">Facturas</h:div>
@@ -48,13 +42,11 @@
 			<h:div class="search-bar">
 				<h:div class="search-input-wrap">
 					<html>
-					
 						<![CDATA[ <svg viewBox="0 0 24 24" fill="none"
 						stroke="currentColor" stroke-width="2"
 						stroke-linecap="round" stroke-linejoin="round">
 						<circle cx="11" cy="11" r="8"/><line x1="21"
 						y1="21" x2="16.65" y2="16.65"/> </svg> ]]>
-
 					</html>
 					<textbox class="search-input" value="@bind(vm.filtro)"
 						onChanging="@command('filtrarTexto')" instant="true"
@@ -152,7 +144,7 @@
 						</h:div>
 						<h:div class="card-actions">
 							<!-- <h:button class="btn-icon btn-cancel"
-								onclick="showToast('No implementado')">
+								onclick="@Command('createKude')">
 								<html>
 									<![CDATA[ <svg viewBox="0 0 24 24"
 									fill="none" stroke="currentColor"
@@ -167,7 +159,7 @@
 								Anular
 							</h:button> -->
 							<h:button class="btn-icon btn-doc"
-								onclick="showToast('No implementado')">
+								onClick="@command('createKude', ceid=each[0], tipode='factura')">
 								<html>
 									<![CDATA[ <svg viewBox="0 0 24 24"
 									fill="none" stroke="currentColor"
@@ -691,14 +683,8 @@
 							Facturar
 						</h:button>
 					</h:div>
-
 				</h:div><!-- /form-body -->
-
-
 			</h:div>
-
 		</div>
-
 	</div>
-
 </zk>

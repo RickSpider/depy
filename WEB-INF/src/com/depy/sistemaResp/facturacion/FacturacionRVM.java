@@ -1,5 +1,14 @@
 package com.depy.sistemaResp.facturacion;
 
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.StringReader;
+import java.io.StringWriter;
+import java.nio.charset.StandardCharsets;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
@@ -10,14 +19,33 @@ import java.util.Arrays;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 
+import javax.imageio.ImageIO;
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.transform.OutputKeys;
+import javax.xml.transform.Transformer;
+import javax.xml.transform.TransformerFactory;
+import javax.xml.transform.dom.DOMSource;
+import javax.xml.transform.stream.StreamResult;
+import javax.xml.transform.stream.StreamSource;
+import javax.xml.xpath.XPath;
+import javax.xml.xpath.XPathConstants;
+import javax.xml.xpath.XPathFactory;
+
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
+import org.w3c.dom.Node;
+import org.xml.sax.InputSource;
 import org.zkoss.bind.BindUtils;
 import org.zkoss.bind.annotation.AfterCompose;
 import org.zkoss.bind.annotation.BindingParam;
 import org.zkoss.bind.annotation.Command;
 import org.zkoss.bind.annotation.Init;
 import org.zkoss.bind.annotation.NotifyChange;
+import org.zkoss.zhtml.Filedownload;
 import org.zkoss.zk.ui.Sessions;
 import org.zkoss.zk.ui.util.Clients;
 import org.zkoss.zk.ui.util.Notification;
@@ -28,18 +56,29 @@ import com.depy.modelo.Empresa;
 import com.depy.modelo.Factura;
 import com.depy.modelo.FacturaDetalle;
 import com.depy.modelo.FacturaPago;
+import com.depy.modelo.NotaCredito;
+import com.depy.modelo.Remision;
 import com.depy.modelo.Ruc;
 import com.depy.sistemaResp.TemplateViewModelLocalResp;
 import com.depy.util.ParamsLocal;
+import com.depy.util.UtilLocalMetodos;
 import com.depy.utilde.MetodoDE;
+import com.depy.utilde.conexion.HttpOrHttpsConexion;
 import com.depy.utilde.conexion.ResultRest;
 import com.depy.utilde.modelo.DE;
 import com.depy.utilde.modelo.Kude;
+import com.depy.utilde.response.ResponseComprobante;
 import com.doxacore.modelo.Tipo;
-
+import com.doxacore.util.Register;
+import com.doxacore.util.SystemInfo;
 import com.google.gson.Gson;
 
-public class FacturacionVM extends TemplateViewModelLocalResp{
+import net.sf.jasperreports.engine.JasperExportManager;
+import net.sf.jasperreports.engine.JasperFillManager;
+import net.sf.jasperreports.engine.JasperPrint;
+import net.sf.jasperreports.engine.data.JRXmlDataSource;
+
+public class FacturacionRVM extends TemplateViewModelLocalResp{
 	
 	
 	
@@ -316,43 +355,58 @@ public class FacturacionVM extends TemplateViewModelLocalResp{
 			return;
 		}*/
 		
-		int idx = docNro.indexOf('-');
-		if (idx > 0) {
-			
-			String [] cols = {"empresa", "documentoNro"};
-			Object [] value = {this.getCurrentEmpresa(), this.facturaSelected.getDocumentoNro()}; 
-			
-			Cliente c = this.reg.getObjectByColumns(Cliente.class, cols, value);
-			
-			if (c != null) {
-				
-				this.facturaSelected.setCliente(c);
-				this.facturaSelected.setDocumentoNro(c.getDocumentoNro());
-				this.facturaSelected.setRazonSocial(c.getRazonsocial());
-				this.facturaSelected.setDocumentoTipo(c.getDocumentoTipo());
-				
-				this.facturaSelected.setEmail(c.getEmail());
-						
-				if (c.getLocalidad() != null && c.getDireccion() != null) {
-					this.facturaSelected.setLocalidad(c.getLocalidad());
-					this.facturaSelected.setDireccion(c.getDireccion());
-					this.facturaSelected.setCasaNro(c.getCasaNro());
-				}
-				
-			}else {
-				
-				String [] columns = {"ruc","dv"};
-			    Object[] valor = {docNro.substring(0, idx), docNro.substring(idx + 1)};
-			   
-			    Ruc ruc = this.reg.getObjectByColumns(Ruc.class, columns, valor);
-			    
-			    this.facturaSelected.setRazonSocial(ruc != null ? ruc.getRazonSocial(): null);
-			    
-			    this.facturaSelected.setDocumentoTipo(ruc != null ?  this.mapTipos.get(ParamsLocal.SIGLA_TIPO_DOCUMENTO_RUC):null );
+		String [] cols;
+		Object [] values;
 
-			}
-		    
+		if (!docNro.equals("0")) {
+
+		    cols = new String[]{"empresa", "documentoNro"};
+		    values = new Object[]{this.getCurrentEmpresa(), this.facturaSelected.getDocumentoNro()};
+
+		} else {
+
+		    cols = new String[]{"documentoNro"};
+		    values = new Object[]{this.facturaSelected.getDocumentoNro()};
 		}
+				
+		Cliente c = this.reg.getObjectByColumns(Cliente.class, cols, values);
+
+		if (c != null) {
+				
+			this.facturaSelected.setCliente(c);
+			this.facturaSelected.setDocumentoNro(c.getDocumentoNro());
+			this.facturaSelected.setRazonSocial(c.getRazonsocial());
+			this.facturaSelected.setDocumentoTipo(c.getDocumentoTipo());
+				
+			this.facturaSelected.setEmail(c.getEmail());
+						
+			if (c.getLocalidad() != null && c.getDireccion() != null) {
+				this.facturaSelected.setLocalidad(c.getLocalidad());
+				this.facturaSelected.setDireccion(c.getDireccion());
+				this.facturaSelected.setCasaNro(c.getCasaNro());
+			}
+				
+		}else {
+			
+			int idx = docNro.indexOf('-');
+			
+			if (idx > 0) {
+
+				String [] columns = {"ruc","dv"};
+				Object[] valor = {docNro.substring(0, idx), docNro.substring(idx + 1)};
+				   
+				Ruc ruc = this.reg.getObjectByColumns(Ruc.class, columns, valor);
+				    
+				this.facturaSelected.setRazonSocial(ruc != null ? ruc.getRazonSocial(): null);
+				    
+				this.facturaSelected.setDocumentoTipo(ruc != null ?  this.mapTipos.get(ParamsLocal.SIGLA_TIPO_DOCUMENTO_RUC):null );
+				
+			}
+			
+
+		}
+	
+
 		
 		BindUtils.postNotifyChange(null, null, this.facturaSelected, "docNro");
 		BindUtils.postNotifyChange(null, null, this.facturaSelected, "razonSocial");
@@ -510,11 +564,7 @@ public class FacturacionVM extends TemplateViewModelLocalResp{
 		}
 				
 		String [] columns = {"empresa","comprobanteTipo","establecimiento","puntoExpedicion","activo"};
-		Object [] values = {su.getEmpresa(), this.facturaDefault ,su.getSucursal().getEstablecimiento() , su.getPuntoExpedicion(),true};
-		
-		
-		//System.out.println("Factura Default: "+this.facturaDefault.getSigla());
-		
+		Object [] values = {su.getEmpresa(), this.facturaDefault ,su.getSucursal().getEstablecimiento() , su.getPuntoExpedicion(),true};		
 		
 		Comprobante comp = this.reg.getObjectByColumns(Comprobante.class, columns, values);
 		this.facturaSelected.setTimbrado(comp.getTimbrado());
@@ -550,9 +600,7 @@ public class FacturacionVM extends TemplateViewModelLocalResp{
 		
 		this.enviarFactura(this.facturaSelected);
 		
-		//this.verKude(this.facturaSelected.getFacturaid());
-		
-		//this.limpiarPantalla();
+		this.consultarDe(this.facturaSelected.getFacturaid());
 		
 		this.cambiarPantalla(0);
 		
@@ -580,6 +628,216 @@ public class FacturacionVM extends TemplateViewModelLocalResp{
 			
 			this.save(f);
 		}
+	}
+	
+	
+	
+	
+	@Command
+	public void consultarDe(@BindingParam("id") long id) {
+		
+		Factura f = this.reg.findObjectById(Factura.class, id);
+		
+		if (f.getCdc() != null && f.getXml() == null) {
+			
+			UtilLocalMetodos ulm = new UtilLocalMetodos();
+			
+			
+				ResponseComprobante rc = ulm.consultarDE(this.getSistemaPropiedad("fcwsHOST").getValor()+"/consultar/comprobantexml/"+f.getCdc(), new HttpOrHttpsConexion());
+				
+				f.setXml(rc.getXml());
+				f.setEstado(rc.getEstado());
+				f.setRespuesta(ulm.escapeSql(rc.getRespuesta()));
+				this.save(f);
+				
+			
+				//System.out.println("Error al consultar el DE");
+				
+			
+		}
+
+	}
+	
+	//seccion kude
+	
+	private String prettyPrintXml(String xml) {
+		try {
+			Transformer transformer = TransformerFactory.newInstance().newTransformer();
+			transformer.setOutputProperty(OutputKeys.OMIT_XML_DECLARATION, "no");
+			transformer.setOutputProperty(OutputKeys.INDENT, "yes");
+			transformer.setOutputProperty("{http://xml.apache.org/xslt}indent-amount", "4");
+			StreamSource source = new StreamSource(new StringReader(xml));
+			StringWriter writer = new StringWriter();
+			transformer.transform(source, new StreamResult(writer));
+
+			return writer.toString();
+		} catch (Exception e) {
+			return xml;
+		}
+	}
+
+	@Command
+	public void createKude(@BindingParam("ceid") long ceid, @BindingParam("tipode") String tipode) throws Exception {
+
+		String xml = "";
+		String logoPath = "";
+		String fileName = "";
+
+		Map<String, Object> parametros = new HashMap<>();
+		String jasperPath;
+		JRXmlDataSource dataSource = null;
+
+		if (tipode.equals("factura")) {
+
+			Factura factura = reg.findObjectById(Factura.class, ceid);
+			if (factura.getSucursal().getLogoPath() != null) {
+				logoPath = factura.getSucursal().getLogoPath();
+			} else {
+				logoPath = factura.getEmpresa().getLogoPath();
+			}
+			xml = this.extraerRDE(prettyPrintXml(factura.getXml())).trim();
+
+			if (factura.getEventoTipo() != null
+					&& factura.getEventoTipo().getSigla().equals(ParamsLocal.SIGLA_TIPO_EVENTO_CANCELACION)
+					&& factura.getEventoEstado().equals("Aprobado")) {
+
+				parametros.put("cancelado", true);
+
+			}
+
+			fileName = "Factura_" + factura.getTimbradoDocNro() + "_" + factura.getCdc();
+
+		} else if (tipode.equals("notacredito")) {
+
+			NotaCredito notacredito = reg.findObjectById(NotaCredito.class, ceid);
+			if (notacredito.getSucursal().getLogoPath() != null) {
+				logoPath = notacredito.getSucursal().getLogoPath();
+			} else {
+				logoPath = notacredito.getEmpresa().getLogoPath();
+			}
+			xml = this.extraerRDE(prettyPrintXml(notacredito.getXml())).trim();
+
+			fileName = "NC_" + notacredito.getTimbradoDocNro() + "_" + notacredito.getCdc();
+
+		}
+		if (tipode.equals("remision")) {
+
+			Remision remision = reg.findObjectById(Remision.class, ceid);
+			if (remision.getSucursal().getLogoPath() != null) {
+				logoPath = remision.getSucursal().getLogoPath();
+			} else {
+				logoPath = remision.getEmpresa().getLogoPath();
+			}
+			xml = this.extraerRDE(prettyPrintXml(remision.getXml())).trim();
+
+			fileName = "Remision_" + remision.getTimbradoDocNro() + "_" + remision.getCdc();
+		}
+
+		int tipoDocumento = getTipoDocumentoFromXML(xml);
+		jasperPath = SystemInfo.SISTEMA_PATH_ABSOLUTO + "/reportTemplate/";
+
+		if (tipoDocumento == 1)
+			jasperPath = String.valueOf(jasperPath) + "Factura.jasper";
+		if (tipoDocumento == 2)
+			jasperPath = String.valueOf(jasperPath) + "FacturaImportacion.jasper";
+		if (tipoDocumento == 3)
+			jasperPath = String.valueOf(jasperPath) + "FacturaExportacion.jasper";
+		if (tipoDocumento == 4)
+			jasperPath = String.valueOf(jasperPath) + "AutoFactura.jasper";
+		if (tipoDocumento == 5)
+			jasperPath = String.valueOf(jasperPath) + "NotaCredito.jasper";
+		if (tipoDocumento == 6)
+			jasperPath = String.valueOf(jasperPath) + "NotaDebito.jasper";
+		if (tipoDocumento == 7)
+			jasperPath = String.valueOf(jasperPath) + "NotaRemision.jasper";
+
+		if (!(new File(jasperPath)).exists())
+			throw new Exception("Archivo " + jasperPath + " no encontrado.!");
+		try {
+			InputStream inputStream = null;
+			if (xml.startsWith("<?xml")) {
+				inputStream = new ByteArrayInputStream(xml.getBytes(StandardCharsets.UTF_8));
+			} else {
+				inputStream = new FileInputStream(xml);
+			}
+			dataSource = new JRXmlDataSource(inputStream, "/rDE/DE/gDtipDE/gCamItem");
+			Locale locale = new Locale("es", "PY");
+			parametros.put("REPORT_LOCALE", locale);
+
+			try {
+
+				if (!logoPath.isBlank()) {
+
+					parametros.put("LOGO_URL", ImageIO.read(new File(logoPath)));
+				}
+
+			} catch (IOException e) {
+
+				e.printStackTrace();
+			}
+
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+
+		JasperPrint jprint = JasperFillManager.fillReport(jasperPath, parametros, dataSource);
+		ByteArrayOutputStream out = new ByteArrayOutputStream();
+		JasperExportManager.exportReportToPdfStream(jprint, out);
+		Filedownload.save(out.toByteArray(), "application/pdf", fileName + ".pdf");
+
+	}
+
+	public String extraerRDE(String xml) throws Exception {
+		// Limpiar espacios
+		xml = xml.trim();
+
+		DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
+		factory.setNamespaceAware(true);
+		factory.setFeature("http://apache.org/xml/features/disallow-doctype-decl", false);
+		DocumentBuilder builder = factory.newDocumentBuilder();
+
+		// Parsear XML original
+		Document doc = builder.parse(new InputSource(new StringReader(xml)));
+
+		XPath xpath = XPathFactory.newInstance().newXPath();
+		Node rdeNode = (Node) xpath.evaluate("//*[local-name()='rDE']", doc, XPathConstants.NODE);
+
+		if (rdeNode == null) {
+			throw new Exception("No se encontró rDE");
+		}
+
+		// Crear nuevo documento
+		Document newDoc = builder.newDocument();
+		Node imported = newDoc.importNode(rdeNode, true);
+		newDoc.appendChild(imported);
+
+		// Usar Transformer para controlar salida
+		TransformerFactory tf = TransformerFactory.newInstance();
+		Transformer transformer = tf.newTransformer();
+		transformer.setOutputProperty(OutputKeys.ENCODING, "UTF-8");
+		transformer.setOutputProperty(OutputKeys.STANDALONE, "no");
+		transformer.setOutputProperty(OutputKeys.OMIT_XML_DECLARATION, "no");
+		transformer.setOutputProperty(OutputKeys.INDENT, "yes");
+
+		StringWriter writer = new StringWriter();
+		transformer.transform(new DOMSource(newDoc), new StreamResult(writer));
+
+		return writer.toString();
+	}
+
+	public int getTipoDocumentoFromXML(String archivoDEXML) throws Exception {
+
+		InputStream inputStream = new ByteArrayInputStream(archivoDEXML.getBytes(StandardCharsets.UTF_8));
+		Document document = DocumentBuilderFactory.newInstance().newDocumentBuilder().parse(inputStream);
+		
+		Node student = document.getElementsByTagName("rDE").item(0);
+		Element dataFileElement = (Element) student;
+		Node dataFile = dataFileElement.getElementsByTagName("DE").item(0);
+		Element iTipoDEElement = (Element) dataFile;
+		Node iTiDE = iTipoDEElement.getElementsByTagName("iTiDE").item(0);
+		Integer tipoDocumento = Integer.valueOf(iTiDE.getTextContent());
+		
+		return tipoDocumento;
 	}
 
 	public List<Object[]> getFacturaciones() {
