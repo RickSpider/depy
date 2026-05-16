@@ -522,6 +522,13 @@ public class FacturacionVM extends TemplateViewModelLocal {
 	
 	public boolean verificarCampos() {
 		
+		if (this.clienteSMSelected == null) {
+			
+			this.mensajeInfo("Debes seleccionar un cliente.");
+			return false;
+			
+		}
+		
 		if (!this.facturaSelected.getMoneda().getSigla().equals(ParamsLocal.SIGLA_TIPO_MONEDA_GUARANIES) && this.facturaSelected.getMonedaCambio() == 1 ) {
 			this.mensajeInfo("Cuando la moneda no es Guaranies(PYG) el cambio debe ser mayor a 1 (uno).");
 			return false;
@@ -778,13 +785,15 @@ public class FacturacionVM extends TemplateViewModelLocal {
 				this.save(f);
 				
 			
-				System.out.println("Error al consultar el DE");
+				//System.out.println("Error al consultar el DE");
 				
 			
-
 		}
 
 	}
+	
+	
+	
 
 
 	public Factura getFacturaSelected() {

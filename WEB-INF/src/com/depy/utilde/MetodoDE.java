@@ -75,11 +75,11 @@ public class MetodoDE{
 		
 		r.setRazonSocial(doc.getRazonSocial());
 		
-		System.out.println("Localidad: " + (doc.getLocalidad() != null));
+		/*System.out.println("Localidad: " + (doc.getLocalidad() != null));
 		System.out.println("Direccion null: " + (doc.getDireccion() != null));
 		System.out.println("Direccion blank: " + 
 		    (doc.getDireccion() != null && !doc.getDireccion().isBlank()));
-		System.out.println("CasaNro: " + (doc.getCasaNro() != null));
+		System.out.println("CasaNro: " + (doc.getCasaNro() != null));*/
 		
 		if (doc.getLocalidad() != null && doc.getDireccion() != null
 				&& !doc.getDireccion().isBlank() && doc.getCasaNro() != null) {

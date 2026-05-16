@@ -10,7 +10,7 @@ import jakarta.persistence.MappedSuperclass;
 public abstract class ModeloERP extends Modelo  {
 
 	@ManyToOne
-	@JoinColumn(name = "empresaid", nullable = false)
+	@JoinColumn(name = "empresaid")
 	protected Empresa empresa;
 
 	public Empresa getEmpresa() {
