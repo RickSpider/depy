@@ -69,7 +69,6 @@ import com.depy.utilde.modelo.DE;
 import com.depy.utilde.modelo.Kude;
 import com.depy.utilde.response.ResponseComprobante;
 import com.doxacore.modelo.Tipo;
-import com.doxacore.util.Register;
 import com.doxacore.util.SystemInfo;
 import com.google.gson.Gson;
 
@@ -557,7 +556,7 @@ public class FacturacionRVM extends TemplateViewModelLocalResp{
 	}
 	
 	@Command
-	public void procesarFactura() {
+	public void procesarFactura() throws Exception {
 		
 		if (!this.verificarCampos()) {
 			return;
@@ -601,6 +600,8 @@ public class FacturacionRVM extends TemplateViewModelLocalResp{
 		this.enviarFactura(this.facturaSelected);
 		
 		this.consultarDe(this.facturaSelected.getFacturaid());
+		
+		this.createKude(this.facturaSelected.getFacturaid(), "factura");
 		
 		this.cambiarPantalla(0);
 		
