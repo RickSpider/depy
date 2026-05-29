@@ -49,6 +49,7 @@ import org.zkoss.zhtml.Filedownload;
 import org.zkoss.zk.ui.Sessions;
 import org.zkoss.zk.ui.util.Clients;
 import org.zkoss.zk.ui.util.Notification;
+import org.zkoss.zul.ListModelArray;
 
 import com.depy.modelo.Cliente;
 import com.depy.modelo.Comprobante;
@@ -59,6 +60,7 @@ import com.depy.modelo.FacturaPago;
 import com.depy.modelo.NotaCredito;
 import com.depy.modelo.Remision;
 import com.depy.modelo.Ruc;
+import com.depy.searchModel.ClienteSM;
 import com.depy.sistemaResp.TemplateViewModelLocalResp;
 import com.depy.util.ParamsLocal;
 import com.depy.util.UtilLocalMetodos;
@@ -69,6 +71,7 @@ import com.depy.utilde.modelo.DE;
 import com.depy.utilde.modelo.Kude;
 import com.depy.utilde.response.ResponseComprobante;
 import com.doxacore.modelo.Tipo;
+
 import com.doxacore.util.SystemInfo;
 import com.google.gson.Gson;
 
@@ -83,8 +86,12 @@ public class FacturacionRVM extends TemplateViewModelLocalResp{
 	
 	private Factura facturaSelected;
 
+	private Cliente clienteSelected;
+	
 	private List<Object[]> facturaciones;
 	private List<Object[]> facturacionesOri;
+	
+	
 	private Date desde;
 	private Date hasta;
 	
@@ -96,7 +103,7 @@ public class FacturacionRVM extends TemplateViewModelLocalResp{
 	
 	private String cbPlazo = "dias";
 	
-	private Boolean[] pantalla = {true, false};
+	private Boolean[] pantalla = {true, false,false};
 	
 	@Init(superclass = true)
 	public void initFacturacionVM() {
@@ -161,7 +168,9 @@ public class FacturacionRVM extends TemplateViewModelLocalResp{
 	}
 	
 	private List<Integer> lIva;
+	private List<Tipo> lDocumentoTipo;
 	private Map<String, Tipo> mapTipos;
+	
 	
 	public void cargarDatosTipos() {
 		
@@ -177,6 +186,7 @@ public class FacturacionRVM extends TemplateViewModelLocalResp{
 		
 		this.mapTipos = new HashMap<>();
 		this.lIva = new ArrayList<>();
+		this.lDocumentoTipo = new ArrayList<>();
 		for (Tipo t : lTipos) {
 			mapTipos.put(t.getSigla(), t);
 			
@@ -192,6 +202,12 @@ public class FacturacionRVM extends TemplateViewModelLocalResp{
 			
 			if (t.getSigla().equals(ParamsLocal.SIGLA_TIPO_FORMAPAGO_EFECTIVO)) {
 				this.efectivoDefault = t;
+			}
+			
+			if (t.getTipotipo().getSigla().equals(ParamsLocal.SIGLA_TIPOTIPO_DOCUMENTO)) {
+				
+				this.lDocumentoTipo.add(t);
+				
 			}
 			
 		}
@@ -266,24 +282,32 @@ public class FacturacionRVM extends TemplateViewModelLocalResp{
 	}
 	
 	@Command
-	@NotifyChange({"pantalla", "facturaSelected"})
+	@NotifyChange({"pantalla", "facturaSelected", "lClienteSM","clienteSelected"})
 	public void cambiarPantalla(@BindingParam("pantalla") int pantalla) {
+		
+		int anterior = 0; 
+		
+		for (int i  = 0 ; i<this.pantalla.length ; i++) {
+			
+			if (this.pantalla[i]) {
+				anterior = i;
+				break;
+			}
+			
+		}
+		
+		
 		
 		Arrays.fill(this.pantalla, false);
 		
 		this.pantalla[pantalla] = true;
 		
-		
-		
-		
-		if (pantalla == 1) {
+		if (pantalla == 1 && anterior == 0) {
 			
 			this.iva0 = 0;
 			this.iva10 = 0;
 			this.iva5 = 0;
-			
-		
-			
+
 			this.facturaSelected = new Factura();
 			this.facturaSelected.setFecha(LocalDateTime.now());
 			this.facturaSelected.setMoneda(this.mapTipos.get(ParamsLocal.SIGLA_TIPO_MONEDA_GUARANIES));
@@ -305,11 +329,59 @@ public class FacturacionRVM extends TemplateViewModelLocalResp{
 			this.onChangeCondicion("btnContado");
 			this.onChangeMoneda("btnPyg");
 			
+			this.clienteSMSelected = null;
+			generarClienteSM();
+			
+		}else if (pantalla == 2) {
+			
+			this.clienteSelected = new Cliente();
+			this.clienteSelected.setEmpresa(getCurrentEmpresa());
+			
+			for (Tipo t : this.lDocumentoTipo) {
+				
+				if (t.getSigla().equals(ParamsLocal.SIGLA_TIPO_DOCUMENTO_RUC)) {
+					
+					this.clienteSelected.setDocumentoTipo(t);
+					break;
+				}
+				
+			}
+			
 		}
 		
 	}
 	
 	//======Seccion nueva Factura =====
+	
+	private ListModelArray<ClienteSM> lClienteSM;
+	private ClienteSM clienteSMSelected;
+	
+	public void generarClienteSM(){
+		
+		this.lClienteSM = this.crearSearchModel(				
+	        this.um.getSql("cliente/buscarCliente.sql").replace("?1", this.getCurrentEmpresa().getEmpresaid()+""),
+	        o -> new ClienteSM(
+	                ((Number) o[0]).longValue(),
+	                (String) o[1],
+	                (String) o[2],
+	                (String) o[3],
+	                (String) o[4]
+	        	)
+	        );
+		
+	}
+	
+	protected <T> ListModelArray<T> crearSearchModel(String sql, java.util.function.Function<Object[], T> mapper) {
+	    List<Object[]> resultados = this.reg.sqlNativo(sql);
+	    List<T> lista = new ArrayList<>(resultados.size());
+
+	    for (Object[] fila : resultados) {
+	        lista.add(mapper.apply(fila));
+	    }
+
+	    ListModelArray<T> modelo = new ListModelArray<>(lista);
+	    return modelo;
+	}
 	
 	@Command
 	public void onChangeCondicion(@BindingParam("id") String id) {
@@ -343,73 +415,27 @@ public class FacturacionRVM extends TemplateViewModelLocalResp{
 	@Command
 	public void onChangeDoc() {
 		
-		String docNro =this.facturaSelected.getDocumentoNro().trim();
-		this.facturaSelected.setDocumentoNro(docNro);
-		
-		//UtilLocalMetodos ulm = new UtilLocalMetodos();
-		/*if (this.facturaSelected.getCliente().getDocumentoTipo().getSigla().equals(ParamsLocal.SIGLA_TIPO_DOCUMENTO_RUC) && !ulm.validarRuc(docNro)) {
-			
-			this.mensajeError("El documento de RUC proporcionado no es correcto, o no cumple con el formato, verifica el digito verificador o el ruc nuevamente");
-			
-			return;
-		}*/
-		
-		String [] cols;
-		Object [] values;
-
-		if (!docNro.equals("0")) {
-
-		    cols = new String[]{"empresa", "documentoNro"};
-		    values = new Object[]{this.getCurrentEmpresa(), this.facturaSelected.getDocumentoNro()};
-
-		} else {
-
-		    cols = new String[]{"documentoNro"};
-		    values = new Object[]{this.facturaSelected.getDocumentoNro()};
-		}
-				
-		Cliente c = this.reg.getObjectByColumns(Cliente.class, cols, values);
-
-		if (c != null) {
-				
-			this.facturaSelected.setCliente(c);
-			this.facturaSelected.setDocumentoNro(c.getDocumentoNro());
-			this.facturaSelected.setRazonSocial(c.getRazonsocial());
-			this.facturaSelected.setDocumentoTipo(c.getDocumentoTipo());
-				
-			this.facturaSelected.setEmail(c.getEmail());
-						
-			if (c.getLocalidad() != null && c.getDireccion() != null) {
-				this.facturaSelected.setLocalidad(c.getLocalidad());
-				this.facturaSelected.setDireccion(c.getDireccion());
-				this.facturaSelected.setCasaNro(c.getCasaNro());
-			}
-				
-		}else {
-			
-			int idx = docNro.indexOf('-');
-			
-			if (idx > 0) {
-
-				String [] columns = {"ruc","dv"};
-				Object[] valor = {docNro.substring(0, idx), docNro.substring(idx + 1)};
-				   
-				Ruc ruc = this.reg.getObjectByColumns(Ruc.class, columns, valor);
-				    
-				this.facturaSelected.setRazonSocial(ruc != null ? ruc.getRazonSocial(): null);
-				    
-				this.facturaSelected.setDocumentoTipo(ruc != null ?  this.mapTipos.get(ParamsLocal.SIGLA_TIPO_DOCUMENTO_RUC):null );
-				
-			}
-			
-
-		}
+		String docNro =this.clienteSelected.getDocumentoNro().trim();
 	
-
 		
-		BindUtils.postNotifyChange(null, null, this.facturaSelected, "docNro");
-		BindUtils.postNotifyChange(null, null, this.facturaSelected, "razonSocial");
-		BindUtils.postNotifyChange(null, null, this.facturaSelected, "email");
+			
+		int idx = docNro.indexOf('-');
+			
+		if (idx > 0 && this.clienteSelected.getDocumentoTipo().getSigla().equals(ParamsLocal.SIGLA_TIPO_DOCUMENTO_RUC)) {
+
+			String [] columns = {"ruc","dv"};
+			Object[] valor = {docNro.substring(0, idx), docNro.substring(idx + 1)};
+				   
+			Ruc ruc = this.reg.getObjectByColumns(Ruc.class, columns, valor);
+				    
+			this.clienteSelected.setRazonsocial(ruc != null ? ruc.getRazonSocial(): null);
+				    
+			this.clienteSelected.setDocumentoTipo(ruc != null ?  this.mapTipos.get(ParamsLocal.SIGLA_TIPO_DOCUMENTO_RUC):null );
+				
+		}
+		
+		BindUtils.postNotifyChange(null, null, this.clienteSelected, "gocumentoNro");
+		BindUtils.postNotifyChange(null, null, this.clienteSelected, "razonsocial");
 		
 	}
 	
@@ -515,6 +541,12 @@ public class FacturacionRVM extends TemplateViewModelLocalResp{
 	
 	public boolean verificarCampos() {
 		
+		if (this.clienteSMSelected == null) {
+			
+			Notification.show("Debes tener un cliente seleccionado.");
+			return false;
+		}
+		
 		if (!this.facturaSelected.getMoneda().getSigla().equals(ParamsLocal.SIGLA_TIPO_MONEDA_GUARANIES) && this.facturaSelected.getMonedaCambio() == 1 ) {
 			Notification.show("Cuando la moneda no es Guaranies(PYG) el cambio debe ser mayor a 1 (uno).");
 			return false;
@@ -560,6 +592,21 @@ public class FacturacionRVM extends TemplateViewModelLocalResp{
 		
 		if (!this.verificarCampos()) {
 			return;
+		}
+		
+		Cliente c = this.reg.findObjectById(Cliente.class, this.clienteSMSelected.getId());
+		
+		this.facturaSelected.setCliente(c);
+		this.facturaSelected.setDocumentoNro(c.getDocumentoNro());
+		this.facturaSelected.setRazonSocial(c.getRazonsocial());
+		this.facturaSelected.setDocumentoTipo(c.getDocumentoTipo());
+		
+		this.facturaSelected.setEmail(c.getEmail());
+				
+		if (c.getLocalidad() != null && c.getDireccion() != null) {
+			this.facturaSelected.setLocalidad(c.getLocalidad());
+			this.facturaSelected.setDireccion(c.getDireccion());
+			this.facturaSelected.setCasaNro(c.getCasaNro());
 		}
 				
 		String [] columns = {"empresa","comprobanteTipo","establecimiento","puntoExpedicion","activo"};
@@ -840,6 +887,61 @@ public class FacturacionRVM extends TemplateViewModelLocalResp{
 		
 		return tipoDocumento;
 	}
+	
+	//Seccion Cliente
+	
+	
+	public boolean verficarCliente() {
+		
+		String [] columns = {"empresa","documentoNro"};
+	    Object[] valor = {this.getCurrentEmpresa(), this.clienteSelected.getDocumentoNro()};
+		Cliente cAux = this.reg.getObjectByColumns(Cliente.class, columns, valor);
+		if (cAux != null) {
+
+			Notification.show("Ya existe el contribuyente...");
+			return false;
+			
+		}
+		
+		if(this.clienteSelected.getDocumentoTipo().getSigla().equals(ParamsLocal.SIGLA_TIPO_DOCUMENTO_RUC)) {
+			
+			if (!this.clienteSelected.getDocumentoNro().matches("^\\d+-\\d$")) {
+				Notification.show("El Ruc no es de la forma 1234567-8.");
+				return false;
+			}
+			
+		}
+		
+		if (this.clienteSelected.getRazonsocial()==null 
+				|| this.clienteSelected.getRazonsocial().isBlank()
+				|| this.clienteSelected.getRazonsocial().isEmpty()) {
+			
+			Notification.show("Debes cargar una Razon Social");
+			return false;
+			
+		}
+
+		return true;
+	}
+	
+	@NotifyChange({"pantalla", "facturaSelected", "lClienteSM","clienteSMSelected"})
+	@Command
+	public void guardarCliente() {
+		
+		if (!verficarCliente()) {
+			return;
+		}
+		
+		this.clienteSelected = this.save(this.clienteSelected);
+		this.clienteSMSelected = new ClienteSM(this.clienteSelected);
+		this.facturaSelected.setCliente(clienteSelected);
+		this.clienteSelected =  null;
+		this.generarClienteSM();
+		
+		this.cambiarPantalla(1);
+		
+	}
+	
 
 	public List<Object[]> getFacturaciones() {
 		return facturaciones;
@@ -951,6 +1053,38 @@ public class FacturacionRVM extends TemplateViewModelLocalResp{
 
 	public void setCbPlazo(String cbPlazo) {
 		this.cbPlazo = cbPlazo;
+	}
+
+	public ListModelArray<ClienteSM> getlClienteSM() {
+		return lClienteSM;
+	}
+
+	public void setlClienteSM(ListModelArray<ClienteSM> lClienteSM) {
+		this.lClienteSM = lClienteSM;
+	}
+
+	public ClienteSM getClienteSMSelected() {
+		return clienteSMSelected;
+	}
+
+	public void setClienteSMSelected(ClienteSM clienteSMSelected) {
+		this.clienteSMSelected = clienteSMSelected;
+	}
+
+	public List<Tipo> getlDocumentoTipo() {
+		return lDocumentoTipo;
+	}
+
+	public void setlDocumentoTipo(List<Tipo> lDocumentoTipo) {
+		this.lDocumentoTipo = lDocumentoTipo;
+	}
+
+	public Cliente getClienteSelected() {
+		return clienteSelected;
+	}
+
+	public void setClienteSelected(Cliente clienteSelected) {
+		this.clienteSelected = clienteSelected;
 	}
 	
 	

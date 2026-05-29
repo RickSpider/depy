@@ -161,7 +161,8 @@ public class FacturacionVM extends TemplateViewModelLocal {
 	                ((Number) o[0]).longValue(),
 	                (String) o[1],
 	                (String) o[2],
-	                (String) o[3]
+	                (String) o[3],
+	                (String) o[4]
 	        	)
 	        );
 		

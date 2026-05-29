@@ -3,6 +3,7 @@ clienteid,
 documentoNro,
 razonsocial,
 direccion,
+email,
 empresaid
 FROM clientes
 where empresaid = ?1
@@ -14,6 +15,7 @@ clienteid,
 documentoNro,
 razonsocial,
 direccion,
+email,
 empresaid
 FROM clientes
 where empresaid is null

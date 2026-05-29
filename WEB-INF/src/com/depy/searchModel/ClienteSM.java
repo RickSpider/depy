@@ -8,13 +8,15 @@ public class ClienteSM {
 	private String documentoNro;
 	private String razonSocial;
 	private String direccion;
+	private String email;
 
-	public ClienteSM(Long id, String documentoNro, String razonSocial, String direccion) {
+	public ClienteSM(Long id, String documentoNro, String razonSocial, String direccion, String email) {
 		super();
 		this.id = id;
 		this.documentoNro = documentoNro;
 		this.razonSocial = razonSocial;
 		this.direccion = direccion;
+		this.email = email;
 	}
 	
 	
@@ -24,6 +26,7 @@ public class ClienteSM {
 		this.razonSocial = c.getRazonsocial();
 		this.documentoNro = c.getDocumentoNro();
 		this.direccion = c.getDireccion() != null ? c.getDireccion():null;
+		this.email = c.getEmail() != null ? c.getEmail():null;
 	}
 	
 	public Long getId() {
@@ -52,6 +55,7 @@ public class ClienteSM {
 		c.setDocumentoNro(documentoNro);
 		c.setRazonsocial(razonSocial);
 		c.setDireccion(this.direccion != null ? this.direccion : null);		
+		c.setEmail(this.email != null ? this.email : null);
 		return c;
 	}
 	
@@ -68,6 +72,21 @@ public class ClienteSM {
 
 	public void setDireccion(String direccion) {
 		this.direccion = direccion;
+	}
+
+
+	public String getEmail() {
+		return email;
+	}
+
+
+	public void setEmail(String email) {
+		this.email = email;
+	}
+
+
+	public void setDocumentoNro(String documentoNro) {
+		this.documentoNro = documentoNro;
 	}
 	
 	

@@ -59,4 +59,14 @@ public class TemplateViewModelLocalResp {
 		return this.reg.getObjectByColumn(SistemaPropiedad.class, "clave", clave);
 		
 	}
+
+	public SucursalUsuario getSu() {
+		return su;
+	}
+
+	public void setSu(SucursalUsuario su) {
+		this.su = su;
+	}
+	
+	
 }
