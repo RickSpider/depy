@@ -282,7 +282,7 @@ public class FacturacionRVM extends TemplateViewModelLocalResp{
 	}
 	
 	@Command
-	@NotifyChange({"pantalla", "facturaSelected", "lClienteSM","clienteSelected"})
+	@NotifyChange({"pantalla", "facturaSelected", "lClienteSM","clienteSelected","clienteSMSelected"})
 	public void cambiarPantalla(@BindingParam("pantalla") int pantalla) {
 		
 		int anterior = 0; 
