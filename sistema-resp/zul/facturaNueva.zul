@@ -363,7 +363,7 @@
 										<h:tr class="item-row">
 											<!--  <h:td class="col-code" data-label="Código"><textbox value ="@bind(each.itemCodigo)" class="cell-input" type="text" placeholder="COD-001" style="width:90px"/></h:td>-->
 										    <h:td class="col-desc" data-label="Descripción"><textbox value ="@bind(each.itemDescripcion)" class="cell-input" type="text" placeholder="Descripción del producto o servicio" style="min-width:200px"/></h:td>
-										    <h:td class="col-price" data-label="P. Unitario"><doublebox onChange="@command('calcularTotales', detalle=each)"  value ="@bind(each.precioUnitario)" format="#,###.##" class="cell-input"  style="width:100px;text-align:right"/></h:td>
+										    <h:td class="col-price" data-label="Precio"><doublebox onChange="@command('calcularTotales', detalle=each)"  value ="@bind(each.precioUnitario)" format="#,###.##" class="cell-input"  style="width:100px;text-align:right"/></h:td>
 										    <h:td class="col-qty" data-label="Cantidad"><doublebox onChange="@command('calcularTotales', detalle=each)" value ="@bind(each.cantidad)" class="cell-input"  format="#,###.##" style="text-align:right;" /></h:td>
 										    <h:td class="col-iva" data-label="IVA">
 										    
