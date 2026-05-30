@@ -307,7 +307,9 @@ public class FacturacionRVM extends TemplateViewModelLocalResp{
 			this.iva0 = 0;
 			this.iva10 = 0;
 			this.iva5 = 0;
-
+			
+			this.clienteSMSelected = null;
+			
 			this.facturaSelected = new Factura();
 			this.facturaSelected.setFecha(LocalDateTime.now());
 			this.facturaSelected.setMoneda(this.mapTipos.get(ParamsLocal.SIGLA_TIPO_MONEDA_GUARANIES));
