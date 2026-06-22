@@ -1,0 +1,89 @@
+<?init class="com.doxacore.login.AuthenticationInit"?>
+
+<?link rel="stylesheet" href="/doxacore-resp/css/styles.css"?>
+<?link rel="stylesheet" href="/doxacore-resp/css/home.css"?>
+<?link rel="stylesheet" href="/doxacore-resp/css/fonts.css"?>
+<?script src="/doxacore-resp/js/nav.js"?>
+
+
+
+<zk xmlns="http://www.zkoss.org/2005/zul"
+	xmlns:h="http://www.w3.org/1999/xhtml">
+
+<div apply="org.zkoss.bind.BindComposer"
+			viewModel="@id('vm')@init('com.depy.sistemaResp.main.MainRespVM')">
+
+	<h:nav class="navbar">
+		<h:button class="hamburger" id="hamburgerBtn"
+			aria-label="Menú">
+			<h:span></h:span><h:span></h:span><h:span></h:span>
+		</h:button>
+		<h:div class="navbar-brand">
+		<html><![CDATA[
+			 <span class="brand-text">DE<span>PY</span><span>
+			 ]]></html>
+		</h:div>
+	</h:nav>
+	
+	
+	 	<!-- ══════════ DRAWER ══════════ -->
+	<h:div class="drawer-overlay" id="drawerOverlay"></h:div>
+	<h:div class="drawer" id="drawer">
+		<h:div class="drawer-header">
+			<h:h3>Menú principal</h:h3>
+		</h:div>
+		<h:nav class="drawer-nav">
+
+			<include src="/sistema-resp/zul/main/menuBar.zul" vflex="1" /> 
+		
+		</h:nav>
+
+		<h:div class="drawer-footer">
+			<h:div class="user-card">
+				<h:div class="user-avatar">DY</h:div>
+				<h:div class="user-info">
+					<h:div class="user-name">${sessionScope.userCredential.account}</h:div>
+					<h:div class="user-role">${sessionScope.userCredential.extra}</h:div>
+				</h:div>
+			</h:div>
+			
+			<div apply="com.doxacore.login.controller.LogoutController">
+				<h:a class="nav-item" id="logout"
+					style="margin-top:8px; color:#fca5a5;">
+					<h:span class="nav-icon" style="color:#f87171">
+						<html>
+							<![CDATA[ <svg viewBox="0 0 24 24" fill="none"
+							stroke="currentColor" stroke-width="2"
+							stroke-linecap="round" stroke-linejoin="round"
+							width="20" height="20"> <path d="M9 21H5a2 2 0 0
+							1-2-2V5a2 2 0 0 1 2-2h4"/> <polyline points="16
+							17 21 12 16 7"/> <line x1="21" y1="12" x2="9"
+							y2="12"/> </svg> ]]>
+						</html>
+					</h:span>
+					Cerrar Sesión
+				</h:a>
+			</div>
+		</h:div>
+	</h:div>
+
+	<!-- ══════════ MAIN ══════════ -->
+	<h:main class="main" style="overflow:auto; height:100vh;">
+
+		
+		
+			<include id="contentInclude"  mode="defer"		
+			
+				src="@load(vm.currentUriPage)" vflex="1" />
+		
+		
+
+		
+
+	</h:main>
+	
+	</div>
+
+
+
+</zk>

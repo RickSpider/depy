@@ -2,7 +2,7 @@
 <zk xmlns="http://www.zkoss.org/2005/zul"
 	xmlns:h="http://www.w3.org/1999/xhtml">
 
-	<h:div>
+	<h:div >
 
 				<!-- Header -->
 

@@ -1,0 +1,561 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>DEPY — Documentos Electrónicos Paraguay</title>
+  <link rel="stylesheet" href="styles.css">
+  <style>
+    /* ══════════════════════════
+       HOME SPLASH
+    ══════════════════════════ */
+    .home-splash {
+      min-height: calc(100vh - 60px);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      background: var(--navy);
+      position: relative;
+      overflow: hidden;
+      padding: 40px 20px;
+    }
+    .home-splash::before {
+      content: '';
+      position: absolute;
+      top: -120px; right: -120px;
+      width: 480px; height: 480px;
+      border-radius: 50%;
+      background: radial-gradient(circle, rgba(14,165,233,.12) 0%, transparent 70%);
+      pointer-events: none;
+    }
+    .home-splash::after {
+      content: '';
+      position: absolute;
+      bottom: -100px; left: -80px;
+      width: 360px; height: 360px;
+      border-radius: 50%;
+      background: radial-gradient(circle, rgba(14,165,233,.07) 0%, transparent 70%);
+      pointer-events: none;
+    }
+    .home-grid-bg {
+      position: absolute; inset: 0;
+      background-image:
+        linear-gradient(rgba(14,165,233,.04) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(14,165,233,.04) 1px, transparent 1px);
+      background-size: 48px 48px;
+      pointer-events: none;
+    }
+    .home-content {
+      position: relative; z-index: 1;
+      display: flex; flex-direction: column; align-items: center;
+      animation: splashFadeIn .6s cubic-bezier(.4,0,.2,1) both;
+    }
+    @keyframes splashFadeIn {
+      from { opacity: 0; transform: translateY(24px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+
+    /* Logo mark */
+    .home-logo-wrap {
+      position: relative;
+      width: 110px; height: 110px;
+      margin-bottom: 28px;
+    }
+    .home-logo-ring {
+      position: absolute; border-radius: 50%;
+      border: 1.5px solid rgba(14,165,233,.2);
+      animation: homeRing 3.5s ease-in-out infinite;
+    }
+    .home-logo-ring-1 { inset: -12px; animation-delay: 0s; }
+    .home-logo-ring-2 { inset: -26px; border-color: rgba(14,165,233,.1); animation-delay: .5s; }
+    .home-logo-ring-3 { inset: -42px; border-color: rgba(14,165,233,.05); animation-delay: 1s; }
+    @keyframes homeRing {
+      0%, 100% { opacity: .5; transform: scale(1); }
+      50%       { opacity: 1; transform: scale(1.03); }
+    }
+    .home-logo-box {
+      position: absolute; inset: 0;
+      border-radius: 28px;
+      background: linear-gradient(135deg, rgba(14,165,233,.18), rgba(14,165,233,.06));
+      border: 1.5px solid rgba(14,165,233,.3);
+      backdrop-filter: blur(12px);
+      display: flex; align-items: center; justify-content: center;
+      z-index: 1;
+    }
+
+    /* Brand */
+    .home-brand-name {
+      font-family: 'Space Mono', monospace;
+      font-size: 46px; font-weight: 700;
+      color: white; letter-spacing: -2px; line-height: 1;
+      text-align: center; margin-bottom: 10px;
+    }
+    .home-brand-name .accent { color: var(--sky); }
+    .home-brand-full {
+      font-size: 14px; font-weight: 500;
+      color: rgba(255,255,255,.4);
+      text-align: center; letter-spacing: .3px;
+      margin-bottom: 40px;
+    }
+
+    /* Feature pills */
+    .home-pills {
+      display: flex; gap: 10px; flex-wrap: wrap;
+      justify-content: center; margin-bottom: 52px;
+    }
+    .home-pill {
+      display: inline-flex; align-items: center; gap: 6px;
+      background: rgba(14,165,233,.1);
+      border: 1px solid rgba(14,165,233,.2);
+      border-radius: 20px; padding: 6px 14px;
+      font-size: 12px; font-weight: 600;
+      color: rgba(255,255,255,.55);
+    }
+    .home-pill svg { width: 13px; height: 13px; color: var(--sky); flex-shrink: 0; }
+
+    /* CTA */
+    .home-cta { display: flex; flex-direction: column; align-items: center; gap: 10px; }
+    .home-cta-label {
+      font-size: 11px; color: rgba(255,255,255,.22);
+      letter-spacing: 1.2px; text-transform: uppercase; font-weight: 600;
+    }
+    .home-cta-btn {
+      display: flex; align-items: center; gap: 8px;
+      background: rgba(14,165,233,.12);
+      border: 1.5px solid rgba(14,165,233,.28);
+      border-radius: 12px; padding: 12px 24px;
+      color: rgba(255,255,255,.55); font-size: 13px; font-weight: 600;
+      font-family: 'DM Sans', sans-serif;
+      cursor: pointer; transition: all .2s; text-decoration: none;
+    }
+    .home-cta-btn:hover {
+      background: rgba(14,165,233,.22);
+      border-color: rgba(14,165,233,.55);
+      color: white;
+    }
+    .home-cta-btn svg { width: 16px; height: 16px; }
+
+    .home-version {
+      position: absolute; bottom: 20px;
+      font-size: 11px; color: rgba(255,255,255,.12);
+      z-index: 1; font-family: 'Space Mono', monospace;
+    }
+
+    /* FAB hidden by default, shown only on facturas */
+    .fab-hidden { display: none !important; }
+  </style>
+</head>
+<body>
+
+<!-- ══════════ NAVBAR ══════════ -->
+<nav class="navbar">
+  <button class="hamburger" id="hamburgerBtn" aria-label="Menú">
+    <span></span><span></span><span></span>
+  </button>
+  <a class="navbar-brand" href="index.html">
+    <div class="brand-icon">
+      <svg viewBox="0 0 24 24"><path d="M14 2H6C4.9 2 4 2.9 4 4v16c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V8l-6-6zm2 16H8v-2h8v2zm0-4H8v-2h8v2zm-3-5V3.5L18.5 9H13z"/></svg>
+    </div>
+    <span class="brand-text">DE<span>PY</span></span>
+  </a>
+</nav>
+
+<!-- ══════════ DRAWER ══════════ -->
+<div class="drawer-overlay" id="drawerOverlay"></div>
+<aside class="drawer" id="drawer">
+  <div class="drawer-header"><h3>Menú principal</h3></div>
+  <nav class="drawer-nav">
+
+    <a class="nav-item" href="#" onclick="goTo('facturas'); closeDrawer(); return false;">
+      <span class="nav-icon">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="20" height="20">
+          <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
+          <polyline points="14 2 14 8 20 8"/>
+          <line x1="16" y1="13" x2="8" y2="13"/>
+          <line x1="16" y1="17" x2="8" y2="17"/>
+        </svg>
+      </span>
+      Facturas
+      <span class="nav-badge">12</span>
+    </a>
+
+    <a class="nav-item" href="#" onclick="goTo('clientes'); closeDrawer(); return false;">
+      <span class="nav-icon">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="20" height="20">
+          <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/>
+          <circle cx="9" cy="7" r="4"/>
+          <path d="M23 21v-2a4 4 0 0 0-3-3.87"/>
+          <path d="M16 3.13a4 4 0 0 1 0 7.75"/>
+        </svg>
+      </span>
+      Clientes
+    </a>
+
+    <a class="nav-item" href="#" onclick="goTo('productos'); closeDrawer(); return false;">
+      <span class="nav-icon">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="20" height="20">
+          <rect x="2" y="7" width="20" height="14" rx="2" ry="2"/>
+          <path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"/>
+        </svg>
+      </span>
+      Productos
+    </a>
+
+    <a class="nav-item" href="#" onclick="goTo('reportes'); closeDrawer(); return false;">
+      <span class="nav-icon">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="20" height="20">
+          <line x1="18" y1="20" x2="18" y2="10"/>
+          <line x1="12" y1="20" x2="12" y2="4"/>
+          <line x1="6" y1="20" x2="6" y2="14"/>
+        </svg>
+      </span>
+      Reportes
+    </a>
+
+    <a class="nav-item" href="#" onclick="goTo('configuracion'); closeDrawer(); return false;">
+      <span class="nav-icon">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="20" height="20">
+          <circle cx="12" cy="12" r="3"/>
+          <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/>
+        </svg>
+      </span>
+      Configuración
+    </a>
+
+  </nav>
+  <div class="drawer-footer">
+    <div class="user-card">
+      <div class="user-avatar">JR</div>
+      <div class="user-info">
+        <div class="user-name">Juan Rodríguez</div>
+        <div class="user-role">Administrador</div>
+      </div>
+    </div>
+    <a class="nav-item" href="login.html" style="margin-top:8px; color:#fca5a5;" onclick="closeDrawer()">
+      <span class="nav-icon" style="color:#f87171">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="20" height="20">
+          <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/>
+          <polyline points="16 17 21 12 16 7"/>
+          <line x1="21" y1="12" x2="9" y2="12"/>
+        </svg>
+      </span>
+      Cerrar Sesión
+    </a>
+  </div>
+</aside>
+
+<!-- ══════════ MAIN ══════════ -->
+<main class="main">
+
+  <!-- HOME SPLASH — pantalla por defecto -->
+  <section class="section active" id="section-home">
+    <div class="home-splash">
+      <div class="home-grid-bg"></div>
+      <div class="home-content">
+
+        <div class="home-logo-wrap">
+          <div class="home-logo-ring home-logo-ring-1"></div>
+          <div class="home-logo-ring home-logo-ring-2"></div>
+          <div class="home-logo-ring home-logo-ring-3"></div>
+          <div class="home-logo-box">
+            <svg viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg" width="66" height="66">
+              <defs>
+                <linearGradient id="depyGrad" x1="0" y1="0" x2="1" y2="1">
+                  <stop offset="0%" stop-color="#38bdf8"/>
+                  <stop offset="100%" stop-color="#0284c7"/>
+                </linearGradient>
+              </defs>
+              <path d="M10 6C10 4.9 10.9 4 12 4H30L38 12V42C38 43.1 37.1 44 36 44H12C10.9 44 10 43.1 10 42V6Z"
+                fill="url(#depyGrad)" opacity=".15"/>
+              <path d="M10 6C10 4.9 10.9 4 12 4H30L38 12V42C38 43.1 37.1 44 36 44H12C10.9 44 10 43.1 10 42V6Z"
+                stroke="url(#depyGrad)" stroke-width="2" fill="none"/>
+              <path d="M30 4L38 12H32C30.9 12 30 11.1 30 10V4Z" fill="url(#depyGrad)" opacity=".5"/>
+              <line x1="16" y1="20" x2="32" y2="20" stroke="url(#depyGrad)" stroke-width="2" stroke-linecap="round"/>
+              <line x1="16" y1="26" x2="32" y2="26" stroke="url(#depyGrad)" stroke-width="2" stroke-linecap="round"/>
+              <line x1="16" y1="32" x2="26" y2="32" stroke="url(#depyGrad)" stroke-width="2" stroke-linecap="round"/>
+              <circle cx="33" cy="36" r="7" fill="#0c2d48" stroke="url(#depyGrad)" stroke-width="1.5"/>
+              <text x="33" y="40" text-anchor="middle" font-size="9" font-weight="bold" fill="#38bdf8" font-family="monospace">₲</text>
+            </svg>
+          </div>
+        </div>
+
+        <div class="home-brand-name">DE<span class="accent">PY</span></div>
+        <div class="home-brand-full">Documentos Electrónicos Paraguay</div>
+
+        <div class="home-pills">
+          <span class="home-pill">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
+              <polyline points="14 2 14 8 20 8"/>
+            </svg>
+            Facturación electrónica
+          </span>
+          <span class="home-pill">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <rect x="3" y="11" width="18" height="11" rx="2" ry="2"/>
+              <path d="M7 11V7a5 5 0 0 1 10 0v4"/>
+            </svg>
+            Firma digital
+          </span>
+          <span class="home-pill">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/>
+            </svg>
+            Tiempo real SET
+          </span>
+        </div>
+
+        <div class="home-cta">
+          <div class="home-cta-label">Abrir el menú para comenzar</div>
+          <a class="home-cta-btn" href="#" onclick="document.getElementById('hamburgerBtn').click(); return false;">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+              <line x1="3" y1="6" x2="21" y2="6"/>
+              <line x1="3" y1="12" x2="21" y2="12"/>
+              <line x1="3" y1="18" x2="21" y2="18"/>
+            </svg>
+            Abrir menú
+          </a>
+        </div>
+
+      </div>
+      <div class="home-version">DEPY v2.0 · 2026</div>
+    </div>
+  </section>
+
+  <!-- FACTURAS -->
+  <section class="section" id="section-facturas">
+    <div class="page-header">
+      <div class="page-title-block">
+        <div class="page-label">Módulo</div>
+        <div class="page-title">Facturas</div>
+        <div class="page-meta">Gestión de comprobantes emitidos</div>
+      </div>
+    </div>
+    <div class="stats-row">
+      <div class="stat-chip">
+        <div class="stat-chip-value" id="statTotal">12</div>
+        <div class="stat-chip-label">Total</div>
+      </div>
+      <div class="stat-chip">
+        <div class="stat-chip-value" style="color:#10b981" id="statApproved">7</div>
+        <div class="stat-chip-label">Aprobadas</div>
+      </div>
+      <div class="stat-chip">
+        <div class="stat-chip-value" style="color:#ef4444" id="statRejected">3</div>
+        <div class="stat-chip-label">Rechazadas</div>
+      </div>
+    </div>
+    <div class="search-bar">
+      <div class="search-input-wrap">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/>
+        </svg>
+        <input class="search-input" type="text" id="searchInput" placeholder="Buscar factura, cliente…">
+      </div>
+    </div>
+    <div class="filter-bar">
+      <button class="filter-pill active" onclick="filterCards(this,'all')">Todas</button>
+      <button class="filter-pill" onclick="filterCards(this,'pending')">Pendientes</button>
+      <button class="filter-pill" onclick="filterCards(this,'approved')">Aprobadas</button>
+      <button class="filter-pill" onclick="filterCards(this,'rejected')">Rechazadas</button>
+    </div>
+    <div class="invoice-grid" id="invoiceGrid"></div>
+  </section>
+
+  <!-- CLIENTES -->
+  <section class="section" id="section-clientes">
+    <div class="placeholder-section">
+      <div class="placeholder-icon">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/>
+          <circle cx="9" cy="7" r="4"/>
+          <path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/>
+        </svg>
+      </div>
+      <div class="placeholder-title">Clientes</div>
+      <div class="placeholder-sub">Gestión de clientes próximamente disponible.</div>
+    </div>
+  </section>
+
+  <!-- PRODUCTOS -->
+  <section class="section" id="section-productos">
+    <div class="placeholder-section">
+      <div class="placeholder-icon">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+          <rect x="2" y="7" width="20" height="14" rx="2" ry="2"/>
+          <path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"/>
+        </svg>
+      </div>
+      <div class="placeholder-title">Productos</div>
+      <div class="placeholder-sub">Catálogo de productos próximamente disponible.</div>
+    </div>
+  </section>
+
+  <!-- REPORTES -->
+  <section class="section" id="section-reportes">
+    <div class="placeholder-section">
+      <div class="placeholder-icon">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+          <line x1="18" y1="20" x2="18" y2="10"/>
+          <line x1="12" y1="20" x2="12" y2="4"/>
+          <line x1="6" y1="20" x2="6" y2="14"/>
+        </svg>
+      </div>
+      <div class="placeholder-title">Reportes</div>
+      <div class="placeholder-sub">Módulo de reportes próximamente disponible.</div>
+    </div>
+  </section>
+
+  <!-- CONFIGURACIÓN -->
+  <section class="section" id="section-configuracion">
+    <div class="placeholder-section">
+      <div class="placeholder-icon">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+          <circle cx="12" cy="12" r="3"/>
+          <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/>
+        </svg>
+      </div>
+      <div class="placeholder-title">Configuración</div>
+      <div class="placeholder-sub">Ajustes del sistema próximamente disponibles.</div>
+    </div>
+  </section>
+
+</main>
+
+<!-- FAB: solo visible en módulo facturas -->
+<a class="fab fab-hidden" id="fabNew" href="nueva-factura.html" title="Nueva Factura">
+  <svg viewBox="0 0 24 24"><path d="M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6v2z"/></svg>
+</a>
+
+<div class="toast" id="toast"></div>
+
+<!-- ══════════ SCRIPTS ══════════ -->
+<script src="nav.js"></script>
+<script>
+/* ── INVOICE DATA ── */
+const invoices = [
+  { id:'FAC-00148', date:'25 Mar 2026', client:'TecnoMax S.A.',       ruc:'80012345-6', amount:'₲ 4.850.000',  status:'approved' },
+  { id:'FAC-00147', date:'24 Mar 2026', client:'Distribuidora Norte', ruc:'50098712-1', amount:'₲ 1.200.000',  status:'pending'  },
+  { id:'FAC-00146', date:'23 Mar 2026', client:'Inversiones Alfa',    ruc:'91234567-8', amount:'₲ 8.360.000',  status:'rejected' },
+  { id:'FAC-00145', date:'22 Mar 2026', client:'Grupo Oriente',       ruc:'30045678-9', amount:'₲ 2.750.000',  status:'approved' },
+  { id:'FAC-00144', date:'21 Mar 2026', client:'Ferremax Ltda.',      ruc:'40078923-4', amount:'₲ 640.000',    status:'pending'  },
+  { id:'FAC-00143', date:'20 Mar 2026', client:'Digital Flow SRL',    ruc:'60034512-7', amount:'₲ 11.400.000', status:'approved' },
+  { id:'FAC-00142', date:'19 Mar 2026', client:'Supermercado Rio',    ruc:'70056789-3', amount:'₲ 980.000',    status:'rejected' },
+  { id:'FAC-00141', date:'18 Mar 2026', client:'Agro Sur S.A.',       ruc:'20089134-5', amount:'₲ 5.120.000',  status:'approved' },
+  { id:'FAC-00140', date:'17 Mar 2026', client:'Logística Plus',      ruc:'55012678-2', amount:'₲ 3.300.000',  status:'pending'  },
+  { id:'FAC-00139', date:'16 Mar 2026', client:'MediCare S.R.L.',     ruc:'44567890-1', amount:'₲ 720.000',    status:'approved' },
+  { id:'FAC-00138', date:'15 Mar 2026', client:'Construcciones CB',   ruc:'33409871-6', amount:'₲ 15.850.000', status:'rejected' },
+  { id:'FAC-00137', date:'14 Mar 2026', client:'Importadora Sur',     ruc:'88012345-0', amount:'₲ 2.100.000',  status:'approved' },
+];
+
+const statusMap = {
+  approved: { label:'Aprobado',  cls:'approved' },
+  rejected: { label:'Rechazado', cls:'rejected' },
+  pending:  { label:'Pendiente', cls:'pending'  },
+};
+
+function initials(n) {
+  return n.split(' ').slice(0,2).map(w => w[0]).join('').toUpperCase();
+}
+
+function buildCard(inv) {
+  const s = statusMap[inv.status];
+  return `
+  <div class="invoice-card" data-status="${inv.status}">
+    <div class="card-stripe ${s.cls}"></div>
+    <div class="card-body">
+      <div class="card-number-label">N° Factura</div>
+      <div class="card-number">${inv.id}</div>
+      <div class="card-date">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <rect x="3" y="4" width="18" height="18" rx="2" ry="2"/>
+          <line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/>
+          <line x1="3" y1="10" x2="21" y2="10"/>
+        </svg>
+        ${inv.date}
+      </div>
+      <div class="card-client">
+        <div class="client-dot">${initials(inv.client)}</div>
+        <div>
+          <div class="client-name">${inv.client}</div>
+          <div class="client-ruc">RUC: ${inv.ruc}</div>
+        </div>
+      </div>
+      <div class="card-divider"></div>
+      <div class="card-amount-row">
+        <div>
+          <div class="card-amount-label">Total</div>
+          <div class="card-amount">${inv.amount}</div>
+        </div>
+        <span class="status-badge ${s.cls}">
+          <span class="status-dot"></span>${s.label}
+        </span>
+      </div>
+    </div>
+    <div class="card-actions">
+      <button class="btn-icon btn-cancel" onclick="showToast('Anulando ${inv.id}…')">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <circle cx="12" cy="12" r="10"/>
+          <line x1="15" y1="9" x2="9" y2="15"/><line x1="9" y1="9" x2="15" y2="15"/>
+        </svg>
+        Anular
+      </button>
+      <button class="btn-icon btn-doc" onclick="showToast('Abriendo ${inv.id}…')">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
+          <polyline points="14 2 14 8 20 8"/>
+        </svg>
+        Ver
+      </button>
+    </div>
+  </div>`;
+}
+
+let activeFilter = 'all';
+let gridReady = false;
+
+function renderGrid(filter) {
+  activeFilter = filter || activeFilter;
+  const q = (document.getElementById('searchInput')?.value || '').toLowerCase();
+  const list = invoices.filter(i => {
+    const mf = activeFilter === 'all' || i.status === activeFilter;
+    const ms = !q || (i.id + ' ' + i.client).toLowerCase().includes(q);
+    return mf && ms;
+  });
+  document.getElementById('invoiceGrid').innerHTML = list.map(buildCard).join('');
+}
+
+function filterCards(btn, f) {
+  document.querySelectorAll('.filter-pill').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  renderGrid(f);
+}
+
+document.getElementById('searchInput')?.addEventListener('input', () => renderGrid());
+
+/* ── NAVIGATION ── */
+function goTo(page) {
+  // Hide all sections
+  document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+  document.getElementById('section-' + page)?.classList.add('active');
+
+  // Update active nav item
+  document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+  const target = [...document.querySelectorAll('.nav-item')].find(
+    n => (n.getAttribute('onclick') || '').includes("'" + page + "'")
+  );
+  if (target) target.classList.add('active');
+
+  // FAB: only on facturas
+  const fab = document.getElementById('fabNew');
+  if (page === 'facturas') {
+    fab.classList.remove('fab-hidden');
+    if (!gridReady) { renderGrid('all'); gridReady = true; }
+  } else {
+    fab.classList.add('fab-hidden');
+  }
+}
+</script>
+</body>
+</html>

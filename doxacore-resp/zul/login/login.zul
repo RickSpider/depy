@@ -1,0 +1,248 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?page title="DEPY — Documentos Electrónicos Paraguay" contentType="text/html;charset=UTF-8"?>
+
+<?link href="/doxacore-resp/css/styles.css" rel="stylesheet" ?>
+<?link href="/doxacore-resp/zul/login/login.css"  rel="stylesheet" ?>
+
+<zk xmlns="http://www.zkoss.org/2005/zul"
+    xmlns:h="http://www.w3.org/1999/xhtml"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://www.zkoss.org/2005/zul http://www.zkoss.org/2005/zul/zul.xsd">
+
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600;700&amp;family=Space+Mono:wght@400;700&amp;display=swap');
+  </style>
+
+  <!-- ── Fondo decorativo ── -->
+  <h:div class="bg-decoration">
+    <h:div class="bg-grid"></h:div>
+    <h:div class="bg-circle bg-circle-1"></h:div>
+    <h:div class="bg-circle bg-circle-2"></h:div>
+    <h:div class="bg-circle bg-circle-3"></h:div>
+  </h:div>
+
+  <h:div class="login-wrapper">
+
+    <!-- LOGO AREA -->
+    <h:div class="login-logo-area">
+      <h:div class="logo-container">
+        <h:div class="logo-ring"></h:div>
+        <h:div class="logo-ring logo-ring-2"></h:div>
+        <h:div class="logo-img-wrap">
+          <!-- SVG inyectado como HTML crudo: evita parseo de ZK -->
+          <html><![CDATA[
+            <svg viewBox="0 0 48 48" fill="none"
+                 xmlns="http://www.w3.org/2000/svg" width="56" height="56">
+              <defs>
+                <linearGradient id="logoGrad" x1="0" y1="0" x2="1" y2="1">
+                  <stop offset="0%" stop-color="#38bdf8"/>
+                  <stop offset="100%" stop-color="#0284c7"/>
+                </linearGradient>
+              </defs>
+              <path d="M10 6C10 4.9 10.9 4 12 4H30L38 12V42C38 43.1 37.1 44 36 44H12C10.9 44 10 43.1 10 42V6Z"
+                    fill="url(#logoGrad)" opacity=".15"/>
+              <path d="M10 6C10 4.9 10.9 4 12 4H30L38 12V42C38 43.1 37.1 44 36 44H12C10.9 44 10 43.1 10 42V6Z"
+                    stroke="url(#logoGrad)" stroke-width="2" fill="none"/>
+              <path d="M30 4L38 12H32C30.9 12 30 11.1 30 10V4Z"
+                    fill="url(#logoGrad)" opacity=".5"/>
+              <line x1="16" y1="20" x2="32" y2="20"
+                    stroke="url(#logoGrad)" stroke-width="2" stroke-linecap="round"/>
+              <line x1="16" y1="26" x2="32" y2="26"
+                    stroke="url(#logoGrad)" stroke-width="2" stroke-linecap="round"/>
+              <line x1="16" y1="32" x2="26" y2="32"
+                    stroke="url(#logoGrad)" stroke-width="2" stroke-linecap="round"/>
+              <circle cx="33" cy="36" r="7" fill="#0c2d48"
+                      stroke="url(#logoGrad)" stroke-width="1.5"/>
+              <text x="33" y="40" text-anchor="middle" font-size="9"
+                    font-weight="bold" fill="#38bdf8"
+                    font-family="monospace">&#x20B2;</text>
+            </svg>
+          ]]></html>
+        </h:div>
+      </h:div>
+
+      <h:div class="login-brand">
+        <h:div class="login-brand-name">DE<h:span class="accent">PY</h:span></h:div>
+        <h:div class="login-brand-sub">Documentos Electrónicos Paraguay</h:div>
+      </h:div>
+    </h:div>
+
+    <!-- LOGIN CARD -->
+    <h:div class="login-card" id="loginCard" >
+
+      <h:div class="login-card-header">
+        <h:div class="login-card-title">Iniciar Sesión</h:div>
+        <h:div class="login-card-sub">Ingrese sus credenciales para continuar</h:div>
+      </h:div>
+
+      <div class="login-card-body" apply="com.doxacore.login.controller.LoginController">
+
+        <!-- Error banner -->
+        <h:div class="login-error" id="loginError" >
+          <html><![CDATA[
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                 stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+                 width="15" height="15" style="flex-shrink:0">
+              <circle cx="12" cy="12" r="10"/>
+              <line x1="12" y1="8"  x2="12"   y2="12"/>
+              <line x1="12" y1="16" x2="12.01" y2="16"/>
+            </svg>
+          ]]></html>
+          
+        	<h:span id="loginErrorMsg"><label id="message"/></h:span>
+        </h:div>
+        
+        
+        <h:div class="login-error">
+        	
+        </h:div>
+        
+
+        <!-- Usuario -->
+        <h:div class="login-form-group">
+          <h:label class="login-label">Usuario</h:label>
+          <h:div class="login-input-wrap">
+            <h:span class="input-icon">
+              <html><![CDATA[
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                     stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+                     width="17" height="17">
+                  <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/>
+                  <circle cx="12" cy="7" r="4"/>
+                </svg>
+              ]]></html>
+            </h:span>
+            <textbox id="account"
+                     placeholder="usuario@empresa.com"
+                     style="flex:1;border:none !important;background:transparent !important;
+                            box-shadow:none !important;padding:13px 0 !important;
+                            font-size:14px !important;font-family:'DM Sans',sans-serif !important;
+                            color:white !important;outline:none !important;width:100% !important;"
+                     />
+          </h:div>
+        </h:div>
+
+        <!-- Contraseña -->
+        <h:div class="login-form-group">
+          <h:label class="login-label">Contraseña</h:label>
+          <h:div class="login-input-wrap">
+            <h:span class="input-icon">
+              <html><![CDATA[
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                     stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+                     width="17" height="17">
+                  <rect x="3" y="11" width="18" height="11" rx="2" ry="2"/>
+                  <path d="M7 11V7a5 5 0 0 1 10 0v4"/>
+                </svg>
+              ]]></html>
+            </h:span>
+            <textbox id="password"
+                     type="password"
+                     placeholder="••••••••"
+                     style="flex:1;border:none !important;background:transparent !important;
+                            box-shadow:none !important;padding:13px 0 !important;
+                            font-size:14px !important;font-family:'DM Sans',sans-serif !important;
+                            color:white !important;outline:none !important;width:100% !important;"
+                     />
+            <h:button class="toggle-password"
+                      onclick="togglePass()"
+                      title="Mostrar/ocultar contraseña">
+              <html id="eyeIconWrap"><![CDATA[
+                <svg id="eyeIcon" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                     stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+                     width="17" height="17">
+                  <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/>
+                  <circle cx="12" cy="12" r="3"/>
+                </svg>
+              ]]></html>
+            </h:button>
+          </h:div>
+        </h:div>
+        
+        
+        <!-- Botón Ingresar -->
+        <h:button id="login" sclass="btn-login">
+	        <html ><![CDATA[
+	        <div class="spinner"></div>
+	        <svg class="btn-icon-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+	          <path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4"/>
+	          <polyline points="10 17 15 12 10 7"/>
+	          <line x1="15" y1="12" x2="3" y2="12"/>
+	        </svg>
+       		]]></html>
+ 
+          Ingresar al sistema
+ 
+        </h:button>
+        
+        
+      </div>
+
+      <!-- Footer card -->
+      <h:div class="login-footer">
+        <h:span class="login-footer-text">Conexión segura</h:span>
+        <h:span class="login-footer-badge">
+          <html><![CDATA[
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                 stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"
+                 width="10" height="10">
+              <rect x="3" y="11" width="18" height="11" rx="2" ry="2"/>
+              <path d="M7 11V7a5 5 0 0 1 10 0v4"/>
+            </svg>
+          ]]></html>
+          SSL
+        </h:span>
+      </h:div>
+
+    </h:div>
+
+    <h:div class="login-caption">
+      DEPY v2.0 &#160;·&#160; © 2026 &#160;·&#160; Todos los derechos reservados
+    </h:div>
+
+  </h:div>
+
+  <h:div class="depy-toast" id="depyToast"></h:div>
+
+ 	
+ 	
+ 	<h:script>
+	zk.afterMount(function () {
+
+    const msgWidget = zk.Widget.$('$message');
+    const errWidget = zk.Widget.$('$loginError');
+   
+    if (!msgWidget || !errWidget) {
+        console.log("Componentes no encontrados");
+        return;
+    }
+
+    const target = msgWidget.$n();
+    
+    const observer = new MutationObserver(() => {
+    const msg = target.textContent;
+
+      //  console.log("Cambio detectado:", msg);
+        
+        if (!msg.includes("Bienvenido")) {
+        	const err = errWidget.$n();
+        	err.classList.add('show');
+        
+           
+        }
+    });
+
+    observer.observe(target, {
+        childList: true,
+        subtree: true,
+        characterData: true
+    });
+});
+
+
+</h:script>
+
+</zk>
+
+
+

@@ -334,6 +334,7 @@ public class FacturacionRVM extends TemplateViewModelLocalResp{
 			this.clienteSMSelected = null;
 			generarClienteSM();
 			
+			
 		}else if (pantalla == 2) {
 			
 			this.clienteSelected = new Cliente();
@@ -351,7 +352,24 @@ public class FacturacionRVM extends TemplateViewModelLocalResp{
 			
 		}
 		
+		Clients.evalJavaScript(
+				
+				 "setTimeout(function() {"
+				+ "const container = document.querySelector('.main');"
+						+ "const el = document.getElementById('facturacionContent');"
+						+ "const top = el.getBoundingClientRect().top + container.scrollTop - 60;"
+						+ "container.scrollTo({"
+						+ "  top: top,"
+						+ "  behavior: 'smooth'"
+						+ "});"
+						+ "console.log('actualizado');"
+						+ "}, 100);"
+			    
+			);
+		
 	}
+	
+	
 	
 	//======Seccion nueva Factura =====
 	

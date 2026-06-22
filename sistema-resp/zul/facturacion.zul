@@ -5,8 +5,9 @@
 	
 	<style src="/sistema-resp/css/customZkoss.min.css" />
 
-	<div apply="org.zkoss.bind.BindComposer"
-		viewModel="@id('vm')@init('com.depy.sistemaResp.facturacion.FacturacionRVM')">
+	<h:div apply="org.zkoss.bind.BindComposer"
+		viewModel="@id('vm')@init('com.depy.sistemaResp.facturacion.FacturacionRVM')"
+		id="facturacionContent">
 		<div visible="@load(vm.pantalla[0])">
 			<h:div class="page-header">
 				<h:div class="page-title-block">
@@ -198,11 +199,11 @@
 
 		</div>
 
-		<div visible="@load(vm.pantalla[1])">
+		<div id="facturacionNueva" visible="@load(vm.pantalla[1])">
 			<include src="/sistema-resp/zul/facturaNueva.zul"/>
 		</div>
 		<div visible="@load(vm.pantalla[2])">
 			<include src="/sistema-resp/zul/clienteNuevo.zul"/>
 		</div>
-	</div>
+	</h:div>
 </zk>
