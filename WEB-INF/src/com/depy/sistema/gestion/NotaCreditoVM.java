@@ -148,7 +148,7 @@ public class NotaCreditoVM extends TemplateViewModelLocal {
 
 	}
 	
-	private void openInNewTabPost(String url, Map<String, String> params) {
+	/*private void openInNewTabPost(String url, Map<String, String> params) {
 	
 		StringBuilder js = new StringBuilder();
 	    js.append("var f=document.createElement('form');");
@@ -174,7 +174,7 @@ public class NotaCreditoVM extends TemplateViewModelLocal {
 	        
 	    js.append("document.body.appendChild(f); f.submit(); document.body.removeChild(f);");
 	    Clients.evalJavaScript(js.toString());
-	}
+	}*/
 	
 	@Command
 	public void verKude(@BindingParam("id") Long id) {

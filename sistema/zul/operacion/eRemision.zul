@@ -577,7 +577,7 @@
 
 					<button label="GENERAR REMISION"
 						style="background-color:green"
-						onClick="@command('generarRemision')" />
+						onClick="@command('generarRemision')" disabled="@load(!vm.btnProcesar)"/>
 
 					<button onClick="@command('limpiarPantalla')"
 						label="LIMPIAR" />

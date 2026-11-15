@@ -1,7 +1,9 @@
 package com.depy.sistema.operacion;
 
 import java.text.SimpleDateFormat;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
@@ -18,7 +20,6 @@ import org.zkoss.zk.ui.event.Event;
 import org.zkoss.zk.ui.event.EventListener;
 import org.zkoss.zk.ui.event.Events;
 import org.zkoss.zk.ui.select.Selectors;
-import org.zkoss.zk.ui.util.Clients;
 import org.zkoss.zul.ListModelArray;
 import org.zkoss.zul.Messagebox;
 import org.zkoss.zul.Window;
@@ -65,25 +66,37 @@ public class FacturacionVM extends TemplateViewModelLocal {
 	
 	private boolean dncpOpen = false;
 	
+	private boolean btnProcesar = false;
+	
+	private String fechaConstraint;
+	
 	@Init(superclass = true)
 	public void initFacturacionVM() {
+
 		
-		this.desde = this.um.modificarHorasMinutosSegundos(new Date(), 0, 0, 0, 0);
-		this.hasta = this.um.modificarHorasMinutosSegundos(this.desde, 23, 59, 59, 99);
-		
-		generarSearchModels();
 		cargarDatosTipos();
-		limpiarPantalla();
-		
-		this.sucursalStr = this.getCurrentSucursalUsuario().getSucursal().getNombre();
-		
+
 		//System.out.println("Iniciando Facturacion...");
 
 	}
 
 	@AfterCompose(superclass = true)
 	public void afterComposeFacturacionVM() {
+		
+		generarSearchModels();
+		limpiarPantalla();
 
+		this.sucursalStr = this.getCurrentSucursalUsuario().getSucursal().getNombre();
+
+		fechaConstraint = String.format(
+		        "between %s and %s",
+		        LocalDate.now().minusDays(30).format(DateTimeFormatter.ofPattern("yyyyMMdd")),
+		        LocalDate.now().format(DateTimeFormatter.ofPattern("yyyyMMdd"))
+		    );
+		
+		if (this.compActivo() != null) {
+			this.btnProcesar = true;
+		}
 	}
 
 	@Override
@@ -595,6 +608,17 @@ public class FacturacionVM extends TemplateViewModelLocal {
 		
 	}
 	
+	public Comprobante compActivo() {
+		
+		SucursalUsuario su =  this.getCurrentSucursalUsuario();
+		
+		String [] columns = {"empresa","comprobanteTipo","establecimiento","puntoExpedicion","activo"};
+		Object [] values = {su.getEmpresa(), this.facturaDefault ,su.getSucursal().getEstablecimiento() , su.getPuntoExpedicion(),true};
+
+		return this.reg.getObjectByColumns(Comprobante.class, columns, values);	
+		
+	}
+	
 	public void procesarFactura() {
 				
 		Cliente c = this.reg.findObjectById(Cliente.class, this.clienteSMSelected.getId());
@@ -619,14 +643,15 @@ public class FacturacionVM extends TemplateViewModelLocal {
 		
 		
 		
-		String [] columns = {"empresa","comprobanteTipo","establecimiento","puntoExpedicion","activo"};
-		Object [] values = {su.getEmpresa(), this.facturaDefault ,su.getSucursal().getEstablecimiento() , su.getPuntoExpedicion(),true};
+		/*String [] columns = {"empresa","comprobanteTipo","establecimiento","puntoExpedicion","activo"};
+		Object [] values = {su.getEmpresa(), this.facturaDefault ,su.getSucursal().getEstablecimiento() , su.getPuntoExpedicion(),true};*/
 		
 		
 		//System.out.println("Factura Default: "+this.facturaDefault.getSigla());
 		
 		
-		Comprobante comp = this.reg.getObjectByColumns(Comprobante.class, columns, values);
+		//Comprobante comp = this.reg.getObjectByColumns(Comprobante.class, columns, values);
+		Comprobante comp = this.compActivo();
 		this.facturaSelected.setTimbrado(comp.getTimbrado());
 		this.facturaSelected.setTimbradoFecha(comp.getFechaInicio());
 		this.facturaSelected.setTimbradoDocNro(comp.getEstablecimiento()+"-"+comp.getPuntoExpedicion()+"-"+String.format("%07d", comp.getSigteNro()));
@@ -713,6 +738,9 @@ public class FacturacionVM extends TemplateViewModelLocal {
 	@Command
 	public void facturacionesModal() {
 		
+		this.desde = this.um.modificarHorasMinutosSegundos(new Date(), 0, 0, 0, 0);
+		this.hasta = this.um.modificarHorasMinutosSegundos(this.desde, 23, 59, 59, 99);
+		
 		this.cargarDatos();
 
 		modal = (Window) Executions.createComponents("/sistema/zul/operacion/facturacionesModal.zul", this.mainComponent, null);
@@ -727,7 +755,7 @@ public class FacturacionVM extends TemplateViewModelLocal {
 
 	}
 	
-	private void openInNewTabPost(String url, Map<String, String> params) {
+	/*private void openInNewTabPost(String url, Map<String, String> params) {
 		
 		StringBuilder js = new StringBuilder();
 	    js.append("var f=document.createElement('form');");
@@ -753,7 +781,7 @@ public class FacturacionVM extends TemplateViewModelLocal {
 	        
 	    js.append("document.body.appendChild(f); f.submit(); document.body.removeChild(f);");
 	    Clients.evalJavaScript(js.toString());
-	}
+	}*/
 	
 	@Command
 	public void verKude(@BindingParam("id") Long id) {
@@ -792,10 +820,6 @@ public class FacturacionVM extends TemplateViewModelLocal {
 		}
 
 	}
-	
-	
-	
-
 
 	public Factura getFacturaSelected() {
 		return facturaSelected;
@@ -941,6 +965,23 @@ public class FacturacionVM extends TemplateViewModelLocal {
 		this.dncpOpen = dncpOpen;
 	}
 
+	public boolean isBtnProcesar() {
+		return btnProcesar;
+	}
+
+	public void setBtnProcesar(boolean btnProcesar) {
+		this.btnProcesar = btnProcesar;
+
+	}
+
+	public String getFechaConstraint() {
+		return fechaConstraint;
+	}
+
+	public void setFechaConstraint(String fechaConstraint) {
+		this.fechaConstraint = fechaConstraint;
+	}
 	
 	
+
 }

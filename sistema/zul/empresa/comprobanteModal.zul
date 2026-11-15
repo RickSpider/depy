@@ -51,7 +51,7 @@
 			</tablechildren>
 			<tablechildren>
 				<datebox
-					value="@load(vm.comprobanteSelected.fechaInicioDate) @save(vm.comprobanteSelected.fechaInicioDate, before='guardar')"
+					valueInLocalDate="@load(vm.comprobanteSelected.fechaInicio) @save(vm.comprobanteSelected.fechaInicio, before='guardar')"
 					format="dd/MM/yyyy" width="150px" />
 			</tablechildren>			
 			

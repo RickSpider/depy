@@ -20,3 +20,6 @@
 
 <mapping class="com.depy.modelo.Remision" />
 <mapping class="com.depy.modelo.RemisionDetalle" />
+
+<mapping class="com.depy.modelo.Recibo" />
+<mapping class="com.depy.modelo.ReciboDetalle" />

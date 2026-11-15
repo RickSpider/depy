@@ -2,10 +2,12 @@ package com.depy.util;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 import org.zkoss.bind.annotation.AfterCompose;
 import org.zkoss.bind.annotation.Init;
 import org.zkoss.zk.ui.Sessions;
+import org.zkoss.zk.ui.util.Clients;
 import org.zkoss.zul.ListModelArray;
 
 import com.depy.modelo.Empresa;
@@ -121,4 +123,33 @@ public abstract class TemplateViewModelLocal extends TemplateViewModel {
 	    ListModelArray<T> modelo = new ListModelArray<>(lista);
 	    return modelo;
 	}
+	
+	protected void openInNewTabPost(String url, Map<String, String> params) {
+		
+		StringBuilder js = new StringBuilder();
+	    js.append("var f=document.createElement('form');");
+	    js.append("f.method='POST';");
+	    js.append("f.action='").append(url).append("';");
+	    js.append("f.target='_blank';");
+
+	    for (Map.Entry<String, String> entry : params.entrySet()) {
+	    
+	    	js.append("var i=document.createElement('input');");
+	        js.append("i.type='hidden';");
+	        js.append("i.name='").append(entry.getKey()).append("';");
+	        js.append("i.value='").append(entry.getValue()
+	        		.replace("\\", "\\\\")
+	                .replace("'", "\\'")
+	                .replace("\r", "")
+	                .replace("\n", "\\n"))
+	                .append("';");
+	            
+	        js.append("f.appendChild(i);");
+	        
+	    }
+	        
+	    js.append("document.body.appendChild(f); f.submit(); document.body.removeChild(f);");
+	    Clients.evalJavaScript(js.toString());
+	}
+
 }

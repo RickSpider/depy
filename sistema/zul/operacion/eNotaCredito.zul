@@ -234,7 +234,7 @@
 				<hlayout>
 
 					<button label="GENERAR"
-						style="background-color:green" onClick="@command('generarNotaCredito')" />
+						style="background-color:green" onClick="@command('generarNotaCredito')" disabled="@load(!vm.btnProcesar)"/>
 					
 					<button onClick="@command('limpiarPantalla')"
 						label="LIMPIAR" />

@@ -38,7 +38,7 @@ public class Comprobante extends ModeloERP  implements Serializable{
 	private Tipo comprobanteTipo;
 	private String timbrado;
 	private String Serie;
-	private LocalDate fechaInicio = LocalDate.now();;
+	private LocalDate fechaInicio = LocalDate.now();
 	private String establecimiento;
 	private String puntoExpedicion;
 	private long iniNro = 1;
@@ -129,21 +129,5 @@ public class Comprobante extends ModeloERP  implements Serializable{
 	public void setLogoPath(String logoPath) {
 		this.logoPath = logoPath;
 	}
-	public Date getFechaInicioDate() {
-		return fechaInicio != null
-		        ? Date.from(fechaInicio.atStartOfDay(ZoneId.systemDefault()).toInstant())
-		        : null;
-	}
-
-	public void setFechaInicioDate(Date d) {
-		this.fechaInicio = d != null
-		        ? d.toInstant().atZone(ZoneId.systemDefault()).toLocalDate()
-		        : null;
-	}
-	
-	
-	
-	
-	
-	
+		
 }

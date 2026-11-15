@@ -35,9 +35,6 @@ public class FacturaDetalle extends DocumentoDetalle implements Serializable{
 	private Double anticipo;
 	private Double anticipoGlobal;
 
-	
-	
-	
 	public FacturaDetalle() {
 		super();
 		// TODO Auto-generated constructor stub

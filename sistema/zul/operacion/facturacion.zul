@@ -135,7 +135,8 @@
 				</tablechildren>
 
 				<tablechildren>
-					<datebox valueInLocalDateTime="@bind(vm.facturaSelected.fecha)" format="dd/MM/yyy HH:mm:ss" width="180px"/>					
+					<datebox valueInLocalDateTime="@bind(vm.facturaSelected.fecha)" format="dd/MM/yyy HH:mm:ss" width="180px"
+				 	constraint="@load(vm.fechaConstraint)"/>					
 				</tablechildren>
 
 			</tablelayout>
@@ -323,7 +324,7 @@
 				<hlayout>
 
 					<button label="FACTURAR"
-						style="background-color:green" onClick="@command('generarFactura')" />
+						style="background-color:green" onClick="@command('generarFactura')" disabled="@load(!vm.btnProcesar)"/>
 					
 					<button onClick="@command('limpiarPantalla')"
 						label="LIMPIAR" />

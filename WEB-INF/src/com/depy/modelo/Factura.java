@@ -20,11 +20,12 @@ import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 
 @Entity
-@Table(name = "facturas", indexes = { @Index(name = "idx_factura_empresa", columnList = "empresaid"),
+@Table(name = "facturas", indexes = { 
+		@Index(name = "idx_factura_empresa", columnList = "empresaid"),
 		@Index(name = "idx_factura_empresa_cliente", columnList = "empresaid, clienteid"),
 		@Index(name = "idx_factura_empresa_sucursal", columnList = "empresaid, sucursalid"),
 		@Index(name = "idx_factura_cdc", columnList = "cdc"),
-		@Index(name = "idx_factura_empresa_numeracion", columnList = "empresaid, numeracion"),
+		@Index(name = "idx_factura_empresa_timdocnro", columnList = "empresaid, timbradoDocNro"),
 		@Index(name = "idx_factura_empresa_fecha", columnList = "empresaid, fecha"),
 		@Index(name = "idx_factura_empresa_estado", columnList = "empresaid, estado") })
 public class Factura extends Documento implements Serializable {

@@ -60,6 +60,8 @@ public class ENotaCreditoVM extends TemplateViewModelLocal {
 	
 	private String sucursalStr;
 	
+	private boolean btnProcesar = false;
+	
 	@Init(superclass = true)
 	public void initNotaCreditocionVM() {
 		
@@ -71,6 +73,10 @@ public class ENotaCreditoVM extends TemplateViewModelLocal {
 		limpiarPantalla();
 		
 		this.sucursalStr = this.getCurrentSucursalUsuario().getSucursal().getNombre();
+		
+		if (this.compActivo() != null) {
+			this.btnProcesar = true;
+		}
 		
 		//System.out.println("Iniciando NotaCreditocion...");
 
@@ -239,6 +245,19 @@ public class ENotaCreditoVM extends TemplateViewModelLocal {
 		
 	}
 	
+	public Comprobante compActivo() {
+		
+		SucursalUsuario su =  this.getCurrentSucursalUsuario();
+		
+		Tipo t = this.reg.getObjectBySigla(Tipo.class, ParamsLocal.SIGLA_TIPO_COMPROBANTE_NOTACREDITO);
+		
+		String [] columns = {"empresa","comprobanteTipo","establecimiento","puntoExpedicion","activo"};
+		Object [] values = {this.getCurrentEmpresa(), t ,su.getSucursal().getEstablecimiento() , su.getPuntoExpedicion(),true};
+		
+		return this.reg.getObjectByColumns(Comprobante.class, columns, values);	
+		
+	}
+	
 	public void procesarNotaCredito() {
 		
 		this.notacreditoSelected.setFecha(LocalDateTime.now());
@@ -276,12 +295,13 @@ public class ENotaCreditoVM extends TemplateViewModelLocal {
 		
 		SucursalUsuario su =  this.getCurrentSucursalUsuario();
 			
-		Tipo t = this.reg.getObjectBySigla(Tipo.class, ParamsLocal.SIGLA_TIPO_COMPROBANTE_NOTACREDITO);
+		/*Tipo t = this.reg.getObjectBySigla(Tipo.class, ParamsLocal.SIGLA_TIPO_COMPROBANTE_NOTACREDITO);
 		
 		String [] columns = {"empresa","comprobanteTipo","establecimiento","puntoExpedicion","activo"};
 		Object [] values = {this.getCurrentEmpresa(), t ,su.getSucursal().getEstablecimiento() , su.getPuntoExpedicion(),true};
 		
-		Comprobante comp = this.reg.getObjectByColumns(Comprobante.class, columns, values);
+		Comprobante comp = this.reg.getObjectByColumns(Comprobante.class, columns, values);*/
+		Comprobante comp = this.compActivo();
 		this.notacreditoSelected.setTimbrado(comp.getTimbrado());
 		this.notacreditoSelected.setTimbradoFecha(comp.getFechaInicio());
 		this.notacreditoSelected.setTimbradoDocNro(comp.getEstablecimiento()+"-"+comp.getPuntoExpedicion()+"-"+String.format("%07d", comp.getSigteNro()));
@@ -366,8 +386,10 @@ public class ENotaCreditoVM extends TemplateViewModelLocal {
 	        this.um.getSql("factura/listaFactura.sql")
 	        .replace("?1", this.getCurrentEmpresa().getEmpresaid()+"")
 	        .replace("?2", this.getCurrentSucursal().getSucursalid()+"")
+	        .replace("?5", "Aprobado")
 	        .replace("--1", "")
-			.replace("--3",""),
+			.replace("--3","")
+			,
 	        o -> new FacturaSM(
 	                ((Number) o[0]).longValue(),
 	                (String) o[2],
@@ -420,7 +442,7 @@ public class ENotaCreditoVM extends TemplateViewModelLocal {
 
 	}
 	
-	private void openInNewTabPost(String url, Map<String, String> params) {
+	/*private void openInNewTabPost(String url, Map<String, String> params) {
 		
 		StringBuilder js = new StringBuilder();
 	    js.append("var f=document.createElement('form');");
@@ -446,7 +468,7 @@ public class ENotaCreditoVM extends TemplateViewModelLocal {
 	        
 	    js.append("document.body.appendChild(f); f.submit(); document.body.removeChild(f);");
 	    Clients.evalJavaScript(js.toString());
-	}
+	}*/
 	
 	@Command
 	public void verKude(@BindingParam("id") Long id) {
@@ -610,6 +632,14 @@ public class ENotaCreditoVM extends TemplateViewModelLocal {
 
 	public void setlIva(List<Integer> lIva) {
 		this.lIva = lIva;
+	}
+
+	public boolean isBtnProcesar() {
+		return btnProcesar;
+	}
+
+	public void setBtnProcesar(boolean btnProcesar) {
+		this.btnProcesar = btnProcesar;
 	}
 
 	

@@ -57,6 +57,8 @@ public class ERemisionVM extends TemplateViewModelLocal {
 	
 	private String sucursalStr;
 	
+	private boolean btnProcesar = false;
+	
 	@Init(superclass = true)
 	public void initRemisionVM() {
 		
@@ -68,6 +70,10 @@ public class ERemisionVM extends TemplateViewModelLocal {
 		limpiarPantalla();
 		
 		this.sucursalStr = this.getCurrentSucursalUsuario().getSucursal().getNombre();
+		
+		if (this.compActivo() != null) {
+			this.btnProcesar = true;
+		}
 		
 		//System.out.println("Iniciando Remision...");
 
@@ -467,18 +473,34 @@ public class ERemisionVM extends TemplateViewModelLocal {
 		
 	}
 	
+
+	public Comprobante compActivo() {
+		
+		Tipo t = this.reg.getObjectBySigla(Tipo.class, ParamsLocal.SIGLA_TIPO_COMPROBANTE_REMISION);
+		
+		SucursalUsuario su =  this.getCurrentSucursalUsuario();
+		
+		String [] columns = {"empresa","comprobanteTipo","establecimiento","puntoExpedicion","activo"};
+		Object [] values = {su.getSucursal().getEmpresa(), t ,su.getSucursal().getEstablecimiento() , su.getPuntoExpedicion(),true};
+
+		return this.reg.getObjectByColumns(Comprobante.class, columns, values);	
+		
+	}
+	
 	public void procesarRemision() {
 		
 		this.remisionSelected.setFecha(LocalDateTime.now());
 			
 		SucursalUsuario su =  this.getCurrentSucursalUsuario();
 			
-		Tipo t = this.reg.getObjectBySigla(Tipo.class, ParamsLocal.SIGLA_TIPO_COMPROBANTE_REMISION);
 		
-		String [] columns = {"empresa","comprobanteTipo","establecimiento","puntoExpedicion","activo"};
+		
+		/*String [] columns = {"empresa","comprobanteTipo","establecimiento","puntoExpedicion","activo"};
 		Object [] values = {su.getSucursal().getEmpresa(), t ,su.getSucursal().getEstablecimiento() , su.getPuntoExpedicion(),true};
 		
-		Comprobante comp = this.reg.getObjectByColumns(Comprobante.class, columns, values);
+		Comprobante comp = this.reg.getObjectByColumns(Comprobante.class, columns, values);*/
+		
+		Comprobante comp =  this.compActivo();
 		this.remisionSelected.setTimbrado(comp.getTimbrado());
 		this.remisionSelected.setTimbradoFecha(comp.getFechaInicio());
 		this.remisionSelected.setTimbradoDocNro(comp.getEstablecimiento()+"-"+comp.getPuntoExpedicion()+"-"+String.format("%07d", comp.getSigteNro()));
@@ -555,7 +577,7 @@ public class ERemisionVM extends TemplateViewModelLocal {
 
 	}
 	
-	private void openInNewTabPost(String url, Map<String, String> params) {
+	/*private void openInNewTabPost(String url, Map<String, String> params) {
 		
 		StringBuilder js = new StringBuilder();
 	    js.append("var f=document.createElement('form');");
@@ -581,7 +603,7 @@ public class ERemisionVM extends TemplateViewModelLocal {
 	        
 	    js.append("document.body.appendChild(f); f.submit(); document.body.removeChild(f);");
 	    Clients.evalJavaScript(js.toString());
-	}
+	}*/
 	
 	@Command
 	public void verKude(@BindingParam("id") Long id) {
@@ -763,6 +785,14 @@ public class ERemisionVM extends TemplateViewModelLocal {
 
 	public List<Tipo> getlVehiculoIdentificacion() {
 		return agrupadoTipo.get(ParamsLocal.SIGLA_TIPOTIPO_VEHICULOIDENTIFICACION);
+	}
+
+	public boolean isBtnProcesar() {
+		return btnProcesar;
+	}
+
+	public void setBtnProcesar(boolean btnProcesar) {
+		this.btnProcesar = btnProcesar;
 	}
 
 	

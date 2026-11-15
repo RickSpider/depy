@@ -23,7 +23,6 @@ import org.zkoss.zk.ui.Executions;
 import org.zkoss.zk.ui.event.Event;
 import org.zkoss.zk.ui.event.EventListener;
 import org.zkoss.zk.ui.select.Selectors;
-import org.zkoss.zk.ui.util.Clients;
 import org.zkoss.zk.ui.util.Notification;
 import org.zkoss.zul.Messagebox;
 import org.zkoss.zul.Window;
@@ -153,7 +152,7 @@ public class FacturaVM extends TemplateViewModelLocal {
 
 	}
 	
-	private void openInNewTabPost(String url, Map<String, String> params) {
+/*	private void openInNewTabPost(String url, Map<String, String> params) {
 	
 		StringBuilder js = new StringBuilder();
 	    js.append("var f=document.createElement('form');");
@@ -179,7 +178,7 @@ public class FacturaVM extends TemplateViewModelLocal {
 	        
 	    js.append("document.body.appendChild(f); f.submit(); document.body.removeChild(f);");
 	    Clients.evalJavaScript(js.toString());
-	}
+	}*/
 	
 	@Command
 	public void verKude(@BindingParam("id") Long id) {

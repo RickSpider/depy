@@ -84,6 +84,7 @@ public class ParamsLocal extends Params{
 	public static final String SIGLA_TIPO_COMPROBANTE_REMISION = "COMPROBANTE_REMISION";
 	public static final String SIGLA_TIPO_COMPROBANTE_NOTADEBITO = "COMPROBANTE_NOTADEBITO";
 	public static final String SIGLA_TIPO_COMPROBANTE_AUTOFACTURA = "COMPROBANTE_AUTOFACTURA";
+	public static final String SIGLA_TIPO_COMPROBANTE_RECIBO = "COMPROBANTE_RECIBO";
 	
 	public static final String SIGLA_TIPOTIPO_EVENTO= "EVENTO";
 	public static final String SIGLA_TIPO_EVENTO_CANCELACION = "EVENTO_CANCELACION";
